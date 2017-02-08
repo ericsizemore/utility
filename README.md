@@ -1,6 +1,6 @@
 # Utility - Collection of various PHP utility functions.
 
-[Utility](http://ericsizemore.github.com/utility/) is (currently) a small collection of 
+[Utility](http://github.com/ericsizemore/utility/) is (currently) a small collection of 
 useful functions that are aimed to make developers' lives just a tad bit easier.
 
 ## Installation
