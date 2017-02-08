@@ -1,0 +1,19 @@
+{
+	"name": "esi/utility",
+	"description": "Utility - Collection of various PHP utility functions.",
+	"type": "library",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Eric Sizemore",
+			"email": "admin@secondversion.com",
+			"homepage": "http://www.secondversion.com/"
+		}
+	],
+	"require": {
+		"php": ">=7.0.0",
+	},
+    "autoload": {
+        "psr-4": { "Esi\\Utility\\": "src/Utility" }
+    },
+}
