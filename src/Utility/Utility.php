@@ -6,8 +6,8 @@
  * @author    Eric Sizemore <admin@secondversion.com>
  * @package   Utility
  * @link      http://www.secondversion.com/
- * @version   1.0.0
- * @copyright (C) 2017 Eric Sizemore
+ * @version   1.0.1
+ * @copyright (C) 2017 - 2019 Eric Sizemore
  * @license   The MIT License (MIT)
  */
 namespace Esi\Utility;
@@ -18,11 +18,11 @@ namespace Esi\Utility;
  * @author    Eric Sizemore <admin@secondversion.com>
  * @package   Utility
  * @link      http://www.secondversion.com/
- * @version   1.0.0
- * @copyright (C) 2017 Eric Sizemore
+ * @version   1.0.1
+ * @copyright (C) 2017 - 2019 Eric Sizemore
  * @license   The MIT License (MIT)
  *
- * Copyright (C) 2017 Eric Sizemore. All rights reserved.
+ * Copyright (C) 2017 - 2019 Eric Sizemore. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to 
@@ -44,14 +44,29 @@ namespace Esi\Utility;
  */
 class Utility
 {
-    /** */
+    /**
+     * Encoding to use for multibyte-based functions.
+     *
+     * @var  string  Encoding
+     */
     private static $encoding = 'UTF-8';
 
-    public static function getEncoding()
+    /**
+     * Returns current encoding.
+     *
+     * @return  string
+     */
+    public static function getEncoding(): string
     {
         return static::$encoding;
     }
 
+    /**
+     * Sets the encoding to use for multibyte-based functions.
+     *
+     * @param  string  $newEncoding  Charset
+     * @param  bool    $iniUpdate    Update php.ini's default_charset?
+     */
     public static function setEncoding(string $newEncoding = '', bool $iniUpdate = false)
     {
         if (!empty($newEncoding)){
@@ -177,6 +192,51 @@ class Utility
     }
 
     /**
+     * lcfirst()
+     *
+     * Convert the first character of a given string to lower case.
+     *
+     * @since   1.0.1
+     *
+     * @param   string  $string  The input string.
+     * @return  string
+     */
+    public static function lcfirst(string $string): string
+    {
+        return self::lower(self::substr($string, 0, 1)) . self::substr($string, 1);
+    }
+
+    /**
+     * ucfirst()
+     *
+     * Convert the first character of a given string to upper case.
+     *
+     * @since   1.0.1
+     *
+     * @param   string  $string  The input string.
+     * @return  string
+     */
+    public static function ucfirst(string $string): string
+    {
+        return self::upper(self::substr($string, 0, 1)) . self::substr($string, 1);
+    }
+
+    /**
+     * Compares multibyte input strings in a binary safe case-insensitive manner.
+     *
+     * @since  1.0.1
+     *
+     * @param  string  $str1  The first string.
+     * @param  string  $str2  The second string.
+     * @return int            Returns < 0 if $str1 is less than $str2; > 0 if $str1 
+     *                        is greater than $str2, and 0 if they are equal.
+     */
+    public static function strcasecmp(string $str1, string $str2): int
+    {
+        return strcmp(static::upper($str1), static::upper($str2));
+    }
+
+    /**
      * beginsWith()
      *
      * Determine if a string begins with another string.
@@ -254,8 +314,9 @@ class Utility
      *
      * Get string length.
      *
-     * @param  string  $string      The string being checked for length.
-     * @param  bool    $binarySafe  Forces '8bit' encoding so that the length check is binary safe.
+     * @param   string  $string      The string being checked for length.
+     * @param   bool    $binarySafe  Forces '8bit' encoding so that the length check is binary safe.
+     * @return  int
      */
     public static function length(string $string, bool $binarySafe = false): int
     {
