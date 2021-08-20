@@ -6,8 +6,8 @@
  * @author    Eric Sizemore <admin@secondversion.com>
  * @package   Utility
  * @link      http://www.secondversion.com/
- * @version   1.0.1
- * @copyright (C) 2017 - 2019 Eric Sizemore
+ * @version   1.0.2
+ * @copyright (C) 2017 - 2021 Eric Sizemore
  * @license   The MIT License (MIT)
  */
 namespace Esi\Utility;
@@ -18,11 +18,11 @@ namespace Esi\Utility;
  * @author    Eric Sizemore <admin@secondversion.com>
  * @package   Utility
  * @link      http://www.secondversion.com/
- * @version   1.0.1
- * @copyright (C) 2017 - 2019 Eric Sizemore
+ * @version   1.0.2
+ * @copyright (C) 2017 - 2021 Eric Sizemore
  * @license   The MIT License (MIT)
  *
- * Copyright (C) 2017 - 2019 Eric Sizemore. All rights reserved.
+ * Copyright (C) 2017 - 2021 Eric Sizemore. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to 
@@ -233,7 +233,7 @@ class Utility
      */
     public static function strcasecmp(string $str1, string $str2): int
     {
-        return strcmp(static::upper($str1), static::upper($str2));
+        return \strcmp(static::upper($str1), static::upper($str2));
     }
 
     /**
@@ -554,9 +554,10 @@ class Utility
             throw new \LengthException('$length must be greater than 0.');
         }
 
-        //
+        // Initialize
         $bytes = false;
 
+        // Attempt to get random bytes
         try {
             $bytes = static::randomBytes($length * 2);
 
@@ -609,22 +610,22 @@ class Utility
             throw new \InvalidArgumentException('Unable to read $directory.');
         }
 
-        //
+        // Initialize
         $lines = [];
 
-        //
+        // Flags passed to \file().
         $flags = \FILE_IGNORE_NEW_LINES;
 
         if ($skipEmpty) {
             $flags |= \FILE_SKIP_EMPTY_LINES;
         }
 
-        //
+        // Directory names we wish to ignore
         if (!empty($ignore)) {
             $ignore = \preg_quote(\implode('|', $ignore), '#');
         }
 
-        //
+        // Traverse the directory
         $iterator = new \RecursiveIteratorIterator(
             new \RecursiveDirectoryIterator(
                 $directory, 
@@ -632,6 +633,7 @@ class Utility
             )
         );
 
+        // Build the actual contents of the directory
         foreach ($iterator AS $key => $val) {
             if ($val->isFile()) {
                 if (
@@ -649,7 +651,7 @@ class Utility
         }
         unset($iterator);
 
-        //
+        // Do we want the content or only the count?
         if ($onlyLineCount) {
             return static::arrayFlatten($lines);
         }
@@ -677,15 +679,15 @@ class Utility
             throw new \InvalidArgumentException('Unable to read $directory.');
         }
 
-        //
+        // Initialize
         $size = 0;
 
-        //
+        // Directories we wish to ignore, if any
         if (!empty($ignore)) {
             $ignore = \preg_quote(\implode('|', $ignore), '#');
         }
 
-        //
+        // Traverse the directory
         $iterator = new \RecursiveIteratorIterator(
             new \RecursiveDirectoryIterator(
                 $directory, 
@@ -693,6 +695,7 @@ class Utility
             )
         );
 
+        // Determine directory size by checking file sizes
         foreach ($iterator AS $key => $val) {
             if (!empty($ignore) AND \preg_match("#($ignore)#i", $val->getPath())) {
                 continue;
@@ -726,15 +729,15 @@ class Utility
             throw new \InvalidArgumentException('Unable to read $directory.');
         }
 
-        //
+        // Initialize
         $contents = [];
 
-        //
+        // Directories to ignore, if any
         if (!empty($ignore)) {
             $ignore = \preg_quote(\implode('|', $ignore), '#');
         }
 
-        //
+        // Traverse the directory
         $iterator = new \RecursiveIteratorIterator(
             new \RecursiveDirectoryIterator(
                 $directory, 
@@ -742,6 +745,7 @@ class Utility
             )
         );
 
+        // Build the actual contents of the directory
         foreach ($iterator AS $key => $val) {
             if (!empty($ignore) AND \preg_match("#($ignore)#i", $val->getPath())) {
                 continue;
@@ -764,7 +768,7 @@ class Utility
      */
     public static function normalizeFilePath(string $path, string $separator = \DIRECTORY_SEPARATOR): string
     {
-        //
+        // Clean up our path
         $path = \rtrim(\strtr($path, '/\\', $separator . $separator), $separator);
 
         if (
@@ -774,9 +778,10 @@ class Utility
             return $path;
         }
 
-        //
+        // Initialize
         $parts = [];
 
+        // Grab file path parts
         foreach (\explode($separator, $path) AS $part) {
             if ($part === '..' AND !empty($parts) AND \end($parts) !== '..') {
                 \array_pop($parts);
@@ -787,7 +792,7 @@ class Utility
             }
         }
 
-        //
+        // Build
         $path = \implode($separator, $parts);
         $path = ($path) ?: '.';
 
@@ -1018,7 +1023,7 @@ class Utility
             throw new \InvalidArgumentException('$timezone appears to be invalid.');
         }
 
-        //
+        // Cannot be zero
         if ($timestampTo <= 0) {
             $timestampTo = \time();
         }
@@ -1083,6 +1088,7 @@ class Utility
      */
     public static function getIpAddress(bool $trustProxy = false): string
     {
+        // Pretty self-explanatory. Try to get an 'accurate' IP
         $ip = $_SERVER['REMOTE_ADDR'];
 
         if ($trustProxy) {
@@ -1422,7 +1428,7 @@ class Utility
             throw new RuntimeException(\sprintf('Failed to send header. Headers have already been sent by "%s" at line %d.', $file, $line));
         }
 
-        //
+        // Properly format and send header, based on server API
         if (static::doesContain(\PHP_SAPI, 'cgi')) {
             \header("Status: $code $message", $replace);
         } else {
@@ -1445,6 +1451,7 @@ class Utility
     {
         static $format = '%04x%04x-%04x-%04x-%04x-%04x%04x%04x';
 
+        // Initialize
         $guid = '';
 
         try {
