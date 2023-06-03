@@ -70,7 +70,7 @@ Array
 
 ### Requirements
 
-- Utility works with PHP 7.0.0 or above.
+- Utility works with PHP 7.1.0 or above.
 
 ### Submitting bugs and feature requests
 

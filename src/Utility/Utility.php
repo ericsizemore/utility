@@ -6,8 +6,8 @@
  * @author    Eric Sizemore <admin@secondversion.com>
  * @package   Utility
  * @link      http://www.secondversion.com/
- * @version   1.0.2
- * @copyright (C) 2017 - 2021 Eric Sizemore
+ * @version   1.0.3
+ * @copyright (C) 2017 - 2023 Eric Sizemore
  * @license   The MIT License (MIT)
  */
 namespace Esi\Utility;
@@ -18,11 +18,11 @@ namespace Esi\Utility;
  * @author    Eric Sizemore <admin@secondversion.com>
  * @package   Utility
  * @link      http://www.secondversion.com/
- * @version   1.0.2
- * @copyright (C) 2017 - 2021 Eric Sizemore
+ * @version   1.0.3
+ * @copyright (C) 2017 - 2023 Eric Sizemore
  * @license   The MIT License (MIT)
  *
- * Copyright (C) 2017 - 2021 Eric Sizemore. All rights reserved.
+ * Copyright (C) 2017 - 2023 Eric Sizemore. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to 
@@ -444,9 +444,7 @@ class Utility
         $title = \preg_replace('![' . \preg_quote($separator) . '\s]+!u', $separator, $title);
 
         // Cleanup $title
-        $title = \trim($title, $separator);
-
-        return $title;
+        return \trim($title, $separator);
     }
 
     /**
@@ -457,8 +455,8 @@ class Utility
      * @param   int     $length  Length of the random string that should be returned in bytes.
      * @return  string
      *
-     * @throws LengthException If an invalid length is specified.
-     * @throws Exception If the random_bytes() function somehow fails.
+     * @throws \LengthException If an invalid length is specified.
+     * @throws \Exception If the random_bytes() function somehow fails.
      */
     public static function randomBytes(int $length): string
     {
@@ -470,12 +468,10 @@ class Utility
         // Generate bytes
         $error = '';
 
-        // Looks weird, but random_bytes can throw 3 different types of errors.
+        // random_bytes can throw 3 different types of errors.
         try {
             $bytes = \random_bytes($length);
-        } catch (\TypeError $e) {
-            $error = $e->getMessage();
-        } catch (\Error $e) {
+        } catch (\TypeError | \Error $e) {
             $error = $e->getMessage();
         } catch (\Exception $e) {
             $error = $e->getMessage();
@@ -496,8 +492,8 @@ class Utility
      * @param   int  $max  The highest value to be returned, which must be less than or equal to PHP_INT_MAX.
      * @return  int
      *
-     * @throws InvalidArgumentException
-     * @throws Exception
+     * @throws \InvalidArgumentException
+     * @throws \Exception
      */
     public static function randomInt(int $min, int $max): int
     {
@@ -517,12 +513,10 @@ class Utility
         // Generate
         $error = '';
 
-        // Looks weird, but random_int can throw 3 different types of errors.
+        // random_int can throw 3 different types of errors.
         try {
             $int = \random_int($min, $max);
-        } catch (\TypeError $e) {
-            $error = $e->getMessage();
-        } catch (\Error $e) {
+        } catch (\TypeError | \Error $e) {
             $error = $e->getMessage();
         } catch (\Exception $e) {
             $error = $e->getMessage();
@@ -544,8 +538,8 @@ class Utility
      * @param   int     $length  Length the random string should be.
      * @return  string
      *
-     * @throws LengthException
-     * @throws Exception
+     * @throws \LengthException
+     * @throws \Exception
      */
     public static function randomString(int $length = 8): string
     {
@@ -561,17 +555,15 @@ class Utility
         try {
             $bytes = static::randomBytes($length * 2);
 
-            if ($bytes === false) {
+            if (!$bytes) {
                 throw new \Exception('Random bytes generator failure.');
             }
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             throw new \Exception($e->getMessage(), 0, $e);
         }
 
-        $bytes = static::substr(\bin2hex($bytes), 0, $length);
-
-        return $bytes;
+        return static::substr(\bin2hex($bytes), 0, $length);
     }
 
     /** directory/file related functions **/
@@ -720,7 +712,7 @@ class Utility
      */
     public static function directoryList(string $directory, array $ignore = []): array
     {
-        // Sanity checka
+        // Sanity checks
         if (empty($directory) OR !\is_dir($directory)) {
             throw new \InvalidArgumentException('Invalid $directory provided.');
         }
@@ -784,7 +776,7 @@ class Utility
         // Grab file path parts
         foreach (\explode($separator, $path) AS $part) {
             if ($part === '..' AND !empty($parts) AND \end($parts) !== '..') {
-                \array_pop($parts);
+                array_pop($parts);
             } elseif ($part === '.' OR $part === '' AND !empty($parts)) {
                 continue;
             } else {
@@ -804,8 +796,9 @@ class Utility
      *
      * Checks to see if a file or directory is really writable.
      *
-     * @param   string  $file  File or directory to check.
+     * @param string $file File or directory to check.
      * @return  bool
+     * @throws \Exception
      */
     public static function isReallyWritable(string $file): bool
     {
@@ -818,7 +811,7 @@ class Utility
         if (\is_dir($file)) {
             // Generate random filename.
             $file = \rtrim($file, '\\/') . \DIRECTORY_SEPARATOR;
-            $file .= \hash('md5', static::getRandomString());
+            $file .= \hash('md5', static::randomString());
 
             if (!($fp = \fopen($file, 'ab'))) {
                 return false;
@@ -1354,11 +1347,14 @@ class Utility
      *
      * Send a HTTP status header.
      *
-     * @param  int      $code     The status code.
-     * @param  string   $message  Custom status message.
-     * @param  bool     $replace  True if the header should replace a previous 
+     * @param int $code The status code.
+     * @param string $message Custom status message.
+     * @param bool $replace True if the header should replace a previous
      *                            similar header.
      *                            False to add a second header of the same type
+     * @throws \Exception
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
     public static function statusHeader(int $code = 200, string $message = '', bool $replace = true)
     {
@@ -1425,7 +1421,7 @@ class Utility
         }
 
         if (\headers_sent($line, $file)) {
-            throw new RuntimeException(\sprintf('Failed to send header. Headers have already been sent by "%s" at line %d.', $file, $line));
+            throw new \RuntimeException(\sprintf('Failed to send header. Headers have already been sent by "%s" at line %d.', $file, $line));
         }
 
         // Properly format and send header, based on server API
@@ -1446,6 +1442,7 @@ class Utility
      * Generate a Globally/Universally Unique Identifier (version 4).
      *
      * @return  string
+     * @throws \Exception
      */
     public static function guid(): string
     {
@@ -1457,14 +1454,14 @@ class Utility
         try {
             $guid = \sprintf(
                 $format,
-                static::getRandomInt(0, 0xffff),
-                static::getRandomInt(0, 0xffff),
-                static::getRandomInt(0, 0xffff),
-                static::getRandomInt(0, 0x0fff) | 0x4000,
-                static::getRandomInt(0, 0x3fff) | 0x8000,
-                static::getRandomInt(0, 0xffff),
-                static::getRandomInt(0, 0xffff),
-                static::getRandomInt(0, 0xffff)
+                static::randomInt(0, 0xffff),
+                static::randomInt(0, 0xffff),
+                static::randomInt(0, 0xffff),
+                static::randomInt(0, 0x0fff) | 0x4000,
+                static::randomInt(0, 0x3fff) | 0x8000,
+                static::randomInt(0, 0xffff),
+                static::randomInt(0, 0xffff),
+                static::randomInt(0, 0xffff)
             );
         }
         catch (\Exception $e) {
