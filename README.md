@@ -1,4 +1,6 @@
 # Utility - Collection of various PHP utility functions.
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fericsizemore%2Futility.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fericsizemore%2Futility?ref=badge_shield)
+
 
 [Utility](http://github.com/ericsizemore/utility/) is (currently) a small collection of 
 useful functions that are aimed to make developers' lives just a tad bit easier.
@@ -128,6 +130,9 @@ Eric Sizemore - <admin@secondversion.com> - <http://www.secondversion.com>
 ### License
 
 Utility is licensed under the MIT License - see the `LICENSE` file for details
+
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fericsizemore%2Futility.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fericsizemore%2Futility?ref=badge_large)
 
 ### Acknowledgements
 
