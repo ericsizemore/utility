@@ -1,6 +1,9 @@
 # Utility - Collection of various PHP utility functions.
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fericsizemore%2Futility.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fericsizemore%2Futility?ref=badge_shield)
-
+[![Tests](https://github.com/ericsizemore/utility/actions/workflows/main.yml/badge.svg)](https://github.com/ericsizemore/utility/actions/workflows/main.yml)
+[![Latest Stable Version](https://img.shields.io/packagist/v/esi/utility.svg)](https://packagist.org/packages/esi/utility)
+[![Downloads per Month](https://img.shields.io/packagist/dm/esi/utility.svg)](https://packagist.org/packages/esi/utility)
+[![License](https://img.shields.io/packagist/l/esi/utility.svg)](https://packagist.org/packages/esi/utility)
 
 [Utility](http://github.com/ericsizemore/utility/) is (currently) a small collection of 
 useful functions that are aimed to make developers' lives just a tad bit easier.
@@ -13,6 +16,22 @@ useful functions that are aimed to make developers' lives just a tad bit easier.
 
 ```bash
 $ composer require esi/utility
+```
+
+Then, within your project (if not already included), include composer's autoload. For example:
+
+```php
+<?php
+
+require 'vendor/autoload.php';
+
+use Esi\Utility\Utility;
+
+$title = Utility::title('this is my title');
+
+echo $title;
+
+?>
 ```
 
 ### Standalone File
@@ -29,6 +48,10 @@ include 'src/Utility/Utility.php';
 
 use Esi\Utility\Utility;
 
+$title = Utility::title('this is my title');
+
+echo $title;
+
 ?>
 ```
 
@@ -38,6 +61,10 @@ use Esi\Utility\Utility;
 <?php
 
 use Esi\Utility\Utility;
+
+$title = Utility::title('this is my title');
+
+echo $title;
 
 ?>
 ```
@@ -72,7 +99,7 @@ Array
 
 ### Requirements
 
-- Utility works with PHP 7.1.0 or above.
+- Utility works with PHP 8.2.0 or above.
 
 ### Submitting bugs and feature requests
 
@@ -125,7 +152,7 @@ branches for both of these features and send two requests.
 
 ### Author
 
-Eric Sizemore - <admin@secondversion.com> - <http://www.secondversion.com>
+Eric Sizemore - <admin@secondversion.com> - <https://www.secondversion.com>
 
 ### License
 
