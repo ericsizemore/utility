@@ -94,7 +94,7 @@ class Utility
      */
     public static function getEncoding(): string
     {
-        return static::$encoding;
+        return self::$encoding;
     }
 
     /**
@@ -106,12 +106,12 @@ class Utility
     public static function setEncoding(string $newEncoding = '', bool $iniUpdate = false): void
     {
         if (!empty($newEncoding)){
-            static::$encoding = $newEncoding;
+            self::$encoding = $newEncoding;
         }
 
         if ($iniUpdate) {
-            static::iniSet('default_charset', static::$encoding);
-            static::iniSet('internal_encoding', static::$encoding);
+            static::iniSet('default_charset', self::$encoding);
+            static::iniSet('internal_encoding', self::$encoding);
         }
     }
 
@@ -124,10 +124,10 @@ class Utility
      *
      * Keys are preserved based on $separator.
      *
-     * @param   array   $array      Array to flatten.
-     * @param   string  $separator  The new keys are a list of original keys 
-     *                              separated by $separator.
-     * @return  array               The flattened array.
+     * @param   array<mixed>   $array      Array to flatten.
+     * @param   string         $separator  The new keys are a list of original keys 
+     *                                     separated by $separator.
+     * @return  array<mixed>               The flattened array.
      */
     public static function arrayFlatten(array $array, string $separator = '.'): array
     {
@@ -155,9 +155,9 @@ class Utility
      *
      * Recursively applies a callback to all elements of the given array.
      *
-     * @param   array     $array     The array to apply $callback to.
-     * @param   callable  $callback  The callback function to apply.
-     * @return  array
+     * @param   array<mixed>     $array     The array to apply $callback to.
+     * @param   callable         $callback  The callback function to apply.
+     * @return  array<mixed>
      */
     public static function arrayMapDeep(array $array, callable $callback): array
     {
@@ -372,10 +372,10 @@ class Utility
      * @see https://packagist.org/packages/laravel/lumen-framework
      * @see http://opensource.org/licenses/MIT
      *
-     * @param   string  $value  Value to transliterate.
-     * @return  string
+     * @param   string       $value  Value to transliterate.
+     * @return  string|null
      */
-    public static function ascii(string $value): string
+    public static function ascii(string $value): string|null
     {
         foreach (static::charMap() AS $key => $val) {
             $value = str_replace($key, $val, $value);
@@ -388,7 +388,7 @@ class Utility
      *
      * Returns the replacements for the ascii method.
      *
-     * @return  array
+     * @return  array<array>
      */
     protected static function charMap(): array
     {
