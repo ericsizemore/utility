@@ -1,3 +1,11 @@
+### 1.1.0 (2023-06-24)
+  * Version bump
+  * Bumped PHP version requirement to 8.2
+  * Updated composer.json
+  * FIX: Minor documentation improvements.
+  * FIX: Minor code improvements.
+  * BC BREAK: randomBytes, randomInt, randomString and guid now throw \Random\RandomException
+
 ### 1.0.3 (2023-06-03)
   * Updated copyright year(s) and version bump.
   * Bumped PHP version requirement.

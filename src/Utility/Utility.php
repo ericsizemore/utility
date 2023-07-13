@@ -6,11 +6,47 @@
  * @author    Eric Sizemore <admin@secondversion.com>
  * @package   Utility
  * @link      http://www.secondversion.com/
- * @version   1.0.3
+ * @version   1.1.0
  * @copyright (C) 2017 - 2023 Eric Sizemore
  * @license   The MIT License (MIT)
  */
 namespace Esi\Utility;
+
+// BEGIN: Imports
+/*
+    T-that's a lot of imports...
+
+    Though I suppose it's nice to know what's being used 
+    at a glance.
+*/
+
+// Exceptions
+use Exception, InvalidArgumentException, RuntimeException;
+use Random\RandomException;
+use FilesystemIterator, RecursiveDirectoryIterator, RecursiveIteratorIterator;
+
+// Classes
+use DateTime, DateTimeZone;
+
+// Functions
+use function abs, array_filter, array_keys, array_map, array_pop;
+use function bin2hex, call_user_func, ceil, chmod, count, date;
+use function end, explode, fclose, file, file_get_contents, file_put_contents;
+use function filter_var, floatval, fopen, function_exists, hash, header, headers_sent;
+use function implode, in_array, inet_ntop, inet_pton, ini_get, ini_set, intval, is_array;
+use function is_dir, is_file, is_null, is_readable, is_writable, json_decode, json_last_error;
+use function mb_convert_case, mb_stripos, mb_strlen, mb_strpos, mb_substr, natsort;
+use function number_format, ord, parse_url, pow, preg_match, preg_quote, preg_replace;
+use function random_bytes, random_int, rtrim, sprintf, str_replace, str_split;
+use function strcmp, strtr, strval, time, trim, ucwords, unlink;
+
+// Constants
+use const DIRECTORY_SEPARATOR, FILE_IGNORE_NEW_LINES, FILE_SKIP_EMPTY_LINES;
+use const FILTER_FLAG_IPV4, FILTER_FLAG_IPV6, FILTER_FLAG_NO_PRIV_RANGE;
+use const FILTER_FLAG_NO_RES_RANGE, FILTER_VALIDATE_EMAIL, FILTER_VALIDATE_IP;
+use const JSON_ERROR_NONE, MB_CASE_LOWER, MB_CASE_TITLE, MB_CASE_UPPER;
+use const PHP_INT_MAX, PHP_INT_MIN, PHP_SAPI, PHP_VERSION_ID;
+// END: Imports
 
 /**
  * Utility - Collection of various PHP utility functions.
@@ -18,7 +54,7 @@ namespace Esi\Utility;
  * @author    Eric Sizemore <admin@secondversion.com>
  * @package   Utility
  * @link      http://www.secondversion.com/
- * @version   1.0.3
+ * @version   1.1.0
  * @copyright (C) 2017 - 2023 Eric Sizemore
  * @license   The MIT License (MIT)
  *
@@ -49,7 +85,7 @@ class Utility
      *
      * @var  string  Encoding
      */
-    private static $encoding = 'UTF-8';
+    private static string $encoding = 'UTF-8';
 
     /**
      * Returns current encoding.
@@ -67,7 +103,7 @@ class Utility
      * @param  string  $newEncoding  Charset
      * @param  bool    $iniUpdate    Update php.ini's default_charset?
      */
-    public static function setEncoding(string $newEncoding = '', bool $iniUpdate = false)
+    public static function setEncoding(string $newEncoding = '', bool $iniUpdate = false): void
     {
         if (!empty($newEncoding)){
             static::$encoding = $newEncoding;
@@ -84,7 +120,7 @@ class Utility
     /**
      * arrayFlatten()
      *
-     * Flattens a multi-dimensional array.
+     * Flattens a multidimensional array.
      *
      * Keys are preserved based on $separator.
      *
@@ -98,13 +134,13 @@ class Utility
         $result  = [];
         $stack[] = ['', $array];
 
-        while (\count($stack) > 0) {
-            list($prefix, $array) = \array_pop($stack);
+        while (count($stack) > 0) {
+            list($prefix, $array) = array_pop($stack);
 
             foreach ($array AS $key => $value) {
-                $_key = $prefix . \strval($key);
+                $_key = $prefix . $key;
 
-                if (\is_array($value)) {
+                if (is_array($value)) {
                     $stack[] = [$_key . $separator, $value];
                 } else {
                     $result[$_key] = $value;
@@ -119,17 +155,17 @@ class Utility
      *
      * Recursively applies a callback to all elements of the given array.
      *
-     * @param   array   $array     The array to apply $callback to.
-     * @param   string  $callback  The callback function to apply.
+     * @param   array     $array     The array to apply $callback to.
+     * @param   callable  $callback  The callback function to apply.
      * @return  array
      */
     public static function arrayMapDeep(array $array, callable $callback): array
     {
         foreach ($array AS $key => $value) {
-            if (\is_array($array[$key])) {
+            if (is_array($array[$key])) {
                 $array[$key] = static::arrayMapDeep($array[$key], $callback);
             } else {
-                $array[$key] = \call_user_func($callback, $array[$key]);
+                $array[$key] = call_user_func($callback, $array[$key]);
             }
         }
         return $array;
@@ -147,7 +183,7 @@ class Utility
      */
     public static function title(string $value): string
     {
-        return \mb_convert_case($value, \MB_CASE_TITLE);
+        return mb_convert_case($value, MB_CASE_TITLE);
     }
 
     /**
@@ -160,7 +196,7 @@ class Utility
      */
     public static function lower(string $value): string
     {
-        return \mb_convert_case($value, \MB_CASE_LOWER);
+        return mb_convert_case($value, MB_CASE_LOWER);
     }
 
     /**
@@ -173,7 +209,7 @@ class Utility
      */
     public static function upper(string $value): string
     {
-        return \mb_convert_case($value, \MB_CASE_UPPER);
+        return mb_convert_case($value, MB_CASE_UPPER);
     }
 
     /**
@@ -186,9 +222,9 @@ class Utility
      * @param   int|null  $length  Characters from $start.
      * @return  string             Extracted part of the string.
      */
-    public static function substr(string $string, int $start, $length = null): string
+    public static function substr(string $string, int $start, ?int $length = null): string
     {
-        return \mb_substr($string, $start, $length);
+        return mb_substr($string, $start, $length);
     }
 
     /**
@@ -233,7 +269,7 @@ class Utility
      */
     public static function strcasecmp(string $str1, string $str2): int
     {
-        return \strcmp(static::upper($str1), static::upper($str2));
+        return strcmp(static::upper($str1), static::upper($str2));
     }
 
     /**
@@ -249,9 +285,9 @@ class Utility
     public static function beginsWith(string $haystack, string $needle, bool $insensitive = false): bool
     {
         if ($insensitive) {
-            return \mb_stripos($haystack, $needle) === 0;
+            return mb_stripos($haystack, $needle) === 0;
         }
-        return \mb_strpos($haystack, $needle) === 0;
+        return mb_strpos($haystack, $needle) === 0;
     }
 
     /**
@@ -286,9 +322,9 @@ class Utility
     public static function doesContain(string $haystack, string $needle, bool $insensitive = false): bool
     {
         if ($insensitive) {
-            return \mb_stripos($haystack, $needle) !== false;
+            return mb_stripos($haystack, $needle) !== false;
         }
-        return \mb_strpos($haystack, $needle) !== false;
+        return mb_strpos($haystack, $needle) !== false;
     }
 
     /**
@@ -304,9 +340,9 @@ class Utility
     public static function doesNotContain(string $haystack, string $needle, bool $insensitive = false): bool
     {
         if ($insensitive) {
-            return \mb_stripos($haystack, $needle) === false;
+            return mb_stripos($haystack, $needle) === false;
         }
-        return \mb_strpos($haystack, $needle) === false;
+        return mb_strpos($haystack, $needle) === false;
     }
 
     /**
@@ -321,9 +357,9 @@ class Utility
     public static function length(string $string, bool $binarySafe = false): int
     {
         if ($binarySafe) {
-            return \mb_strlen($string, '8bit');
+            return mb_strlen($string, '8bit');
         }
-        return \mb_strlen($string);
+        return mb_strlen($string);
     }
 
     /**
@@ -342,9 +378,9 @@ class Utility
     public static function ascii(string $value): string
     {
         foreach (static::charMap() AS $key => $val) {
-            $value = \str_replace($key, $val, $value);
+            $value = str_replace($key, $val, $value);
         }
-        return \preg_replace('/[^\x20-\x7E]/u', '', $value);
+        return preg_replace('/[^\x20-\x7E]/u', '', $value);
     }
 
     /**
@@ -435,16 +471,16 @@ class Utility
     public static function slugify(string $title, string $separator = '-'): string
     {
         $title = static::ascii($title);
-        $title = \preg_replace('![' . \preg_quote(($separator == '-' ? '_' : '-')) . ']+!u', $separator, $title);
+        $title = preg_replace('![' . preg_quote(($separator == '-' ? '_' : '-')) . ']+!u', $separator, $title);
 
         // Remove all characters that are not the separator, letters, numbers, or whitespace.
-        $title = \preg_replace('![^' . \preg_quote($separator) . '\pL\pN\s]+!u', '', static::lower($title));
+        $title = preg_replace('![^' . preg_quote($separator) . '\pL\pN\s]+!u', '', static::lower($title));
 
         // Replace all separator characters and whitespace by a single separator
-        $title = \preg_replace('![' . \preg_quote($separator) . '\s]+!u', $separator, $title);
+        $title = preg_replace('![' . preg_quote($separator) . '\s]+!u', $separator, $title);
 
         // Cleanup $title
-        return \trim($title, $separator);
+        return trim($title, $separator);
     }
 
     /**
@@ -455,30 +491,23 @@ class Utility
      * @param   int     $length  Length of the random string that should be returned in bytes.
      * @return  string
      *
-     * @throws \LengthException If an invalid length is specified.
-     * @throws \Exception If the random_bytes() function somehow fails.
+     * @throws RandomException If an invalid length is specified.
+     *                         If the random_bytes() function somehow fails.
      */
     public static function randomBytes(int $length): string
     {
         // Sanity check
-        if ($length < 1 OR $length > \PHP_INT_MAX) {
-            throw new \LengthException('Invalid $length specified.');
+        if ($length < 1 OR $length > PHP_INT_MAX) {
+            throw new RandomException('Invalid $length specified.');
         }
 
         // Generate bytes
-        $error = '';
-
-        // random_bytes can throw 3 different types of errors.
         try {
-            $bytes = \random_bytes($length);
-        } catch (\TypeError | \Error $e) {
-            $error = $e->getMessage();
-        } catch (\Exception $e) {
-            $error = $e->getMessage();
-        }
-
-        if (\trim($error) != '') {
-            throw new \Exception($error);
+            $bytes = random_bytes($length);
+        } catch (RandomException | Exception $e) {
+            throw new RandomException(
+                'Utility was unable to generate random bytes: ' . $e->getMessage(), $e->getCode(), $e->getPrevious()
+            );
         }
         return $bytes;
     }
@@ -492,38 +521,30 @@ class Utility
      * @param   int  $max  The highest value to be returned, which must be less than or equal to PHP_INT_MAX.
      * @return  int
      *
-     * @throws \InvalidArgumentException
-     * @throws \Exception
+     * @throws RandomException
      */
     public static function randomInt(int $min, int $max): int
     {
         // Sanity check
-        if ($min < \PHP_INT_MIN) {
-            throw new \InvalidArgumentException('$min value too low.');
+        if ($min < PHP_INT_MIN) {
+            throw new RandomException('$min value too low.');
         }
 
-        if ($max > \PHP_INT_MAX) {
-            throw new \InvalidArgumentException('$max value too high.');
+        if ($max > PHP_INT_MAX) {
+            throw new RandomException('$max value too high.');
         }
 
         if ($min >= $max) {
-            throw new \InvalidArgumentException('$min value must be less than $max.');
+            throw new RandomException('$min value must be less than $max.');
         }
 
-        // Generate
-        $error = '';
-
-        // random_int can throw 3 different types of errors.
+        // Generate random int
         try {
-            $int = \random_int($min, $max);
-        } catch (\TypeError | \Error $e) {
-            $error = $e->getMessage();
-        } catch (\Exception $e) {
-            $error = $e->getMessage();
-        }
-
-        if (\trim($error) != '') {
-            throw new \Exception($error);
+            $int = random_int($min, $max);
+        } catch (RandomException | Exception $e) {
+            throw new RandomException(
+                'Utility was unable to generate random int: ' . $e->getMessage(), $e->getCode(), $e->getPrevious()
+            );
         }
         return $int;
     }
@@ -538,32 +559,27 @@ class Utility
      * @param   int     $length  Length the random string should be.
      * @return  string
      *
-     * @throws \LengthException
-     * @throws \Exception
+     * @throws RandomException
      */
     public static function randomString(int $length = 8): string
     {
         // Sanity check
         if ($length <= 0) {
-            throw new \LengthException('$length must be greater than 0.');
+            throw new RandomException('$length must be greater than 0.');
         }
-
-        // Initialize
-        $bytes = false;
 
         // Attempt to get random bytes
         try {
             $bytes = static::randomBytes($length * 2);
 
             if (!$bytes) {
-                throw new \Exception('Random bytes generator failure.');
+                throw new RandomException('Random bytes generator failure.');
             }
         }
-        catch (\Exception $e) {
-            throw new \Exception($e->getMessage(), 0, $e);
+        catch (RandomException $e) {
+            throw new RandomException($e->getMessage(), 0, $e);
         }
-
-        return static::substr(\bin2hex($bytes), 0, $length);
+        return static::substr(bin2hex($bytes), 0, $length);
     }
 
     /** directory/file related functions **/
@@ -575,7 +591,7 @@ class Utility
      * codebase.
      *
      * @param   string  $directory      Directory to parse.
-     * @param   array   $ignore         Sub-directories of $directory you wish 
+     * @param   array   $ignore         Subdirectories of $directory you wish
      *                                  to not include in the line count.
      * @param   array   $extensions     An array of file types/extensions of 
      *                                  files you want included in the line count.
@@ -584,44 +600,40 @@ class Utility
      * @param   bool    $onlyLineCount  If set to true, only returns an array 
      *                                  of line counts without directory/filenames.
      * @return  array
+     *
+     * @throws  InvalidArgumentException
      */
-    public static function lineCounter(
-        string $directory, 
-        array $ignore = [], 
-        array $extensions = [], 
-        bool $skipEmpty = true, 
-        bool $onlyLineCount = false
-    ): array
+    public static function lineCounter(string $directory, array $ignore = [], array $extensions = [], bool $skipEmpty = true, bool $onlyLineCount = false): array
     {
         // Sanity check
-        if (empty($directory) OR !\is_dir($directory)) {
-            throw new \InvalidArgumentException('Invalid $directory provided.');
+        if (empty($directory) OR !is_dir($directory)) {
+            throw new InvalidArgumentException('Invalid $directory provided.');
         }
 
-        if (!\is_readable($directory)) {
-            throw new \InvalidArgumentException('Unable to read $directory.');
+        if (!is_readable($directory)) {
+            throw new InvalidArgumentException('Unable to read $directory.');
         }
 
         // Initialize
         $lines = [];
 
         // Flags passed to \file().
-        $flags = \FILE_IGNORE_NEW_LINES;
+        $flags = FILE_IGNORE_NEW_LINES;
 
         if ($skipEmpty) {
-            $flags |= \FILE_SKIP_EMPTY_LINES;
+            $flags |= FILE_SKIP_EMPTY_LINES;
         }
 
         // Directory names we wish to ignore
         if (!empty($ignore)) {
-            $ignore = \preg_quote(\implode('|', $ignore), '#');
+            $ignore = preg_quote(implode('|', $ignore), '#');
         }
 
         // Traverse the directory
-        $iterator = new \RecursiveIteratorIterator(
-            new \RecursiveDirectoryIterator(
+        $iterator = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator(
                 $directory, 
-                \FilesystemIterator::CURRENT_AS_FILEINFO | \FilesystemIterator::SKIP_DOTS
+                FilesystemIterator::CURRENT_AS_FILEINFO | FilesystemIterator::SKIP_DOTS
             )
         );
 
@@ -629,14 +641,14 @@ class Utility
         foreach ($iterator AS $key => $val) {
             if ($val->isFile()) {
                 if (
-                    (!empty($ignore) AND \preg_match("#($ignore)#i", $val->getPath()))
-                    OR (!empty($extensions) AND !\in_array($val->getExtension(), $extensions))
+                    (!empty($ignore) AND preg_match("#($ignore)#i", $val->getPath()))
+                    OR (!empty($extensions) AND !in_array($val->getExtension(), $extensions))
                 ) {
                     continue;
                 }
 
-                $content = \file($val->getPath() . \DIRECTORY_SEPARATOR . $val->getFilename(), $flags);
-                $content = \count($content);
+                $content = file($val->getPath() . DIRECTORY_SEPARATOR . $val->getFilename(), $flags);
+                $content = count($content);
 
                 $lines[$val->getPath()][$val->getFilename()] = $content;
             }
@@ -656,19 +668,21 @@ class Utility
      * Retrieves size of a directory (in bytes).
      *
      * @param   string  $directory  Directory to parse.
-     * @param   array   $ignore     Sub-directories of $directory you wish to not
+     * @param   array   $ignore     Subdirectories of $directory you wish to not
      *                              include.
      * @return  int
+     *
+     * @throws  InvalidArgumentException
      */
     public static function directorySize(string $directory, array $ignore = []): int
     {
         // Sanity checks
-        if (empty($directory) OR !\is_dir($directory)) {
-            throw new \InvalidArgumentException('Invalid $directory provided.');
+        if (empty($directory) OR !is_dir($directory)) {
+            throw new InvalidArgumentException('Invalid $directory provided.');
         }
 
-        if (!\is_readable($directory)) {
-            throw new \InvalidArgumentException('Unable to read $directory.');
+        if (!is_readable($directory)) {
+            throw new InvalidArgumentException('Unable to read $directory.');
         }
 
         // Initialize
@@ -676,20 +690,20 @@ class Utility
 
         // Directories we wish to ignore, if any
         if (!empty($ignore)) {
-            $ignore = \preg_quote(\implode('|', $ignore), '#');
+            $ignore = preg_quote(implode('|', $ignore), '#');
         }
 
         // Traverse the directory
-        $iterator = new \RecursiveIteratorIterator(
-            new \RecursiveDirectoryIterator(
+        $iterator = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator(
                 $directory, 
-                \FilesystemIterator::CURRENT_AS_FILEINFO | \FilesystemIterator::SKIP_DOTS
+                FilesystemIterator::CURRENT_AS_FILEINFO | FilesystemIterator::SKIP_DOTS
             )
         );
 
         // Determine directory size by checking file sizes
         foreach ($iterator AS $key => $val) {
-            if (!empty($ignore) AND \preg_match("#($ignore)#i", $val->getPath())) {
+            if (!empty($ignore) AND preg_match("#($ignore)#i", $val->getPath())) {
                 continue;
             }
 
@@ -706,19 +720,21 @@ class Utility
      * Retrieves contents of a directory.
      *
      * @param   string  $directory  Directory to parse.
-     * @param   array   $ignore     Sub-directories of $directory you wish to not
+     * @param   array   $ignore     Subdirectories of $directory you wish to not
      *                              include.
      * @return  array
+     *
+     * @throws  InvalidArgumentException
      */
     public static function directoryList(string $directory, array $ignore = []): array
     {
         // Sanity checks
-        if (empty($directory) OR !\is_dir($directory)) {
-            throw new \InvalidArgumentException('Invalid $directory provided.');
+        if (empty($directory) OR !is_dir($directory)) {
+            throw new InvalidArgumentException('Invalid $directory provided.');
         }
 
-        if (!\is_readable($directory)) {
-            throw new \InvalidArgumentException('Unable to read $directory.');
+        if (!is_readable($directory)) {
+            throw new InvalidArgumentException('Unable to read $directory.');
         }
 
         // Initialize
@@ -726,25 +742,25 @@ class Utility
 
         // Directories to ignore, if any
         if (!empty($ignore)) {
-            $ignore = \preg_quote(\implode('|', $ignore), '#');
+            $ignore = preg_quote(implode('|', $ignore), '#');
         }
 
         // Traverse the directory
-        $iterator = new \RecursiveIteratorIterator(
-            new \RecursiveDirectoryIterator(
+        $iterator = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator(
                 $directory, 
-                \FilesystemIterator::KEY_AS_PATHNAME | \FilesystemIterator::CURRENT_AS_FILEINFO | \FilesystemIterator::SKIP_DOTS
+                FilesystemIterator::KEY_AS_PATHNAME | FilesystemIterator::CURRENT_AS_FILEINFO | FilesystemIterator::SKIP_DOTS
             )
         );
 
         // Build the actual contents of the directory
         foreach ($iterator AS $key => $val) {
-            if (!empty($ignore) AND \preg_match("#($ignore)#i", $val->getPath())) {
+            if (!empty($ignore) AND preg_match("#($ignore)#i", $val->getPath())) {
                 continue;
             }
             $contents[] = $key;
         }
-        \natsort($contents);
+        natsort($contents);
 
         return $contents;
     }
@@ -758,10 +774,10 @@ class Utility
      * @param   string  $separator  The directory separator. Defaults to DIRECTORY_SEPARATOR.
      * @return  string              The normalized file or directory path
      */
-    public static function normalizeFilePath(string $path, string $separator = \DIRECTORY_SEPARATOR): string
+    public static function normalizeFilePath(string $path, string $separator = DIRECTORY_SEPARATOR): string
     {
         // Clean up our path
-        $path = \rtrim(\strtr($path, '/\\', $separator . $separator), $separator);
+        $path = rtrim(strtr($path, '/\\', $separator . $separator), $separator);
 
         if (
             static::doesNotContain($separator . $path, "{$separator}.") 
@@ -774,8 +790,8 @@ class Utility
         $parts = [];
 
         // Grab file path parts
-        foreach (\explode($separator, $path) AS $part) {
-            if ($part === '..' AND !empty($parts) AND \end($parts) !== '..') {
+        foreach (explode($separator, $path) AS $part) {
+            if ($part === '..' AND !empty($parts) AND end($parts) !== '..') {
                 array_pop($parts);
             } elseif ($part === '.' OR $part === '' AND !empty($parts)) {
                 continue;
@@ -785,10 +801,8 @@ class Utility
         }
 
         // Build
-        $path = \implode($separator, $parts);
-        $path = ($path) ?: '.';
-
-        return $path;
+        $path = implode($separator, $parts);
+        return ($path) ?: '.';
     }
 
     /**
@@ -796,34 +810,35 @@ class Utility
      *
      * Checks to see if a file or directory is really writable.
      *
-     * @param string $file File or directory to check.
+     * @param   string  $file  File or directory to check.
      * @return  bool
-     * @throws \Exception
+     *
+     * @throws RandomException
      */
     public static function isReallyWritable(string $file): bool
     {
         // If we are on Unix/Linux just run is_writable()
-        if (\DIRECTORY_SEPARATOR === '/') {
-            return \is_writable($file);
+        if (DIRECTORY_SEPARATOR === '/') {
+            return is_writable($file);
         }
 
         // Otherwise, if on Windows...
-        if (\is_dir($file)) {
+        if (is_dir($file)) {
             // Generate random filename.
-            $file = \rtrim($file, '\\/') . \DIRECTORY_SEPARATOR;
-            $file .= \hash('md5', static::randomString());
+            $file = rtrim($file, '\\/') . DIRECTORY_SEPARATOR;
+            $file .= hash('md5', static::randomString());
 
-            if (!($fp = \fopen($file, 'ab'))) {
+            if (!($fp = fopen($file, 'ab'))) {
                 return false;
             }
-            \fclose($fp);
-            \chmod($file, 0777);
-            @\unlink($file);
+            fclose($fp);
+            chmod($file, 0777);
+            @unlink($file);
         } else {
-            if (!\is_file($file) OR !($fp = \fopen($file, 'ab'))) {
+            if (!is_file($file) OR !($fp = fopen($file, 'ab'))) {
                 return false;
             }
-            \fclose($fp);
+            fclose($fp);
         }
         return true;
     }
@@ -833,16 +848,18 @@ class Utility
      *
      * Perform a read operation on a pre-existing file.
      *
-     * @param   string  $file  Filename
-     * @return  mixed
+     * @param   string       $file  Filename
+     * @return  string|false
+     *
+     * @throws  InvalidArgumentException
      */
-    public static function fileRead(string $file)
+    public static function fileRead(string $file): string|false
     {
         // Sanity check
-        if (!\is_readable($file)) {
-            throw new \InvalidArgumentException(\sprintf("File '%s' does not exist or is not readable.", $file));
+        if (!is_readable($file)) {
+            throw new InvalidArgumentException(sprintf("File '%s' does not exist or is not readable.", $file));
         }
-        return $contents = \file_get_contents($file);
+        return file_get_contents($file);
     }
 
     /**
@@ -855,23 +872,25 @@ class Utility
      * @param   int     $flags  Bitwise OR'ed set of flags for file_put_contents. One or 
      *                          more of FILE_USE_INCLUDE_PATH, FILE_APPEND, LOCK_EX. 
      *                          {@link http://php.net/file_put_contents}
-     * @return  mixed
+     * @return  string|false
+     *
+     * @throws InvalidArgumentException|RandomException
      */
-    public static function fileWrite(string $file, string $data = '', int $flags = 0)
+    public static function fileWrite(string $file, string $data = '', int $flags = 0): string|false
     {
         // Sanity checks
-        if (!\is_readable($file)) {
-            throw new \InvalidArgumentException(\sprintf("File '%s' does not exist or is not readable.", $file));
+        if (!is_readable($file)) {
+            throw new InvalidArgumentException(sprintf("File '%s' does not exist or is not readable.", $file));
         }
 
         if (!static::isReallyWritable($file)) {
-            throw new \InvalidArgumentException(\sprintf("File '%s' is not writable.", $file));
+            throw new InvalidArgumentException(sprintf("File '%s' is not writable.", $file));
         }
 
         if ($flags < 0) {
             $flags = 0;
         }
-        return $written = \file_put_contents($file, $data, $flags);
+        return file_put_contents($file, $data, $flags);
     }
 
     /** miscellaneous functions **/
@@ -886,7 +905,7 @@ class Utility
      */
     public static function validEmail(string $email): bool
     {
-        return (bool)\filter_var($email, \FILTER_VALIDATE_EMAIL);
+        return (bool)filter_var($email, FILTER_VALIDATE_EMAIL);
     }
 
     /**
@@ -899,24 +918,22 @@ class Utility
      */
     public static function validJson(string $data): bool
     {
-        if (empty($data)) {
-            return false;
-        }
+        $data = trim($data);
 
-        if (($validate = \json_decode($data, true)) === NULL) {
-            return false;
-        }
+        // PHP >= 8.3? json_validate currently in RFC for PHP 8.3
+        if (PHP_VERSION_ID >= 80300) {
+            return \json_validate($data);
+        } else {
+            json_decode($data);
 
-        if (\json_last_error() !== \JSON_ERROR_NONE) {
-            return false;
+            return json_last_error() !== JSON_ERROR_NONE;
         }
-        return true;
     }
 
     /**
      * sizeFormat()
      *
-     * Format bytes to a human readable format.
+     * Format bytes to a human-readable format.
      *
      * @param   int     $bytes     The number in bytes.
      * @param   int     $decimals  How many decimal points to include.
@@ -927,60 +944,60 @@ class Utility
         static $pow;
 
         //
-        if (\is_null($pow)) {
+        if (is_null($pow)) {
             $pow = [
                 'kilo'  => 1024,
-                'mega'  => \pow(1024, 2),
-                'giga'  => \pow(1024, 3),
-                'tera'  => \pow(1024, 4),
-                'peta'  => \pow(1024, 5),
-                'exa'   => \pow(1024, 6),
-                'zeta'  => \pow(1024, 7),
-                'yotta' => \pow(1024, 8)
+                'mega'  => pow(1024, 2),
+                'giga'  => pow(1024, 3),
+                'tera'  => pow(1024, 4),
+                'peta'  => pow(1024, 5),
+                'exa'   => pow(1024, 6),
+                'zeta'  => pow(1024, 7),
+                'yotta' => pow(1024, 8)
             ];
         }
 
         //
-        $bytes = \floatval($bytes);
+        $bytes = floatval($bytes);
 
         /**
          * @todo  Cleanup just a little bit.
          */
         switch (true) {
             case ($bytes >= $pow['yotta']):
-                $bytes = \number_format(($bytes / $pow['yotta']), $decimals, '.', '');
+                $bytes = number_format(($bytes / $pow['yotta']), $decimals, '.', '');
                 $bytes .= ' YiB';
                 break;
             case ($bytes >= $pow['zeta']):
-                $bytes = \number_format(($bytes / $pow['zeta']), $decimals, '.', '');
+                $bytes = number_format(($bytes / $pow['zeta']), $decimals, '.', '');
                 $bytes .= ' ZiB';
                 break;
             case ($bytes >= $pow['exa']):
-                $bytes = \number_format(($bytes / $pow['exa']), $decimals, '.', '');
+                $bytes = number_format(($bytes / $pow['exa']), $decimals, '.', '');
                 $bytes .= ' EiB';
                 break;
             case ($bytes >= $pow['peta']):
-                $bytes = \number_format(($bytes / $pow['peta']), $decimals, '.', '');
+                $bytes = number_format(($bytes / $pow['peta']), $decimals, '.', '');
                 $bytes .= ' PiB';
                 break;
             case ($bytes >= $pow['tera']):
-                $bytes = \number_format(($bytes / $pow['tera']), $decimals, '.', '');
+                $bytes = number_format(($bytes / $pow['tera']), $decimals, '.', '');
                 $bytes .= ' TiB';
                 break;
             case ($bytes >= $pow['giga']):
-                $bytes = \number_format(($bytes / $pow['giga']), $decimals, '.', '');
+                $bytes = number_format(($bytes / $pow['giga']), $decimals, '.', '');
                 $bytes .= ' GiB';
                 break;
             case ($bytes >= $pow['mega']):
-                $bytes = \number_format(($bytes / $pow['mega']), $decimals, '.', '');
+                $bytes = number_format(($bytes / $pow['mega']), $decimals, '.', '');
                 $bytes .= ' MiB';
                 break;
             case ($bytes >= $pow['kilo']):
-                $bytes = \number_format(($bytes / $pow['kilo']), $decimals, '.', '');
+                $bytes = number_format(($bytes / $pow['kilo']), $decimals, '.', '');
                 $bytes .= ' KiB';
                 break;
             default:
-                $bytes = \number_format($bytes, $decimals, '.', '') . ' B';
+                $bytes = number_format($bytes, $decimals, '.', '') . ' B';
                 break;
         }
         return $bytes;
@@ -989,7 +1006,7 @@ class Utility
     /**
      * timeDifference()
      *
-     * Formats the difference between two timestamps to be human readable.
+     * Formats the difference between two timestamps to be human-readable.
      *
      * @param   int     $timestampFrom  Starting unix timestamp.
      * @param   int     $timestampTo    Ending unix timestamp.
@@ -997,13 +1014,15 @@ class Utility
      *                                  {@see http://www.php.net/manual/en/timezones.php}
      * @param   string  $append         The string to append to the difference.
      * @return  string
+     *
+     * @throws  InvalidArgumentException|Exception
      */
     public static function timeDifference(int $timestampFrom, int $timestampTo = 0, string $timezone = 'UTC', string $append = ' old'): string
     {
         static $validTimezones;
 
         if (!$validTimezones) {
-            $validTimezones = \DateTimeZone::listIdentifiers();
+            $validTimezones = DateTimeZone::listIdentifiers();
         }
 
         // Default timezone
@@ -1012,25 +1031,25 @@ class Utility
         }
 
         // Check to see if it is a valid timezone
-        if (!\in_array($timezone, $validTimezones)) {
-            throw new \InvalidArgumentException('$timezone appears to be invalid.');
+        if (!in_array($timezone, $validTimezones)) {
+            throw new InvalidArgumentException('$timezone appears to be invalid.');
         }
 
         // Cannot be zero
         if ($timestampTo <= 0) {
-            $timestampTo = \time();
+            $timestampTo = time();
         }
 
         if ($timestampFrom <= 0) {
-            throw new \InvalidArgumentException('$timestampFrom must be greater than 0.');
+            throw new InvalidArgumentException('$timestampFrom must be greater than 0.');
         }
 
         // Create \DateTime objects and set timezone
-        $timestampFrom = new \DateTime(\date('Y-m-d H:i:s', $timestampFrom));
-        $timestampFrom->setTimezone(new \DateTimeZone($timezone));
+        $timestampFrom = new DateTime(date('Y-m-d H:i:s', $timestampFrom));
+        $timestampFrom->setTimezone(new DateTimeZone($timezone));
 
-        $timestampTo = new \DateTime(\date('Y-m-d H:i:s', $timestampTo));
-        $timestampTo->setTimezone(new \DateTimeZone($timezone));
+        $timestampTo = new DateTime(date('Y-m-d H:i:s', $timestampTo));
+        $timestampTo->setTimezone(new DateTimeZone($timezone));
 
         // Calculate difference
         $difference = $timestampFrom->diff($timestampTo);
@@ -1046,7 +1065,7 @@ class Utility
                 break;
             case ($difference->d):
                 if ($difference->d >= 7) {
-                    $string = \ceil($difference->d / 7) . ' week(s)';
+                    $string = ceil($difference->d / 7) . ' week(s)';
                 }
                 else {
                     $string = $difference->d . ' day(s)';
@@ -1075,7 +1094,7 @@ class Utility
      *
      * Return the visitor's IP address.
      *
-     * @param   bool    $trustProxy  Whether or not to trust HTTP_CLIENT_IP and 
+     * @param   bool    $trustProxy  Whether to trust HTTP_CLIENT_IP and
      *                               HTTP_X_FORWARDED_FOR.
      * @return  string
      */
@@ -1091,16 +1110,16 @@ class Utility
         $ips = [];
 
         if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            $ips = \explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+            $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
         } elseif (isset($_SERVER['HTTP_X_REAL_IP'])) {
-            $ips = \explode(',', $_SERVER['HTTP_X_REAL_IP']);
+            $ips = explode(',', $_SERVER['HTTP_X_REAL_IP']);
         }
 
         $ips = static::arrayMapDeep($ips, 'trim');
 
         if (!empty($ips)) {
             foreach ($ips AS $val) {
-                if (\inet_ntop(\inet_pton($val)) == $val AND static::isPublicIp($val)) {
+                if (inet_ntop(inet_pton($val)) == $val AND static::isPublicIp($val)) {
                     $ip = $val;
                     break;
                 }
@@ -1124,10 +1143,10 @@ class Utility
      */
     public static function isPrivateIp(string $ipaddress): bool
     {
-        return !(bool)\filter_var(
+        return !filter_var(
             $ipaddress, 
-            \FILTER_VALIDATE_IP, 
-            \FILTER_FLAG_IPV4 | \FILTER_FLAG_IPV6 | \FILTER_FLAG_NO_PRIV_RANGE
+            FILTER_VALIDATE_IP,
+            FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6 | FILTER_FLAG_NO_PRIV_RANGE
         );
     }
 
@@ -1141,10 +1160,10 @@ class Utility
      */
     public static function isReservedIp(string $ipaddress): bool
     {
-        return !(bool)\filter_var(
+        return !filter_var(
             $ipaddress, 
-            \FILTER_VALIDATE_IP, 
-            \FILTER_FLAG_IPV4 | \FILTER_FLAG_IPV6 | \FILTER_FLAG_NO_RES_RANGE
+            FILTER_VALIDATE_IP,
+            FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6 | FILTER_FLAG_NO_RES_RANGE
         );
     }
 
@@ -1158,7 +1177,7 @@ class Utility
      */
     public static function isPublicIp(string $ipaddress): bool
     {
-        return (bool)(!static::isPrivateIp($ipaddress) AND !static::isReservedIp($ipaddress));
+        return (!static::isPrivateIp($ipaddress) AND !static::isReservedIp($ipaddress));
     }
 
     /**
@@ -1168,22 +1187,22 @@ class Utility
      *
      * @param   string  $email  Email address to obscure.
      * @return  string          Obscured email address.
+     *
+     * @throws  InvalidArgumentException
      */
     public static function obscureEmail(string $email): string
     {
         // Sanity check
         if (!static::validEmail($email)) {
-            throw new \InvalidArgumentException('Invalid $email specified.');
+            throw new InvalidArgumentException('Invalid $email specified.');
         }
 
         // Split and process
-        $email = \str_split($email);
-        $email = \array_map(function ($char) {
-            return '&#' . \ord($char) . ';';
+        $email = str_split($email);
+        $email = array_map(function ($char) {
+            return '&#' . ord($char) . ';';
         }, $email);
-        $email = \implode('', $email);
-
-        return $email;
+        return implode('', $email);
     }
 
     /**
@@ -1197,9 +1216,9 @@ class Utility
      */
     public static function currentHost(bool $stripWww = false): string
     {
-        $host = \trim(\strval(($_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? '')));
+        $host = trim(strval(($_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? '')));
 
-        if (empty($host) OR !\preg_match('#^\[?(?:[a-z0-9-:\]_]+\.?)+$#', $host)) {
+        if (empty($host) OR !preg_match('#^\[?(?:[a-z0-9-:\]_]+\.?)+$#', $host)) {
             $host = 'localhost';
         }
 
@@ -1207,7 +1226,7 @@ class Utility
 
         // Strip 'www.'
         if ($stripWww) {
-            return \preg_replace('#^www\.#', '', $host);
+            return preg_replace('#^www\.#', '', $host);
         }
         return $host;
     }
@@ -1223,16 +1242,16 @@ class Utility
     {
         $headers = [];
 
-        if (static::doesNotContain(\PHP_SAPI, 'cli')) {
-            $keys = static::arrayMapDeep(\array_keys($_SERVER), [static::class, 'lower']);
-            $keys = \array_filter($keys, function ($key) {
+        if (static::doesNotContain(PHP_SAPI, 'cli')) {
+            $keys = static::arrayMapDeep(array_keys($_SERVER), [static::class, 'lower']);
+            $keys = array_filter($keys, function ($key) {
                 return (static::beginsWith($key, 'http_'));
             });
 
             if (!empty($keys)) {
                 foreach ($keys AS $key) {
-                    $headers[\strtr(
-                        \ucwords(\strtr(static::substr($key, 5), '_', ' ')), 
+                    $headers[strtr(
+                        ucwords(strtr(static::substr($key, 5), '_', ' ')),
                         ' ', 
                         '-'
                     )] = &$_SERVER[static::upper($key)];
@@ -1252,7 +1271,7 @@ class Utility
      */
     public static function isHttps(): bool
     {
-        $headers = \array_map([static::class, 'lower'], static::serverHttpVars());
+        $headers = array_map([static::class, 'lower'], static::serverHttpVars());
 
         // Generally, as long as HTTPS is not set or is any empty value, it is considered to be "off"
         if (
@@ -1271,9 +1290,9 @@ class Utility
      * Retrieve the current URL.
      *
      * @param   bool   $parse  True to return the url as an array, false otherwise.
-     * @return  mixed
+     * @return  string|array 
      */
-    public static function currentUrl(bool $parse = false)
+    public static function currentUrl(bool $parse = false): string|array
     {
         // Scheme
         $url = (static::isHttps()) ? 'https://' : 'http://';
@@ -1291,7 +1310,7 @@ class Utility
         // Host and port
         $url .= static::currentHost();
 
-        $port = \intval($_SERVER['SERVER_PORT']);
+        $port = intval($_SERVER['SERVER_PORT']);
         $port = ((static::isHttps() AND $port != 443) OR (!static::isHttps() AND $port != 80)) ? $port : 0;
 
         if (!empty($port)) {
@@ -1300,18 +1319,18 @@ class Utility
 
         // Path
         if (!isset($_SERVER['REQUEST_URI'])) {
-            $url .= \trim(\strval($_SERVER['PHP_SELF']));
+            $url .= trim(strval($_SERVER['PHP_SELF']));
 
             if (isset($_SERVER['QUERY_STRING'])) {
-                $url .= '?' . \trim(\strval($_SERVER['QUERY_STRING']));
+                $url .= '?' . trim(strval($_SERVER['QUERY_STRING']));
             }
         } else {
-            $url .= \trim(\strval($_SERVER['REQUEST_URI']));
+            $url .= trim(strval($_SERVER['REQUEST_URI']));
         }
 
         // If $parse is true, parse into array
         if ($parse) {
-            $url = \parse_url($url);
+            $url = parse_url($url);
         }
         return $url;
     }
@@ -1330,12 +1349,10 @@ class Utility
     {
         static $suffixes = ['th', 'st', 'nd', 'rd'];
 
-        $suffix = '';
-
-        if (\abs($number) % 100 > 10 AND \abs($number) % 100 < 20) {
+        if (abs($number) % 100 > 10 AND abs($number) % 100 < 20) {
             $suffix = $suffixes[0];
-        } elseif (\abs($number) % 10 < 4) {
-            $suffix = $suffixes[(\abs($number) % 10)];
+        } elseif (abs($number) % 10 < 4) {
+            $suffix = $suffixes[(abs($number) % 10)];
         } else {
             $suffix = $suffixes[0];
         }
@@ -1345,18 +1362,16 @@ class Utility
     /**
      * statusHeader()
      *
-     * Send a HTTP status header.
+     * Send an HTTP status header.
      *
-     * @param int $code The status code.
-     * @param string $message Custom status message.
-     * @param bool $replace True if the header should replace a previous
-     *                            similar header.
-     *                            False to add a second header of the same type
-     * @throws \Exception
-     * @throws \InvalidArgumentException
-     * @throws \RuntimeException
+     * @param  int     $code     The status code.
+     * @param  string  $message  Custom status message.
+     * @param  bool    $replace  True if the header should replace a previous similar header.
+     *                           False to add a second header of the same type
+     *
+     * @throws Exception|InvalidArgumentException|RuntimeException
      */
-    public static function statusHeader(int $code = 200, string $message = '', bool $replace = true)
+    public static function statusHeader(int $code = 200, string $message = '', bool $replace = true): void
     {
         static $statusCodes;
 
@@ -1407,28 +1422,26 @@ class Utility
         }
 
         // Sanity check
-        $replace = (bool)$replace;
-
         if (empty($code)) {
-            throw new \InvalidArgumentException('$code is invalid.');
+            throw new InvalidArgumentException('$code is invalid.');
         }
 
         if (empty($message)) {
             if (!isset($statusCodes[$code])) {
-                throw new \Exception('No status message available. Please double check your $code or provide a custom $message.');
+                throw new Exception('No status message available. Please double check your $code or provide a custom $message.');
             }
             $message = $statusCodes[$code];
         }
 
-        if (\headers_sent($line, $file)) {
-            throw new \RuntimeException(\sprintf('Failed to send header. Headers have already been sent by "%s" at line %d.', $file, $line));
+        if (headers_sent($line, $file)) {
+            throw new RuntimeException(sprintf('Failed to send header. Headers have already been sent by "%s" at line %d.', $file, $line));
         }
 
         // Properly format and send header, based on server API
-        if (static::doesContain(\PHP_SAPI, 'cgi')) {
-            \header("Status: $code $message", $replace);
+        if (static::doesContain(PHP_SAPI, 'cgi')) {
+            header("Status: $code $message", $replace);
         } else {
-            \header(
+            header(
                 ($_SERVER['SERVER_PROTOCOL'] ?? 'HTTP/1.1') . " $code $message", 
                 $replace, 
                 $code
@@ -1442,17 +1455,14 @@ class Utility
      * Generate a Globally/Universally Unique Identifier (version 4).
      *
      * @return  string
-     * @throws \Exception
+     * @throws RandomException
      */
     public static function guid(): string
     {
         static $format = '%04x%04x-%04x-%04x-%04x-%04x%04x%04x';
 
-        // Initialize
-        $guid = '';
-
         try {
-            $guid = \sprintf(
+            $guid = sprintf(
                 $format,
                 static::randomInt(0, 0xffff),
                 static::randomInt(0, 0xffff),
@@ -1464,8 +1474,8 @@ class Utility
                 static::randomInt(0, 0xffff)
             );
         }
-        catch (\Exception $e) {
-            throw new \Exception($e->getMessage(), 0, $e);
+        catch (RandomException $e) {
+            throw new RandomException('Unable to generate GUID: ' . $e->getMessage(), 0, $e);
         }
         return $guid;
     }
@@ -1481,33 +1491,35 @@ class Utility
      *
      * @param   string  $timezone  The timezone to return information for.
      * @return  array
+     *
+     * @throws  InvalidArgumentException|Exception
      */
     public static function timezoneInfo(string $timezone): array
     {
         static $validTimezones;
 
         if (!$validTimezones) {
-            $validTimezones = \DateTimeZone::listIdentifiers();
+            $validTimezones = DateTimeZone::listIdentifiers();
         }
 
         // Check to see if it is a valid timezone
-        if (empty($timezone) OR !\in_array($timezone, $validTimezones)) {
-            throw new \InvalidArgumentException('$timezone appears to be invalid.');
+        if (empty($timezone) OR !in_array($timezone, $validTimezones)) {
+            throw new InvalidArgumentException('$timezone appears to be invalid.');
         }
 
         try {
-            $tz = new \DateTimeZone($timezone);
+            $tz = new DateTimeZone($timezone);
         }
-        catch (\Exception $e) {
-            throw new \InvalidArgumentException($e->getMessage(), 0, $e);
+        catch (Exception $e) {
+            throw new InvalidArgumentException($e->getMessage(), 0, $e);
         }
 
         $info = [
-            'offset'    => $tz->getOffset(new \DateTime('now', new \DateTimeZone('GMT'))) / 3600,
+            'offset'    => $tz->getOffset(new DateTime('now', new DateTimeZone('GMT'))) / 3600,
             'country'   => $tz->getLocation()['country_code'],
             'latitude'  => $tz->getLocation()['latitude'],
             'longitude' => $tz->getLocation()['longitude'],
-            'dst'       => $tz->getTransitions($now = \time(), $now)[0]['isdst']
+            'dst'       => $tz->getTransitions($now = time(), $now)[0]['isdst']
         ];
         unset($tz);
 
@@ -1521,43 +1533,34 @@ class Utility
      *
      * @param   string  $option       The configuration option name.
      * @param   bool    $standardize  Standardize returned values to 1 or 0?
-     * @return  mixed
+     * @return  string|false 
+     *
+     * @throws  RuntimeException|InvalidArgumentException
      */
-    public static function iniGet(string $option, bool $standardize = false)
+    public static function iniGet(string $option, bool $standardize = false): string|false
     {
-        if (!\function_exists('\\ini_get')) {
+        if (!function_exists('\\ini_get')) {
             // disabled_functions?
-            throw new \RuntimeException('Native ini_get function not available.');
+            throw new RuntimeException('Native ini_get function not available.');
         }
 
         if (empty($option)) {
-            throw new \InvalidArgumentException('$option must not be empty.');
+            throw new InvalidArgumentException('$option must not be empty.');
         }
 
-        $value = \ini_get($option);
+        $value = ini_get($option);
 
         if ($value === false) {
-            throw new \RuntimeException('$option does not exist.');
+            throw new RuntimeException('$option does not exist.');
         }
 
-        $value = (string)\trim($value);
+        $value = trim($value);
 
         if ($standardize) {
-            switch (static::lower($option)) {
-                case 'yes':
-                case 'on':
-                case 'true':
-                case '1':
-                    $value = 1;
-                    break;
-                case 'no':
-                case 'off':
-                case 'false':
-                case '0':
-                default:
-                    $value = 0;
-                    break;
-            }
+            $value = match (static::lower($option)) {
+                'yes', 'on', 'true', '1' => 1,
+                default => 0
+            };
         }
         return $value;
     }
@@ -1569,18 +1572,20 @@ class Utility
      *
      * @param   string  $option  The configuration option name.
      * @param   string  $value   The new value for the option.
-     * @return  mixed
+     * @return  string|false
+     *
+     * @throws RuntimeException|InvalidArgumentException
      */
-    public static function iniSet(string $option, string $value)
+    public static function iniSet(string $option, string $value): string|false
     {
-        if (!\function_exists('\\ini_set')) {
+        if (!function_exists('\\ini_set')) {
             // disabled_functions?
-            throw new \RuntimeException('Native ini_set function not available.');
+            throw new RuntimeException('Native ini_set function not available.');
         }
 
         if (empty($option)) {
-            throw new \InvalidArgumentException('$option must not be empty.');
+            throw new InvalidArgumentException('$option must not be empty.');
         }
-        return \ini_set($option, $value);
+        return ini_set($option, $value);
     }
 }
