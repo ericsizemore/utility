@@ -464,16 +464,12 @@ class Utility
      * @see https://packagist.org/packages/laravel/lumen-framework
      * @see http://opensource.org/licenses/MIT
      * 
-     * @param   string|null  $title      String to convert.
-     * @param   string|null  $separator  Separator used to separate words in $title.
+     * @param   string  $title      String to convert.
+     * @param   string  $separator  Separator used to separate words in $title.
      * @return  string
      */
-    public static function slugify(?string $title, ?string $separator = '-'): ?string
+    public static function slugify(?string $title, string $separator = '-'): ?string
     {
-        if (is_null($title)) {
-            return $title;
-        }
-
         $title = static::ascii($title);
         $title = preg_replace('![' . preg_quote(($separator == '-' ? '_' : '-')) . ']+!u', $separator, $title);
 
@@ -671,9 +667,8 @@ class Utility
      *
      * Retrieves size of a directory (in bytes).
      *
-     * @param   string  $directory  Directory to parse.
-     * @param   array   $ignore     Subdirectories of $directory you wish to not
-     *                              include.
+     * @param   string          $directory  Directory to parse.
+     * @param   array<string>   $ignore     Subdirectories of $directory you wish to not include.
      * @return  int
      *
      * @throws  InvalidArgumentException
@@ -723,10 +718,9 @@ class Utility
     /**
      * Retrieves contents of a directory.
      *
-     * @param   string  $directory  Directory to parse.
-     * @param   array   $ignore     Subdirectories of $directory you wish to not
-     *                              include.
-     * @return  array
+     * @param   string          $directory  Directory to parse.
+     * @param   array<string>   $ignore     Subdirectories of $directory you wish to not include.
+     * @return  array<mixed>
      *
      * @throws  InvalidArgumentException
      */
@@ -924,14 +918,15 @@ class Utility
     {
         $data = trim($data);
 
+/* Remove for now 
         // PHP >= 8.3? json_validate currently in RFC for PHP 8.3
         if (PHP_VERSION_ID >= 80300) {
             return \json_validate($data);
-        } else {
-            json_decode($data);
-
-            return json_last_error() !== JSON_ERROR_NONE;
         }
+*/
+        json_decode($data);
+
+        return json_last_error() !== JSON_ERROR_NONE;
     }
 
     /**
@@ -1240,7 +1235,7 @@ class Utility
      *
      * Builds an array of headers based on HTTP_* keys within $_SERVER.
      *
-     * @return  array
+     * @return  array<mixed>
      */
     public static function serverHttpVars(): array
     {
@@ -1294,7 +1289,7 @@ class Utility
      * Retrieve the current URL.
      *
      * @param   bool   $parse  True to return the url as an array, false otherwise.
-     * @return  string|array 
+     * @return  string|array<mixed>
      */
     public static function currentUrl(bool $parse = false): string|array
     {
@@ -1494,7 +1489,7 @@ class Utility
      * @see http://www.php.net/manual/en/timezones.php
      *
      * @param   string  $timezone  The timezone to return information for.
-     * @return  array
+     * @return  array<mixed>
      *
      * @throws  InvalidArgumentException|Exception
      */
