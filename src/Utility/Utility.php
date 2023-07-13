@@ -388,7 +388,7 @@ class Utility
      *
      * Returns the replacements for the ascii method.
      *
-     * @return  array<array>
+     * @return  array<string, string>
      */
     protected static function charMap(): array
     {
@@ -464,12 +464,16 @@ class Utility
      * @see https://packagist.org/packages/laravel/lumen-framework
      * @see http://opensource.org/licenses/MIT
      * 
-     * @param   string  $title      String to convert.
-     * @param   string  $separator  Separator used to separate words in $title.
+     * @param   string|null  $title      String to convert.
+     * @param   string|null  $separator  Separator used to separate words in $title.
      * @return  string
      */
-    public static function slugify(string $title, string $separator = '-'): string
+    public static function slugify(?string $title, ?string $separator = '-'): ?string
     {
+        if (is_null($title)) {
+            return $title;
+        }
+
         $title = static::ascii($title);
         $title = preg_replace('![' . preg_quote(($separator == '-' ? '_' : '-')) . ']+!u', $separator, $title);
 
@@ -590,16 +594,16 @@ class Utility
      * Parse a project directory for approximate line count for a project's 
      * codebase.
      *
-     * @param   string  $directory      Directory to parse.
-     * @param   array   $ignore         Subdirectories of $directory you wish
-     *                                  to not include in the line count.
-     * @param   array   $extensions     An array of file types/extensions of 
-     *                                  files you want included in the line count.
-     * @param   bool    $skipEmpty      If set to true, will not include empty 
-     *                                  lines in the line count.
-     * @param   bool    $onlyLineCount  If set to true, only returns an array 
-     *                                  of line counts without directory/filenames.
-     * @return  array
+     * @param   string          $directory      Directory to parse.
+     * @param   array<string>   $ignore         Subdirectories of $directory you wish
+     *                                          to not include in the line count.
+     * @param   array<string>   $extensions     An array of file types/extensions of 
+     *                                          files you want included in the line count.
+     * @param   bool            $skipEmpty      If set to true, will not include empty 
+     *                                          lines in the line count.
+     * @param   bool            $onlyLineCount  If set to true, only returns an array 
+     *                                          of line counts without directory/filenames.
+     * @return  array<mixed>
      *
      * @throws  InvalidArgumentException
      */
