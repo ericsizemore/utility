@@ -1,0 +1,9 @@
+.idea/
+vendor/
+build/
+composer.phar
+.phpunit.result.cache
+*.iws
+out/
+.idea_modules/
+atlassian-ide-plugin.xml
