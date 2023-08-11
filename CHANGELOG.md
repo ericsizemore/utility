@@ -1,3 +1,7 @@
+### 1.1.1 (2023-08-11)
+  * Version bump
+  * Cleaning up issues per PHPStan
+
 ### 1.1.0 (2023-06-24)
   * Version bump
   * Bumped PHP version requirement to 8.2

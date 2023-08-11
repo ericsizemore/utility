@@ -6,7 +6,7 @@
  * @author    Eric Sizemore <admin@secondversion.com>
  * @package   Utility
  * @link      http://www.secondversion.com/
- * @version   1.1.0
+ * @version   1.1.1
  * @copyright (C) 2017 - 2023 Eric Sizemore
  * @license   The MIT License (MIT)
  */
@@ -54,7 +54,7 @@ use const PHP_INT_MAX, PHP_INT_MIN, PHP_SAPI, PHP_VERSION_ID;
  * @author    Eric Sizemore <admin@secondversion.com>
  * @package   Utility
  * @link      http://www.secondversion.com/
- * @version   1.1.0
+ * @version   1.1.1
  * @copyright (C) 2017 - 2023 Eric Sizemore
  * @license   The MIT License (MIT)
  *
@@ -648,6 +648,11 @@ class Utility
                 }
 
                 $content = file($val->getPath() . DIRECTORY_SEPARATOR . $val->getFilename(), $flags);
+                
+                if (!$content) {
+                    continue;
+                }
+                /** @var array<int, string>|\Countable $content **/
                 $content = count($content);
 
                 $lines[$val->getPath()][$val->getFilename()] = $content;
@@ -768,9 +773,9 @@ class Utility
      *
      * Normalizes a file or directory path.
      *
-     * @param   string  $path       The file or directory path.
-     * @param   string  $separator  The directory separator. Defaults to DIRECTORY_SEPARATOR.
-     * @return  string              The normalized file or directory path
+     * @param   string            $path       The file or directory path.
+     * @param   non-empty-string  $separator  The directory separator. Defaults to DIRECTORY_SEPARATOR.
+     * @return  string                        The normalized file or directory path
      */
     public static function normalizeFilePath(string $path, string $separator = DIRECTORY_SEPARATOR): string
     {
@@ -870,11 +875,11 @@ class Utility
      * @param   int     $flags  Bitwise OR'ed set of flags for file_put_contents. One or 
      *                          more of FILE_USE_INCLUDE_PATH, FILE_APPEND, LOCK_EX. 
      *                          {@link http://php.net/file_put_contents}
-     * @return  string|false
+     * @return  string|int<0, max>|false
      *
      * @throws InvalidArgumentException|RandomException
      */
-    public static function fileWrite(string $file, string $data = '', int $flags = 0): string|false
+    public static function fileWrite(string $file, string $data = '', int $flags = 0): string|false|int
     {
         // Sanity checks
         if (!is_readable($file)) {
@@ -1118,6 +1123,7 @@ class Utility
 
         if (!empty($ips)) {
             foreach ($ips AS $val) {
+                /** @phpstan-ignore-next-line */
                 if (inet_ntop(inet_pton($val)) == $val AND static::isPublicIp($val)) {
                     $ip = $val;
                     break;
@@ -1289,9 +1295,9 @@ class Utility
      * Retrieve the current URL.
      *
      * @param   bool   $parse  True to return the url as an array, false otherwise.
-     * @return  string|array<mixed>
+     * @return  mixed
      */
-    public static function currentUrl(bool $parse = false): string|array
+    public static function currentUrl(bool $parse = false): mixed
     {
         // Scheme
         $url = (static::isHttps()) ? 'https://' : 'http://';
@@ -1513,11 +1519,21 @@ class Utility
             throw new InvalidArgumentException($e->getMessage(), 0, $e);
         }
 
+        $location = $tz->getLocation();
+
+        if ($location == false) {
+            $location = [
+                'country_code' => 'N/A',
+                'latitude'     => 'N/A',
+                'longitude'    => 'N/A'
+            ];
+        }
+
         $info = [
             'offset'    => $tz->getOffset(new DateTime('now', new DateTimeZone('GMT'))) / 3600,
-            'country'   => $tz->getLocation()['country_code'],
-            'latitude'  => $tz->getLocation()['latitude'],
-            'longitude' => $tz->getLocation()['longitude'],
+            'country'   => $location['country_code'],
+            'latitude'  => $location['latitude'],
+            'longitude' => $location['longitude'],
             'dst'       => $tz->getTransitions($now = time(), $now)[0]['isdst']
         ];
         unset($tz);
@@ -1557,8 +1573,8 @@ class Utility
 
         if ($standardize) {
             $value = match (static::lower($option)) {
-                'yes', 'on', 'true', '1' => 1,
-                default => 0
+                'yes', 'on', 'true', '1' => '1',
+                default => '0'
             };
         }
         return $value;
