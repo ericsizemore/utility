@@ -6,7 +6,7 @@
  * @author    Eric Sizemore <admin@secondversion.com>
  * @package   Utility
  * @link      http://www.secondversion.com/
- * @version   1.1.1
+ * @version   1.1.2
  * @copyright (C) 2017 - 2023 Eric Sizemore
  * @license   The MIT License (MIT)
  */
@@ -54,7 +54,7 @@ use const PHP_INT_MAX, PHP_INT_MIN, PHP_SAPI, PHP_VERSION_ID;
  * @author    Eric Sizemore <admin@secondversion.com>
  * @package   Utility
  * @link      http://www.secondversion.com/
- * @version   1.1.1
+ * @version   1.1.2
  * @copyright (C) 2017 - 2023 Eric Sizemore
  * @license   The MIT License (MIT)
  *
@@ -105,7 +105,7 @@ class Utility
      */
     public static function setEncoding(string $newEncoding = '', bool $iniUpdate = false): void
     {
-        if (!empty($newEncoding)){
+        if (!empty($newEncoding)) {
             self::$encoding = $newEncoding;
         }
 
@@ -468,7 +468,7 @@ class Utility
      * @param   string  $separator  Separator used to separate words in $title.
      * @return  string
      */
-    public static function slugify(?string $title, string $separator = '-'): ?string
+    public static function slugify(string $title, string $separator = '-'): string
     {
         $title = static::ascii($title);
         $title = preg_replace('![' . preg_quote(($separator == '-' ? '_' : '-')) . ']+!u', $separator, $title);
@@ -575,8 +575,7 @@ class Utility
             if (!$bytes) {
                 throw new RandomException('Random bytes generator failure.');
             }
-        }
-        catch (RandomException $e) {
+        } catch (RandomException $e) {
             throw new RandomException($e->getMessage(), 0, $e);
         }
         return static::substr(bin2hex($bytes), 0, $length);
@@ -606,7 +605,7 @@ class Utility
     public static function lineCounter(string $directory, array $ignore = [], array $extensions = [], bool $skipEmpty = true, bool $onlyLineCount = false): array
     {
         // Sanity check
-        if (empty($directory) OR !is_dir($directory)) {
+        if (!is_dir($directory)) {
             throw new InvalidArgumentException('Invalid $directory provided.');
         }
 
@@ -681,7 +680,7 @@ class Utility
     public static function directorySize(string $directory, array $ignore = []): int
     {
         // Sanity checks
-        if (empty($directory) OR !is_dir($directory)) {
+        if (!is_dir($directory)) {
             throw new InvalidArgumentException('Invalid $directory provided.');
         }
 
@@ -732,7 +731,7 @@ class Utility
     public static function directoryList(string $directory, array $ignore = []): array
     {
         // Sanity checks
-        if (empty($directory) OR !is_dir($directory)) {
+        if (!is_dir($directory)) {
             throw new InvalidArgumentException('Invalid $directory provided.');
         }
 
@@ -951,13 +950,13 @@ class Utility
         if (is_null($pow)) {
             $pow = [
                 'kilo'  => 1024,
-                'mega'  => pow(1024, 2),
-                'giga'  => pow(1024, 3),
-                'tera'  => pow(1024, 4),
-                'peta'  => pow(1024, 5),
-                'exa'   => pow(1024, 6),
-                'zeta'  => pow(1024, 7),
-                'yotta' => pow(1024, 8)
+                'mega'  => 1024 ** 2,
+                'giga'  => 1024 ** 3,
+                'tera'  => 1024 ** 4,
+                'peta'  => 1024 ** 5,
+                'exa'   => 1024 ** 6,
+                'zeta'  => 1024 ** 7,
+                'yotta' => 1024 ** 8
             ];
         }
 
@@ -1478,8 +1477,7 @@ class Utility
                 static::randomInt(0, 0xffff),
                 static::randomInt(0, 0xffff)
             );
-        }
-        catch (RandomException $e) {
+        } catch (RandomException $e) {
             throw new RandomException('Unable to generate GUID: ' . $e->getMessage(), 0, $e);
         }
         return $guid;

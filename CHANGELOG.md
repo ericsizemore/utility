@@ -1,3 +1,7 @@
+### 1.1.2 (2023-08-17)
+  * Version bump
+  * Minor code cleanup
+
 ### 1.1.1 (2023-08-11)
   * Version bump
   * Cleaning up issues per PHPStan
