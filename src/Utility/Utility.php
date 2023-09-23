@@ -172,7 +172,7 @@ class Utility
             }
         } elseif (is_object($array)) {
             foreach (get_object_vars($array) AS $key => $value) {
-                $array->$key = static::arrayMapDeep($value, $callback); /** @phpstan-ignore-line */
+                $array->$key = static::arrayMapDeep($value, $callback); /** @phpstan-ignore-line **/
             }
         } else {
             $array = call_user_func($callback, $array);

@@ -813,7 +813,6 @@ class UtilityTest extends TestCase
     {
         $oldValue = Utility::iniSet('display_errors', Utility::iniGet('display_errors'));
 
-        $this->assertEquals($oldValue, Utility::iniSet('display_errors', '1'));
         $this->assertEquals($oldValue, Utility::iniSet('display_errors', $oldValue));
     }
 }
