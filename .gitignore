@@ -9,3 +9,4 @@ out/
 atlassian-ide-plugin.xml
 .idea/php.xml
 .idea/utility.iml
+clover.xml

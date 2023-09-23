@@ -15,8 +15,19 @@
         "ext-mbstring": "*",
         "ext-json": "*"
     },
+    "require-dev": {
+        "phpunit/phpunit": "^10.2"
+    },
     "autoload": {
         "psr-4": { "Esi\\Utility\\": "src/Utility" }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Esi\\Utility\\Tests\\": "tests/src/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit --display-warnings --globals-backup"
     },
     "minimum-stability": "dev",
     "extra": {

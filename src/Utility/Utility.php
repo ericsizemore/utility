@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types = 1);
+
 /**
  * Utility - Collection of various PHP utility functions.
  *
  * @author    Eric Sizemore <admin@secondversion.com>
  * @package   Utility
  * @link      http://www.secondversion.com/
- * @version   1.1.2
+ * @version   1.2.0
  * @copyright (C) 2017 - 2023 Eric Sizemore
  * @license   The MIT License (MIT)
  */
@@ -21,7 +23,7 @@ namespace Esi\Utility;
 */
 
 // Exceptions
-use Exception, InvalidArgumentException, RuntimeException;
+use Exception, InvalidArgumentException, RuntimeException, ValueError;
 use Random\RandomException;
 use FilesystemIterator, RecursiveDirectoryIterator, RecursiveIteratorIterator;
 
@@ -29,23 +31,23 @@ use FilesystemIterator, RecursiveDirectoryIterator, RecursiveIteratorIterator;
 use DateTime, DateTimeZone;
 
 // Functions
-use function abs, array_filter, array_keys, array_map, array_pop;
+use function abs, array_filter, array_keys, array_map, array_pop, array_merge_recursive;
 use function bin2hex, call_user_func, ceil, chmod, count, date;
 use function end, explode, fclose, file, file_get_contents, file_put_contents;
 use function filter_var, floatval, fopen, function_exists, hash, header, headers_sent;
 use function implode, in_array, inet_ntop, inet_pton, ini_get, ini_set, intval, is_array;
 use function is_dir, is_file, is_null, is_readable, is_writable, json_decode, json_last_error;
 use function mb_convert_case, mb_stripos, mb_strlen, mb_strpos, mb_substr, natsort;
-use function number_format, ord, parse_url, pow, preg_match, preg_quote, preg_replace;
+use function number_format, ord, parse_url, preg_match, preg_quote, preg_replace;
 use function random_bytes, random_int, rtrim, sprintf, str_replace, str_split;
-use function strcmp, strtr, strval, time, trim, ucwords, unlink;
+use function strcmp, strtr, strval, time, trim, ucwords, unlink, str_contains, str_starts_with, str_ends_with;
 
 // Constants
 use const DIRECTORY_SEPARATOR, FILE_IGNORE_NEW_LINES, FILE_SKIP_EMPTY_LINES;
 use const FILTER_FLAG_IPV4, FILTER_FLAG_IPV6, FILTER_FLAG_NO_PRIV_RANGE;
 use const FILTER_FLAG_NO_RES_RANGE, FILTER_VALIDATE_EMAIL, FILTER_VALIDATE_IP;
 use const JSON_ERROR_NONE, MB_CASE_LOWER, MB_CASE_TITLE, MB_CASE_UPPER;
-use const PHP_INT_MAX, PHP_INT_MIN, PHP_SAPI, PHP_VERSION_ID;
+use const PHP_INT_MAX, PHP_INT_MIN, PHP_SAPI, PHP_OS_FAMILY;
 // END: Imports
 
 /**
@@ -54,16 +56,16 @@ use const PHP_INT_MAX, PHP_INT_MIN, PHP_SAPI, PHP_VERSION_ID;
  * @author    Eric Sizemore <admin@secondversion.com>
  * @package   Utility
  * @link      http://www.secondversion.com/
- * @version   1.1.2
+ * @version   1.2.0
  * @copyright (C) 2017 - 2023 Eric Sizemore
  * @license   The MIT License (MIT)
  *
  * Copyright (C) 2017 - 2023 Eric Sizemore. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to 
- * deal in the Software without restriction, including without limitation the 
- * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or 
+ * of this software and associated documentation files (the "Software"), to
+ * deal in the Software without restriction, including without limitation the
+ * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
  * sell copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
@@ -105,7 +107,7 @@ class Utility
      */
     public static function setEncoding(string $newEncoding = '', bool $iniUpdate = false): void
     {
-        if (!empty($newEncoding)) {
+        if ($newEncoding !== '') {
             self::$encoding = $newEncoding;
         }
 
@@ -120,55 +122,120 @@ class Utility
     /**
      * arrayFlatten()
      *
-     * Flattens a multidimensional array.
+     * Flattens a multi-dimensional array.
      *
      * Keys are preserved based on $separator.
      *
      * @param   array<mixed>   $array      Array to flatten.
-     * @param   string         $separator  The new keys are a list of original keys 
-     *                                     separated by $separator.
+     * @param   string         $separator  The new keys are a list of original keys separated by $separator.
+     *
+     * @since 1.2.0
+     * @param   string         $prepend    A string to prepend to resulting array keys.
+     *
      * @return  array<mixed>               The flattened array.
      */
-    public static function arrayFlatten(array $array, string $separator = '.'): array
+    public static function arrayFlatten(array $array, string $separator = '.', string $prepend = ''): array
     {
-        $result  = [];
-        $stack[] = ['', $array];
+        $result = [];
 
-        while (count($stack) > 0) {
-            list($prefix, $array) = array_pop($stack);
-
-            foreach ($array AS $key => $value) {
-                $_key = $prefix . $key;
-
-                if (is_array($value)) {
-                    $stack[] = [$_key . $separator, $value];
-                } else {
-                    $result[$_key] = $value;
-                }
+        foreach ($array AS $key => $value) {
+            if (is_array($value) AND $value !== []) {
+                $result[] = static::arrayFlatten($value, $separator, $prepend . $key . $separator);
+            } else {
+                $result[] = [$prepend . $key => $value];
             }
         }
-        return $result;
+
+        if (count($result) === 0) {
+            return [];
+        }
+        return array_merge_recursive([], ...$result);
     }
 
     /**
      * arrayMapDeep()
      *
-     * Recursively applies a callback to all elements of the given array.
+     * Recursively applies a callback to all non-iterable elements of an array or an object.
      *
-     * @param   array<mixed>     $array     The array to apply $callback to.
-     * @param   callable         $callback  The callback function to apply.
-     * @return  array<mixed>
+     * @since 1.2.0 - updated with inspiration from the WordPress map_deep() function.
+     *      @see https://developer.wordpress.org/reference/functions/map_deep/
+     *
+     * @param   mixed     $array     The array to apply $callback to.
+     * @param   callable  $callback  The callback function to apply.
+     * @return  mixed
      */
-    public static function arrayMapDeep(array $array, callable $callback): array
+    public static function arrayMapDeep(mixed $array, callable $callback): mixed
     {
-        foreach ($array AS $key => $value) {
-            if (is_array($array[$key])) {
-                $array[$key] = static::arrayMapDeep($array[$key], $callback);
-            } else {
-                $array[$key] = call_user_func($callback, $array[$key]);
+        if (is_array($array)) {
+            foreach ($array AS $key => $value) {
+                $array[$key] = static::arrayMapDeep($value, $callback);
             }
+        } elseif (is_object($array)) {
+            foreach (get_object_vars($array) AS $key => $value) {
+                /** @phpstan-ignore-next-line */
+                $array->$key = static::arrayMapDeep($value, $callback);
+            }
+        } else {
+            $array = call_user_func($callback, $array);
         }
         return $array;
+    }
+
+    /**
+     * arrayInterlace()
+     * 
+     * Interlaces one or more arrays' values (not preserving keys).
+     *
+     * Example:
+     *
+     *      var_dump(Utility::arrayInterlace(
+     *          [1, 2, 3],
+     *          ['a', 'b', 'c']
+     *      ));
+     *
+     * Result:
+     *      Array (
+     *          [0] => 1
+     *          [1] => a
+     *          [2] => 2
+     *          [3] => b
+     *          [4] => 3
+     *          [5] => c
+     *      )
+     *
+     * @since 1.2.0
+     *
+     * @param  array<mixed>        ...$args
+     * @return array<mixed>|false
+     */
+    public static function arrayInterlace(array ...$args): array|false
+    {
+        $numArgs = count($args);
+
+        if ($numArgs === 0) {
+            return false;
+        }
+
+        if ($numArgs === 1) {
+            return $args;
+        }
+
+        $totalElements = 0;
+
+        for ($i = 0; $i < $numArgs; $i++) {
+            $totalElements += count($args[$i]);
+        }
+
+        $newArray = [];
+
+        for ($i = 0; $i < $totalElements; $i++) {
+            for ($a = 0; $a < $numArgs; $a++) {
+                if (isset($args[$a][$i])) {
+                    $newArray[] = $args[$a][$i];
+                }
+            }
+        }
+        return $newArray;
     }
 
     /** string related functions **/
@@ -183,7 +250,7 @@ class Utility
      */
     public static function title(string $value): string
     {
-        return mb_convert_case($value, MB_CASE_TITLE);
+        return mb_convert_case($value, MB_CASE_TITLE, (self::$encoding ?? null));
     }
 
     /**
@@ -196,7 +263,7 @@ class Utility
      */
     public static function lower(string $value): string
     {
-        return mb_convert_case($value, MB_CASE_LOWER);
+        return mb_convert_case($value, MB_CASE_LOWER, (self::$encoding ?? null));
     }
 
     /**
@@ -209,7 +276,7 @@ class Utility
      */
     public static function upper(string $value): string
     {
-        return mb_convert_case($value, MB_CASE_UPPER);
+        return mb_convert_case($value, MB_CASE_UPPER, (self::$encoding ?? null));
     }
 
     /**
@@ -224,7 +291,7 @@ class Utility
      */
     public static function substr(string $string, int $start, ?int $length = null): string
     {
-        return mb_substr($string, $start, $length);
+        return mb_substr($string, $start, $length, (self::$encoding ?? null));
     }
 
     /**
@@ -264,7 +331,7 @@ class Utility
      *
      * @param  string  $str1  The first string.
      * @param  string  $str2  The second string.
-     * @return int            Returns < 0 if $str1 is less than $str2; > 0 if $str1 
+     * @return int            Returns < 0 if $str1 is less than $str2; > 0 if $str1
      *                        is greater than $str2, and 0 if they are equal.
      */
     public static function strcasecmp(string $str1, string $str2): int
@@ -280,14 +347,23 @@ class Utility
      * @param   string  $haystack     String to search in.
      * @param   string  $needle       String to check for.
      * @param   bool    $insensitive  True to do a case-insensitive search.
+     * @param   bool    $multibyte    True to perform checks via mbstring, false otherwise.
      * @return  bool
      */
-    public static function beginsWith(string $haystack, string $needle, bool $insensitive = false): bool
+    public static function beginsWith(string $haystack, string $needle, bool $insensitive = false, bool $multibyte = false): bool
     {
-        if ($insensitive) {
-            return mb_stripos($haystack, $needle) === 0;
+        if ($multibyte === true) {
+            if ($insensitive) {
+                return mb_stripos($haystack, $needle) === 0;
+            }
+            return mb_strpos($haystack, $needle) === 0;
         }
-        return mb_strpos($haystack, $needle) === 0;
+
+        if ($insensitive) {
+            $haystack = static::lower($haystack);
+            $needle   = static::lower($needle);
+        }
+        return str_starts_with($haystack, $needle);
     }
 
     /**
@@ -298,15 +374,20 @@ class Utility
      * @param   string  $haystack     String to search in.
      * @param   string  $needle       String to check for.
      * @param   bool    $insensitive  True to do a case-insensitive search.
+     * @param   bool    $multibyte    True to perform checks via mbstring, false otherwise.
      * @return  bool
      */
-    public static function endsWith(string $haystack, string $needle, bool $insensitive = false): bool
+    public static function endsWith(string $haystack, string $needle, bool $insensitive = false, bool $multibyte = false): bool
     {
         if ($insensitive) {
             $haystack = static::lower($haystack);
-            $needle   = static::upper($needle);
+            $needle   = static::lower($needle);
         }
-        return static::substr($haystack, -static::length($needle)) === $needle;
+        return (
+            $multibyte
+            ? static::substr($haystack, -static::length($needle)) === $needle
+            : str_ends_with($haystack, $needle)
+        );
     }
 
     /**
@@ -317,14 +398,20 @@ class Utility
      * @param   string  $haystack     String to search in.
      * @param   string  $needle       String to check for.
      * @param   bool    $insensitive  True to do a case-insensitive search.
+     * @param   bool    $multibyte    True to perform checks via mbstring, false otherwise.
      * @return  bool
      */
-    public static function doesContain(string $haystack, string $needle, bool $insensitive = false): bool
+    public static function doesContain(string $haystack, string $needle, bool $insensitive = false, bool $multibyte = false): bool
     {
         if ($insensitive) {
-            return mb_stripos($haystack, $needle) !== false;
+            $haystack = static::lower($haystack);
+            $needle   = static::lower($needle);
         }
-        return mb_strpos($haystack, $needle) !== false;
+        return (
+            $multibyte
+            ? mb_strpos($haystack, $needle) !== false
+            : str_contains($haystack, $needle) !== false
+        );
     }
 
     /**
@@ -335,14 +422,20 @@ class Utility
      * @param   string  $haystack     String to search in.
      * @param   string  $needle       String to check for.
      * @param   bool    $insensitive  True to do a case-insensitive search.
+     * @param   bool    $multibyte    True to perform checks via mbstring, false otherwise.
      * @return  bool
      */
-    public static function doesNotContain(string $haystack, string $needle, bool $insensitive = false): bool
+    public static function doesNotContain(string $haystack, string $needle, bool $insensitive = false, bool $multibyte = false): bool
     {
         if ($insensitive) {
-            return mb_stripos($haystack, $needle) === false;
+            $haystack = static::lower($haystack);
+            $needle   = static::lower($needle);
         }
-        return mb_strpos($haystack, $needle) === false;
+        return (
+            $multibyte
+            ? mb_strpos($haystack, $needle) === false
+            : str_contains($haystack, $needle) === false
+        );
     }
 
     /**
@@ -356,10 +449,7 @@ class Utility
      */
     public static function length(string $string, bool $binarySafe = false): int
     {
-        if ($binarySafe) {
-            return mb_strlen($string, '8bit');
-        }
-        return mb_strlen($string);
+        return mb_strlen($string, ($binarySafe ? '8bit' : self::$encoding));
     }
 
     /**
@@ -369,18 +459,20 @@ class Utility
      *
      * Note: Adapted from Illuminate/Support/Str
      *
-     * @see https://packagist.org/packages/laravel/lumen-framework
+     * @see https://packagist.org/packages/laravel/lumen-framework < v5.5
      * @see http://opensource.org/licenses/MIT
      *
      * @param   string       $value  Value to transliterate.
-     * @return  string|null
+     * @return  string
      */
-    public static function ascii(string $value): string|null
+    public static function ascii(string $value): string
     {
         foreach (static::charMap() AS $key => $val) {
             $value = str_replace($key, $val, $value);
         }
-        return preg_replace('/[^\x20-\x7E]/u', '', $value);
+        // preg_replace can return null if it encounters an error, so we return
+        // the passed $value in that instance.
+        return preg_replace('/[^\x20-\x7E]/u', '', $value) ?? $value;
     }
 
     /**
@@ -450,7 +542,7 @@ class Utility
             "\xE2\x80\x85" => ' ', "\xE2\x80\x86" => ' ', "\xE2\x80\x87" => ' ',
             "\xE2\x80\x88" => ' ', "\xE2\x80\x89" => ' ', "\xE2\x80\x8A" => ' ',
             "\xE2\x80\xAF" => ' ', "\xE2\x81\x9F" => ' ', "\xE3\x80\x80" => ' '
-            
+
         ];
     }
 
@@ -461,9 +553,9 @@ class Utility
      *
      * Note: Adapted from Illuminate/Support/Str::slug
      *
-     * @see https://packagist.org/packages/laravel/lumen-framework
+     * @see https://packagist.org/packages/laravel/lumen-framework  < v5.5
      * @see http://opensource.org/licenses/MIT
-     * 
+     *
      * @param   string  $title      String to convert.
      * @param   string  $separator  Separator used to separate words in $title.
      * @return  string
@@ -471,13 +563,28 @@ class Utility
     public static function slugify(string $title, string $separator = '-'): string
     {
         $title = static::ascii($title);
-        $title = preg_replace('![' . preg_quote(($separator == '-' ? '_' : '-')) . ']+!u', $separator, $title);
+
+        // preg_replace can return null if an error occurs. It shouldn't happen, but if it does,
+        // we return what we have processed thus far
+        $title = (
+            preg_replace('![' . preg_quote(($separator === '-' ? '_' : '-')) . ']+!u', $separator, $title)
+            ?? $title
+        );
+
+        // Replace @ with the word 'at'
+        $title = str_replace('@', $separator . 'at' . $separator, $title);
 
         // Remove all characters that are not the separator, letters, numbers, or whitespace.
-        $title = preg_replace('![^' . preg_quote($separator) . '\pL\pN\s]+!u', '', static::lower($title));
+        $title = (
+            preg_replace('![^' . preg_quote($separator) . '\pL\pN\s]+!u', '', static::lower($title))
+            ?? $title
+        );
 
         // Replace all separator characters and whitespace by a single separator
-        $title = preg_replace('![' . preg_quote($separator) . '\s]+!u', $separator, $title);
+        $title = (
+            preg_replace('![' . preg_quote($separator) . '\s]+!u', $separator, $title)
+            ?? $title
+        );
 
         // Cleanup $title
         return trim($title, $separator);
@@ -516,7 +623,7 @@ class Utility
      * randomInt()
      *
      * Generate a cryptographically secure pseudo-random integer.
-     * 
+     *
      * @param   int  $min  The lowest value to be returned, which must be PHP_INT_MIN or higher.
      * @param   int  $max  The highest value to be returned, which must be less than or equal to PHP_INT_MAX.
      * @return  int
@@ -572,7 +679,7 @@ class Utility
         try {
             $bytes = static::randomBytes($length * 2);
 
-            if (!$bytes) {
+            if ($bytes === '') {
                 throw new RandomException('Random bytes generator failure.');
             }
         } catch (RandomException $e) {
@@ -586,17 +693,17 @@ class Utility
     /**
      * lineCounter()
      *
-     * Parse a project directory for approximate line count for a project's 
+     * Parse a project directory for approximate line count for a project's
      * codebase.
      *
      * @param   string          $directory      Directory to parse.
      * @param   array<string>   $ignore         Subdirectories of $directory you wish
      *                                          to not include in the line count.
-     * @param   array<string>   $extensions     An array of file types/extensions of 
+     * @param   array<string>   $extensions     An array of file types/extensions of
      *                                          files you want included in the line count.
-     * @param   bool            $skipEmpty      If set to true, will not include empty 
+     * @param   bool            $skipEmpty      If set to true, will not include empty
      *                                          lines in the line count.
-     * @param   bool            $onlyLineCount  If set to true, only returns an array 
+     * @param   bool            $onlyLineCount  If set to true, only returns an array
      *                                          of line counts without directory/filenames.
      * @return  array<mixed>
      *
@@ -624,34 +731,35 @@ class Utility
         }
 
         // Directory names we wish to ignore
-        if (!empty($ignore)) {
+        if (count($ignore) > 0) {
             $ignore = preg_quote(implode('|', $ignore), '#');
         }
 
         // Traverse the directory
         $iterator = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator(
-                $directory, 
+                $directory,
                 FilesystemIterator::CURRENT_AS_FILEINFO | FilesystemIterator::SKIP_DOTS
             )
         );
 
         // Build the actual contents of the directory
+        /** @var RecursiveDirectoryIterator $val **/
         foreach ($iterator AS $key => $val) {
             if ($val->isFile()) {
                 if (
-                    (!empty($ignore) AND preg_match("#($ignore)#i", $val->getPath()))
-                    OR (!empty($extensions) AND !in_array($val->getExtension(), $extensions))
+                    (is_string($ignore) AND preg_match("#($ignore)#i", $val->getPath()) === 1)
+                    OR (count($extensions) > 0 AND !in_array($val->getExtension(), $extensions, true))
                 ) {
                     continue;
                 }
 
                 $content = file($val->getPath() . DIRECTORY_SEPARATOR . $val->getFilename(), $flags);
-                
-                if (!$content) {
+
+                if ($content === false) {
                     continue;
                 }
-                /** @var array<int, string>|\Countable $content **/
+                /** @var int<0, max> $content **/
                 $content = count($content);
 
                 $lines[$val->getPath()][$val->getFilename()] = $content;
@@ -692,21 +800,22 @@ class Utility
         $size = 0;
 
         // Directories we wish to ignore, if any
-        if (!empty($ignore)) {
+        if (count($ignore) > 0) {
             $ignore = preg_quote(implode('|', $ignore), '#');
         }
 
         // Traverse the directory
         $iterator = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator(
-                $directory, 
+                $directory,
                 FilesystemIterator::CURRENT_AS_FILEINFO | FilesystemIterator::SKIP_DOTS
             )
         );
 
         // Determine directory size by checking file sizes
+        /** @var RecursiveDirectoryIterator $val **/
         foreach ($iterator AS $key => $val) {
-            if (!empty($ignore) AND preg_match("#($ignore)#i", $val->getPath())) {
+            if (is_string($ignore) AND preg_match("#($ignore)#i", $val->getPath()) === 1) {
                 continue;
             }
 
@@ -743,21 +852,22 @@ class Utility
         $contents = [];
 
         // Directories to ignore, if any
-        if (!empty($ignore)) {
+        if (count($ignore) > 0) {
             $ignore = preg_quote(implode('|', $ignore), '#');
         }
 
         // Traverse the directory
         $iterator = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator(
-                $directory, 
+                $directory,
                 FilesystemIterator::KEY_AS_PATHNAME | FilesystemIterator::CURRENT_AS_FILEINFO | FilesystemIterator::SKIP_DOTS
             )
         );
 
         // Build the actual contents of the directory
+        /** @var RecursiveDirectoryIterator $val **/
         foreach ($iterator AS $key => $val) {
-            if (!empty($ignore) AND preg_match("#($ignore)#i", $val->getPath())) {
+            if (is_string($ignore) AND preg_match("#($ignore)#i", $val->getPath()) === 1) {
                 continue;
             }
             $contents[] = $key;
@@ -782,7 +892,7 @@ class Utility
         $path = rtrim(strtr($path, '/\\', $separator . $separator), $separator);
 
         if (
-            static::doesNotContain($separator . $path, "{$separator}.") 
+            static::doesNotContain($separator . $path, "{$separator}.")
             AND static::doesNotContain($path, $separator . $separator)
         ) {
             return $path;
@@ -793,9 +903,9 @@ class Utility
 
         // Grab file path parts
         foreach (explode($separator, $path) AS $part) {
-            if ($part === '..' AND !empty($parts) AND end($parts) !== '..') {
+            if ($part === '..' AND count($parts) > 0 AND end($parts) !== '..') {
                 array_pop($parts);
-            } elseif ($part === '.' OR $part === '' AND !empty($parts)) {
+            } elseif ($part === '.' OR $part === '' AND count($parts) > 0) {
                 continue;
             } else {
                 $parts[] = $part;
@@ -804,7 +914,7 @@ class Utility
 
         // Build
         $path = implode($separator, $parts);
-        return ($path) ?: '.';
+        return ($path === '' ? '.' : $path);
     }
 
     /**
@@ -820,7 +930,7 @@ class Utility
     public static function isReallyWritable(string $file): bool
     {
         // If we are on Unix/Linux just run is_writable()
-        if (DIRECTORY_SEPARATOR === '/') {
+        if (PHP_OS_FAMILY !== 'Windows') {
             return is_writable($file);
         }
 
@@ -830,14 +940,15 @@ class Utility
             $file = rtrim($file, '\\/') . DIRECTORY_SEPARATOR;
             $file .= hash('md5', static::randomString());
 
-            if (!($fp = fopen($file, 'ab'))) {
+            if (($fp = fopen($file, 'ab')) === false) {
                 return false;
             }
+
             fclose($fp);
             chmod($file, 0777);
             @unlink($file);
         } else {
-            if (!is_file($file) OR !($fp = fopen($file, 'ab'))) {
+            if (!is_file($file) OR ($fp = fopen($file, 'ab')) === false) {
                 return false;
             }
             fclose($fp);
@@ -871,8 +982,8 @@ class Utility
      *
      * @param   string  $file   Filename
      * @param   string  $data   If writing to the file, the data to write.
-     * @param   int     $flags  Bitwise OR'ed set of flags for file_put_contents. One or 
-     *                          more of FILE_USE_INCLUDE_PATH, FILE_APPEND, LOCK_EX. 
+     * @param   int     $flags  Bitwise OR'ed set of flags for file_put_contents. One or
+     *                          more of FILE_USE_INCLUDE_PATH, FILE_APPEND, LOCK_EX.
      *                          {@link http://php.net/file_put_contents}
      * @return  string|int<0, max>|false
      *
@@ -896,6 +1007,210 @@ class Utility
     }
 
     /** miscellaneous functions **/
+
+    /**
+     * Convert Fahrenheit (Fº) To Celsius (Cº)
+     *
+     * @since  1.2.0
+     *
+     * @param  float  $fahrenheit  Value in Fahrenheit
+     * @param  bool   $rounded     Whether or not to round the result.
+     * @param  int    $precision   Precision to use if $rounded is true.
+     * @return float
+     */
+    public static function fahrenheitToCelsius(float $fahrenheit, bool $rounded = true, int $precision = 2): float
+    {
+        $result = ($fahrenheit - 32) / 1.8;
+
+        return ($rounded) ? round($result, $precision) : $result;
+    }
+
+    /**
+     * Convert Celsius (Cº) To Fahrenheit (Fº)
+     *
+     * @since  1.2.0
+     *
+     * @param  float  $celsius    Value in Celsius
+     * @param  bool   $rounded    Whether or not to round the result.
+     * @param  int    $precision  Precision to use if $rounded is true.
+     * @return float
+     */
+    public static function celsiusToFahrenheit(float $celsius, bool $rounded = true, int $precision = 2): float
+    {
+        $result = ($celsius * 1.8) + 32;
+
+        return ($rounded) ? round($result, $precision) : $result;
+    }
+
+    /**
+     * Convert Celsius (Cº) To Kelvin (K)
+     *
+     * @since  1.2.0
+     *
+     * @param  float  $celsius    Value in Celsius
+     * @param  bool   $rounded    Whether or not to round the result.
+     * @param  int    $precision  Precision to use if $rounded is true.
+     * @return float
+     */
+    public static function celsiusToKelvin(float $celsius, bool $rounded = true, int $precision = 2): float
+    {
+        $result = $celsius + 273.15;
+
+        return ($rounded) ? round($result, $precision) : $result;
+    }
+
+    /**
+     * Convert Kelvin (K) To Celsius (Cº)
+     *
+     * @since  1.2.0
+     *
+     * @param  float  $kelvin     Value in Kelvin
+     * @param  bool   $rounded    Whether or not to round the result.
+     * @param  int    $precision  Precision to use if $rounded is true.
+     * @return float
+     */
+    public static function kelvinToCelsius(float $kelvin, bool $rounded = true, int $precision = 2): float
+    {
+        $result = $kelvin - 273.15;
+
+        return ($rounded) ? round($result, $precision) : $result;
+    }
+
+    /**
+     * Convert Fahrenheit (Fº) To Kelvin (K)
+     *
+     * @since  1.2.0
+     *
+     * @param  float  $fahrenheit  Value in Fahrenheit
+     * @param  bool   $rounded     Whether or not to round the result.
+     * @param  int    $precision   Precision to use if $rounded is true.
+     * @return float
+     */
+    public static function fahrenheitToKelvin(float $fahrenheit, bool $rounded = true, int $precision = 2): float
+    {
+        $result = (($fahrenheit - 32) / 1.8) + 273.15;
+
+        return ($rounded) ? round($result, $precision) : $result;
+    }
+
+    /**
+     * Convert Kelvin (K) To Fahrenheit (Fº)
+     *
+     * @since  1.2.0
+     *
+     * @param  float  $kelvin     Value in Kelvin
+     * @param  bool   $rounded    Whether or not to round the result.
+     * @param  int    $precision  Precision to use if $rounded is true.
+     * @return float
+     */
+    public static function kelvinToFahrenheit(float $kelvin, bool $rounded = true, int $precision = 2): float
+    {
+        $result = (($kelvin - 273.15) * 1.8) + 32;
+
+        return ($rounded) ? round($result, $precision) : $result;
+    }
+
+    /**
+     * Convert Fahrenheit (Fº) To Rankine (ºR)
+     *
+     * @since  1.2.0
+     *
+     * @param  float  $fahrenheit  Value in Fahrenheit
+     * @param  bool   $rounded     Whether or not to round the result.
+     * @param  int    $precision   Precision to use if $rounded is true.
+     * @return float
+     */
+    public static function fahrenheitToRankine(float $fahrenheit, bool $rounded = true, int $precision = 2): float
+    {
+        $result = $fahrenheit + 459.67;
+
+        return ($rounded) ? round($result, $precision) : $result;
+    }
+
+    /**
+     * Convert Rankine (ºR) To Fahrenheit (Fº)
+     *
+     * @since  1.2.0
+     *
+     * @param  float  $rankine    Value in Rankine
+     * @param  bool   $rounded    Whether or not to round the result.
+     * @param  int    $precision  Precision to use if $rounded is true.
+     * @return float
+     */
+    public static function rankineToFahrenheit(float $rankine, bool $rounded = true, int $precision = 2): float
+    {
+        $result = $rankine - 459.67;
+
+        return ($rounded) ? round($result, $precision) : $result;
+    }
+
+    /**
+     * Convert Celsius (Cº) To Rankine (ºR)
+     *
+     * @since  1.2.0
+     *
+     * @param  float  $celsius    Value in Celsius
+     * @param  bool   $rounded    Whether or not to round the result.
+     * @param  int    $precision  Precision to use if $rounded is true.
+     * @return float
+     */
+    public static function celsiusToRankine(float $celsius, bool $rounded = true, int $precision = 2): float
+    {
+        $result = ($celsius * 1.8) + 491.67;
+
+        return ($rounded) ? round($result, $precision) : $result;
+    }
+
+    /**
+     * Convert Rankine (ºR) To Celsius (Cº)
+     *
+     * @since  1.2.0
+     *
+     * @param  float  $rankine    Value in Rankine
+     * @param  bool   $rounded    Whether or not to round the result.
+     * @param  int    $precision  Precision to use if $rounded is true.
+     * @return float
+     */
+    public static function rankineToCelsius(float $rankine, bool $rounded = true, int $precision = 2): float
+    {
+        $result = ($rankine - 491.67) / 1.8;
+
+        return ($rounded) ? round($result, $precision) : $result;
+    }
+
+    /**
+     * Convert Kelvin (K) To Rankine (ºR)
+     *
+     * @since  1.2.0
+     *
+     * @param  float  $kelvin     Value in Kelvin
+     * @param  bool   $rounded    Whether or not to round the result.
+     * @param  int    $precision  Precision to use if $rounded is true.
+     * @return float
+     */
+    public static function kelvinToRankine(float $kelvin, bool $rounded = true, int $precision = 2): float
+    {
+        $result = (($kelvin - 273.15) * 1.8) + 491.67;
+
+        return ($rounded) ? round($result, $precision) : $result;
+    }
+
+    /**
+     * Convert Rankine (ºR) To Kelvin (K)
+     *
+     * @since  1.2.0
+     *
+     * @param  float  $rankine    Value in Rankine
+     * @param  bool   $rounded    Whether or not to round the result.
+     * @param  int    $precision  Precision to use if $rounded is true.
+     * @return float
+     */
+    public static function rankineToKelvin(float $rankine, bool $rounded = true, int $precision = 2): float
+    {
+        $result = (($rankine - 491.67) / 1.8) + 273.15;
+
+        return ($rounded) ? round($result, $precision) : $result;
+    }
 
     /**
      * validEmail()
@@ -922,15 +1237,9 @@ class Utility
     {
         $data = trim($data);
 
-/* Remove for now 
-        // PHP >= 8.3? json_validate currently in RFC for PHP 8.3
-        if (PHP_VERSION_ID >= 80300) {
-            return \json_validate($data);
-        }
-*/
         json_decode($data);
 
-        return json_last_error() !== JSON_ERROR_NONE;
+        return json_last_error() === JSON_ERROR_NONE;
     }
 
     /**
@@ -963,47 +1272,17 @@ class Utility
         //
         $bytes = floatval($bytes);
 
-        /**
-         * @todo  Cleanup just a little bit.
-         */
-        switch (true) {
-            case ($bytes >= $pow['yotta']):
-                $bytes = number_format(($bytes / $pow['yotta']), $decimals, '.', '');
-                $bytes .= ' YiB';
-                break;
-            case ($bytes >= $pow['zeta']):
-                $bytes = number_format(($bytes / $pow['zeta']), $decimals, '.', '');
-                $bytes .= ' ZiB';
-                break;
-            case ($bytes >= $pow['exa']):
-                $bytes = number_format(($bytes / $pow['exa']), $decimals, '.', '');
-                $bytes .= ' EiB';
-                break;
-            case ($bytes >= $pow['peta']):
-                $bytes = number_format(($bytes / $pow['peta']), $decimals, '.', '');
-                $bytes .= ' PiB';
-                break;
-            case ($bytes >= $pow['tera']):
-                $bytes = number_format(($bytes / $pow['tera']), $decimals, '.', '');
-                $bytes .= ' TiB';
-                break;
-            case ($bytes >= $pow['giga']):
-                $bytes = number_format(($bytes / $pow['giga']), $decimals, '.', '');
-                $bytes .= ' GiB';
-                break;
-            case ($bytes >= $pow['mega']):
-                $bytes = number_format(($bytes / $pow['mega']), $decimals, '.', '');
-                $bytes .= ' MiB';
-                break;
-            case ($bytes >= $pow['kilo']):
-                $bytes = number_format(($bytes / $pow['kilo']), $decimals, '.', '');
-                $bytes .= ' KiB';
-                break;
-            default:
-                $bytes = number_format($bytes, $decimals, '.', '') . ' B';
-                break;
-        }
-        return $bytes;
+        return match (true) {
+            $bytes >= $pow['yotta'] => number_format(($bytes / $pow['yotta']), $decimals, '.', '') . ' YiB',
+            $bytes >= $pow['zeta']  => number_format(($bytes / $pow['zeta']), $decimals, '.', '') . ' ZiB',
+            $bytes >= $pow['exa']   => number_format(($bytes / $pow['exa']), $decimals, '.', '') . ' EiB',
+            $bytes >= $pow['peta']  => number_format(($bytes / $pow['peta']), $decimals, '.', '') . ' PiB',
+            $bytes >= $pow['tera']  => number_format(($bytes / $pow['tera']), $decimals, '.', '') . ' TiB',
+            $bytes >= $pow['giga']  => number_format(($bytes / $pow['giga']), $decimals, '.', '') . ' GiB',
+            $bytes >= $pow['mega']  => number_format(($bytes / $pow['mega']), $decimals, '.', '') . ' MiB',
+            $bytes >= $pow['kilo']  => number_format(($bytes / $pow['kilo']), $decimals, '.', '') . ' KiB',
+            default => number_format($bytes, $decimals, '.', '') . ' B'
+        };
     }
 
     /**
@@ -1029,12 +1308,12 @@ class Utility
         }
 
         // Default timezone
-        if (empty($timezone)) {
+        if ($timezone === '') {
             $timezone = 'UTC';
         }
 
         // Check to see if it is a valid timezone
-        if (!in_array($timezone, $validTimezones)) {
+        if (!in_array($timezone, $validTimezones, true)) {
             throw new InvalidArgumentException('$timezone appears to be invalid.');
         }
 
@@ -1057,38 +1336,19 @@ class Utility
         // Calculate difference
         $difference = $timestampFrom->diff($timestampTo);
 
-        $string = '';
-
-        switch (true) {
-            case ($difference->y):
-                $string = $difference->y . ' year(s)';
-                break;
-            case ($difference->m):
-                $string = $difference->m . ' month(s)';
-                break;
-            case ($difference->d):
-                if ($difference->d >= 7) {
-                    $string = ceil($difference->d / 7) . ' week(s)';
-                }
-                else {
-                    $string = $difference->d . ' day(s)';
-                }
-                break;
-            case ($difference->h):
-                $string = $difference->h . ' hour(s)';
-                break;
-            case ($difference->i):
-                $string = $difference->i . ' minute(s)';
-                break;
-            case ($difference->s):
-                $string = $difference->s . ' second(s)';
-                break;
-        }
-
-        // Should not happen, but if it does...
-        if (empty($string)) {
-            return '';
-        }
+        $string = match (true) {
+            $difference->y > 0 => $difference->y . ' year(s)',
+            $difference->m > 0 => $difference->m . ' month(s)',
+            $difference->d > 0 => (
+            $difference->d >= 7
+                ? ceil($difference->d / 7) . ' week(s)'
+                : $difference->d . ' day(s)'
+            ),
+            $difference->h > 0 => $difference->h . ' hour(s)',
+            $difference->i > 0 => $difference->i . ' minute(s)',
+            $difference->s > 0 => $difference->s . ' second(s)',
+            default => ''
+        };
         return $string . $append;
     }
 
@@ -1104,26 +1364,32 @@ class Utility
     public static function getIpAddress(bool $trustProxy = false): string
     {
         // Pretty self-explanatory. Try to get an 'accurate' IP
-        $ip = $_SERVER['REMOTE_ADDR'];
-
-        if ($trustProxy) {
-            return $ip;
+        if (!$trustProxy) {
+            /** @var string **/
+            return $_SERVER['REMOTE_ADDR'];
         }
 
+        $ip = '';
         $ips = [];
 
         if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+            /** @var string $ips **/
+            $ips = $_SERVER['HTTP_X_FORWARDED_FOR'];
+            $ips = explode(',', $ips);
         } elseif (isset($_SERVER['HTTP_X_REAL_IP'])) {
-            $ips = explode(',', $_SERVER['HTTP_X_REAL_IP']);
+            /** @var string $ips **/
+            $ips = $_SERVER['HTTP_X_REAL_IP'];
+            $ips = explode(',', $ips);
         }
 
+        /** @var  array<mixed> $ips **/
         $ips = static::arrayMapDeep($ips, 'trim');
 
-        if (!empty($ips)) {
+        if (count($ips) > 0) {
             foreach ($ips AS $val) {
                 /** @phpstan-ignore-next-line */
-                if (inet_ntop(inet_pton($val)) == $val AND static::isPublicIp($val)) {
+                if (inet_ntop(inet_pton($val)) === $val AND static::isPublicIp($val)) {
+                    /** @var string $ip **/
                     $ip = $val;
                     break;
                 }
@@ -1131,8 +1397,9 @@ class Utility
         }
         unset($ips);
 
-        if (!$ip AND isset($_SERVER['HTTP_CLIENT_IP'])) {
-            $ip = $_SERVER['HTTP_CLIENT_IP'];
+        if ($ip === '') {
+            /** @var string $ip **/
+            $ip = $_SERVER['HTTP_CLIENT_IP'] ?? $_SERVER['REMOTE_ADDR'];
         }
         return $ip;
     }
@@ -1147,8 +1414,8 @@ class Utility
      */
     public static function isPrivateIp(string $ipaddress): bool
     {
-        return !filter_var(
-            $ipaddress, 
+        return !(bool)filter_var(
+            $ipaddress,
             FILTER_VALIDATE_IP,
             FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6 | FILTER_FLAG_NO_PRIV_RANGE
         );
@@ -1164,8 +1431,8 @@ class Utility
      */
     public static function isReservedIp(string $ipaddress): bool
     {
-        return !filter_var(
-            $ipaddress, 
+        return !(bool)filter_var(
+            $ipaddress,
             FILTER_VALIDATE_IP,
             FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6 | FILTER_FLAG_NO_RES_RANGE
         );
@@ -1214,15 +1481,17 @@ class Utility
      *
      * Determines current hostname.
      *
-     * @param   bool    $stripWww  True to strip www. off the host, false to 
+     * @param   bool    $stripWww  True to strip www. off the host, false to
      *                             leave it be.
-     * @return  string 
+     * @return  string
      */
     public static function currentHost(bool $stripWww = false): string
     {
-        $host = trim(strval(($_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? '')));
+        /** @var string $host **/
+        $host = ($_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? '');
+        $host = trim(strval($host));
 
-        if (empty($host) OR !preg_match('#^\[?(?:[a-z0-9-:\]_]+\.?)+$#', $host)) {
+        if ($host === '' OR preg_match('#^\[?(?:[a-z0-9-:\]_]+\.?)+$#', $host) === 0) {
             $host = 'localhost';
         }
 
@@ -1230,9 +1499,9 @@ class Utility
 
         // Strip 'www.'
         if ($stripWww) {
-            return preg_replace('#^www\.#', '', $host);
+            $strippedHost = preg_replace('#^www\.#', '', $host);
         }
-        return $host;
+        return ($strippedHost ?? $host);
     }
 
     /**
@@ -1240,25 +1509,29 @@ class Utility
      *
      * Builds an array of headers based on HTTP_* keys within $_SERVER.
      *
+     * @param   bool  $asLowerCase
      * @return  array<mixed>
      */
-    public static function serverHttpVars(): array
+    public static function serverHttpVars(bool $asLowerCase = false): array
     {
         $headers = [];
 
         if (static::doesNotContain(PHP_SAPI, 'cli')) {
+            /** @var array<mixed> $keys **/
             $keys = static::arrayMapDeep(array_keys($_SERVER), [static::class, 'lower']);
             $keys = array_filter($keys, function ($key) {
+                /** @var string $key **/
                 return (static::beginsWith($key, 'http_'));
             });
 
-            if (!empty($keys)) {
+            if (count($keys) > 0) {
                 foreach ($keys AS $key) {
+                    /** @var string $key **/
                     $headers[strtr(
                         ucwords(strtr(static::substr($key, 5), '_', ' ')),
-                        ' ', 
+                        ' ',
                         '-'
-                    )] = &$_SERVER[static::upper($key)];
+                    )] = &$_SERVER[($asLowerCase ? $key : static::upper($key))];
                 }
             }
             unset($keys);
@@ -1275,12 +1548,12 @@ class Utility
      */
     public static function isHttps(): bool
     {
-        $headers = array_map([static::class, 'lower'], static::serverHttpVars());
+        $headers = static::serverHttpVars(true);
 
         // Generally, as long as HTTPS is not set or is any empty value, it is considered to be "off"
         if (
-            (isset($_SERVER['HTTPS']) AND !empty($_SERVER['HTTPS']) AND $_SERVER['HTTPS'] !== 'off') 
-            OR (isset($headers['X-Forwarded-Proto']) AND $headers['X-Forwarded-Proto'] === 'https') 
+            (isset($_SERVER['HTTPS']) AND $_SERVER['HTTPS'] !== '' AND $_SERVER['HTTPS'] !== 'off')
+            OR (isset($headers['X-Forwarded-Proto']) AND $headers['X-Forwarded-Proto'] === 'https')
             OR (isset($headers['Front-End-Https']) AND $headers['Front-End-Https'] !== 'off')
         ) {
             return true;
@@ -1306,7 +1579,8 @@ class Utility
             $url .= $_SERVER['PHP_AUTH_USER'];
 
             if (isset($_SERVER['PHP_AUTH_PW'])) {
-                $url .= ":{$_SERVER['PHP_AUTH_PW']}";
+                $url .= ':';
+                $url .= $_SERVER['PHP_AUTH_PW'];
             }
             $url .= '@';
         }
@@ -1314,22 +1588,31 @@ class Utility
         // Host and port
         $url .= static::currentHost();
 
-        $port = intval($_SERVER['SERVER_PORT']);
-        $port = ((static::isHttps() AND $port != 443) OR (!static::isHttps() AND $port != 80)) ? $port : 0;
+        /** @var int $port **/
+        $port = $_SERVER['SERVER_PORT'] ?? '';
+        $port = intval($port);
+        $port = ((static::isHttps() AND $port !== 443) OR (!static::isHttps() AND $port !== 80)) ? $port : 0;
 
-        if (!empty($port)) {
+        if ($port > 0) {
             $url .= ":$port";
         }
 
         // Path
-        if (!isset($_SERVER['REQUEST_URI'])) {
-            $url .= trim(strval($_SERVER['PHP_SELF']));
+        /** @var string $self **/
+        $self = $_SERVER['PHP_SELF'];
+        /** @var string $query **/
+        $query = $_SERVER['QUERY_STRING'] ?? '';
+        /** @var string $request **/
+        $request = $_SERVER['REQUEST_URI'] ?? '';
 
-            if (isset($_SERVER['QUERY_STRING'])) {
-                $url .= '?' . trim(strval($_SERVER['QUERY_STRING']));
+        if ($request === '') {
+            $url .= trim(strval($self));
+
+            if ($query !== '') {
+                $url .= '?' . trim(strval($query));
             }
         } else {
-            $url .= trim(strval($_SERVER['REQUEST_URI']));
+            $url .= trim(strval($request));
         }
 
         // If $parse is true, parse into array
@@ -1374,10 +1657,14 @@ class Utility
      *                           False to add a second header of the same type
      *
      * @throws Exception|InvalidArgumentException|RuntimeException
+     *
+     * @deprecated 1.2.0         Use \http_response_code() instead
      */
     public static function statusHeader(int $code = 200, string $message = '', bool $replace = true): void
     {
         static $statusCodes;
+
+        @trigger_error('Utility function "statusHeader()" is deprecated since version 1.2.0. Use \http_response_code() instead', \E_USER_DEPRECATED);
 
         if (!$statusCodes) {
             $statusCodes = [
@@ -1426,11 +1713,11 @@ class Utility
         }
 
         // Sanity check
-        if (empty($code)) {
+        if ($code < 0 OR $code > 505) {
             throw new InvalidArgumentException('$code is invalid.');
         }
 
-        if (empty($message)) {
+        if ($message === '') {
             if (!isset($statusCodes[$code])) {
                 throw new Exception('No status message available. Please double check your $code or provide a custom $message.');
             }
@@ -1446,8 +1733,8 @@ class Utility
             header("Status: $code $message", $replace);
         } else {
             header(
-                ($_SERVER['SERVER_PROTOCOL'] ?? 'HTTP/1.1') . " $code $message", 
-                $replace, 
+                ($_SERVER['SERVER_PROTOCOL'] ?? 'HTTP/1.1') . " $code $message",
+                $replace,
                 $code
             );
         }
@@ -1477,7 +1764,7 @@ class Utility
                 static::randomInt(0, 0xffff),
                 static::randomInt(0, 0xffff)
             );
-        } catch (RandomException $e) {
+        } catch (RandomException | Exception $e) {
             throw new RandomException('Unable to generate GUID: ' . $e->getMessage(), 0, $e);
         }
         return $guid;
@@ -1506,7 +1793,7 @@ class Utility
         }
 
         // Check to see if it is a valid timezone
-        if (empty($timezone) OR !in_array($timezone, $validTimezones)) {
+        if ($timezone === '' OR !in_array($timezone, $validTimezones, true)) {
             throw new InvalidArgumentException('$timezone appears to be invalid.');
         }
 
@@ -1519,7 +1806,7 @@ class Utility
 
         $location = $tz->getLocation();
 
-        if ($location == false) {
+        if ($location === false) {
             $location = [
                 'country_code' => 'N/A',
                 'latitude'     => 'N/A',
@@ -1546,7 +1833,7 @@ class Utility
      *
      * @param   string  $option       The configuration option name.
      * @param   bool    $standardize  Standardize returned values to 1 or 0?
-     * @return  string|false 
+     * @return  string|false
      *
      * @throws  RuntimeException|InvalidArgumentException
      */
@@ -1557,7 +1844,7 @@ class Utility
             throw new RuntimeException('Native ini_get function not available.');
         }
 
-        if (empty($option)) {
+        if ($option === '') {
             throw new InvalidArgumentException('$option must not be empty.');
         }
 
@@ -1596,7 +1883,7 @@ class Utility
             throw new RuntimeException('Native ini_set function not available.');
         }
 
-        if (empty($option)) {
+        if ($option === '') {
             throw new InvalidArgumentException('$option must not be empty.');
         }
         return ini_set($option, $value);
