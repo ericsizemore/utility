@@ -20,7 +20,6 @@ I will evaluate the vulnerability and, if necessary, release a fix or mitigating
 
 Once either a) a fix has been published, or b) I have declined to address the vulnerability for whatever reason, you are free to publicly disclose it.
 
-<!--
 ## Tidelift subscribers
 
 If you're a [Tidelift](https://tidelift.com/) subscriber, please use this route instead:
@@ -28,4 +27,3 @@ If you're a [Tidelift](https://tidelift.com/) subscriber, please use this route 
 To report a security vulnerability, please use the
 [Tidelift security contact](https://tidelift.com/security).
 Tidelift will coordinate the fix and disclosure.
--->
