@@ -1,18 +1,27 @@
 name: Tests
 
-on: [push]
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
 
 jobs:
   test:
-    name: Run Unit Tests
+    name: Run Unit Tests ${{ matrix.php }}
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: [ '8.2', '8.3' ]
     steps:
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
+      - uses: actions/checkout@v4
 
-      - uses: actions/checkout@v3
+      - name: Install PHP ${{ matrix.php }}
+        uses: shivammathur/setup-php@master
+        with:
+           php-version: ${{ matrix.php }}
+           extensions: mbstring
+           tools: composer:v2
 
       - name: Validate composer.json and composer.lock
         run: composer validate --strict
