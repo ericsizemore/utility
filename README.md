@@ -1,6 +1,7 @@
 # Utility - Collection of various PHP utility functions.
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fericsizemore%2Futility.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fericsizemore%2Futility?ref=badge_shield)
-[![Tests](https://github.com/ericsizemore/utility/actions/workflows/main.yml/badge.svg)](https://github.com/ericsizemore/utility/actions/workflows/main.yml)
+[![Tests](https://github.com/ericsizemore/utility/actions/workflows/tests.yml/badge.svg)](https://github.com/ericsizemore/utility/actions/workflows/tests.yml)
+[![PHPStan](https://github.com/ericsizemore/utility/actions/workflows/main.yml/badge.svg)](https://github.com/ericsizemore/utility/actions/workflows/main.yml)
 [![Latest Stable Version](https://img.shields.io/packagist/v/esi/utility.svg)](https://packagist.org/packages/esi/utility)
 [![Downloads per Month](https://img.shields.io/packagist/dm/esi/utility.svg)](https://packagist.org/packages/esi/utility)
 [![License](https://img.shields.io/packagist/l/esi/utility.svg)](https://packagist.org/packages/esi/utility)
