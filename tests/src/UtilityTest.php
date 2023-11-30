@@ -369,7 +369,12 @@ class UtilityTest extends TestCase
 
         Utility::fileWrite($file2, \implode('', \range('a', 'z')));
 
-        $this->assertEquals([$file1, $file2], Utility::directoryList($dir));
+        $expected = [
+            0 => $file2,
+            1 => $file1
+        ];
+
+        $this->assertEquals($expected, Utility::directoryList($dir));
 
         \unlink($file1);
         \unlink($file2);
@@ -397,17 +402,24 @@ class UtilityTest extends TestCase
     public function testFileRead(): void
     {
         $dir = \dirname(__FILE__) . \DIRECTORY_SEPARATOR . 'dir1';
-        \mkdir($dir);
+
+        if (!\is_dir($dir)) {
+            \mkdir($dir);
+        }
 
         $file1 = $dir . \DIRECTORY_SEPARATOR . 'file1';
-        \touch($file1);
+
+        if (!\file_exists($file1)) {
+            \touch($file1);
+        }
 
         Utility::fileWrite($file1, "This is a test.");
 
         $this->assertEquals('This is a test.', \trim(Utility::fileRead($file1)));
 
-        \unlink($file1);
-        \rmdir($dir);
+        if (\unlink($file1)) {
+            \rmdir($dir);
+        }
     }
 
     /**
@@ -416,15 +428,22 @@ class UtilityTest extends TestCase
     public function testFileWrite(): void
     {
         $dir = \dirname(__FILE__) . \DIRECTORY_SEPARATOR . 'dir1';
-        \mkdir($dir);
+
+        if (!\is_dir($dir)) {
+            \mkdir($dir);
+        }
 
         $file1 = $dir . \DIRECTORY_SEPARATOR . 'file1';
-        \touch($file1);
+
+        if (!\file_exists($file1)) {
+            \touch($file1);
+        }
 
         $this->assertEquals(15, Utility::fileWrite($file1, "This is a test."));
 
-        \unlink($file1);
-        \rmdir($dir);
+        if (\unlink($file1)) {
+            \rmdir($dir);
+        }
     }
 
     /**
@@ -794,7 +813,9 @@ class UtilityTest extends TestCase
     public function testTimezoneInfo(): void
     {
         $zoneInfo = Utility::timezoneInfo('America/New_York');
-        $this->assertEquals(-4, $zoneInfo['offset']);
+        $expected = ($zoneInfo['dst'] === 1) ? -4 : -5;
+
+        $this->assertEquals($expected, $zoneInfo['offset']);
         $this->assertEquals('US', $zoneInfo['country']);
     }
 

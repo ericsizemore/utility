@@ -1363,6 +1363,10 @@ class Utility
     public static function getIpAddress(bool $trustProxy = false): string
     {
         // Pretty self-explanatory. Try to get an 'accurate' IP
+        if (isset($_SERVER['HTTP_CF_CONNECTING_IP'])) {
+            $_SERVER['REMOTE_ADDR'] = $_SERVER['HTTP_CF_CONNECTING_IP'];
+        }
+
         if (!$trustProxy) {
             /** @var string **/
             return $_SERVER['REMOTE_ADDR'];
