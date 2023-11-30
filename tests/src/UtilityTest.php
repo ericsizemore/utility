@@ -416,7 +416,8 @@ class UtilityTest extends TestCase
         Utility::fileWrite($file1, "This is a test.");
 
         /** @var string $data **/
-        $data = \trim(Utility::fileRead($file1));
+        $data = Utility::fileRead($file1);
+        $data = \trim($data);
 
         $this->assertEquals('This is a test.', $data);
 
@@ -836,7 +837,7 @@ class UtilityTest extends TestCase
     public function testIniSet(): void
     {
         /** @var string $oldValue **/
-        $oldValue = Utility::iniSet('display_errors', Utility::iniGet('display_errors'));
+        $oldValue = Utility::iniSet('display_errors', (string)Utility::iniGet('display_errors'));
 
         $this->assertEquals($oldValue, Utility::iniSet('display_errors', $oldValue));
     }
