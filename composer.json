@@ -35,7 +35,7 @@
 		"security": "https://github.com/ericsizemore/utility/security/policy"
 	},
     "scripts": {
-        "test": "phpunit --display-deprecations --display-warnings --globals-backup",
+        "test": "phpunit --coverage-clover=coverage.clover --display-deprecations --display-warnings --globals-backup",
         "phpstan": "vendor/bin/phpstan analyse -c phpstan.neon"
     },
     "minimum-stability": "dev",
