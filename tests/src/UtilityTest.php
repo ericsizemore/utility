@@ -474,6 +474,7 @@ class UtilityTest extends TestCase
         \natsort($expected);
 
         $actual = Utility::directoryList(self::$testDir);
+        \natsort($actual);
 
         $this->assertEquals($expected, $actual);
         $this->assertEquals([], Utility::directoryList(self::$testDir, ['dir1']));
