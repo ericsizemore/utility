@@ -1,13 +1,13 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /**
  * Utility - Collection of various PHP utility functions.
  *
  * @author    Eric Sizemore <admin@secondversion.com>
  * @package   Utility
- * @link      http://www.secondversion.com/
+ * @link      https://www.secondversion.com/
  * @version   1.2.0
  * @copyright (C) 2017 - 2023 Eric Sizemore
  * @license   The MIT License (MIT)
@@ -55,7 +55,7 @@ use const PHP_INT_MAX, PHP_INT_MIN, PHP_SAPI, PHP_OS_FAMILY;
  *
  * @author    Eric Sizemore <admin@secondversion.com>
  * @package   Utility
- * @link      http://www.secondversion.com/
+ * @link      https://www.secondversion.com/
  * @version   1.2.0
  * @copyright (C) 2017 - 2023 Eric Sizemore
  * @license   The MIT License (MIT)
@@ -207,7 +207,7 @@ class Utility
      * @param  array<mixed>        ...$args
      * @return array<mixed>|false
      */
-    public static function arrayInterlace(array ...$args): array|false
+    public static function arrayInterlace(array ...$args): array | false
     {
         $numArgs = count($args);
 
@@ -216,7 +216,7 @@ class Utility
         }
 
         if ($numArgs === 1) {
-            return $args;
+            return $args[0];
         }
 
         $totalElements = 0;
@@ -965,7 +965,7 @@ class Utility
      *
      * @throws  InvalidArgumentException
      */
-    public static function fileRead(string $file): string|false
+    public static function fileRead(string $file): string | false
     {
         // Sanity check
         if (!is_readable($file)) {
@@ -988,7 +988,7 @@ class Utility
      *
      * @throws InvalidArgumentException|RandomException
      */
-    public static function fileWrite(string $file, string $data = '', int $flags = 0): string|false|int
+    public static function fileWrite(string $file, string $data = '', int $flags = 0): string | false | int
     {
         // Sanity checks
         if (!is_readable($file)) {
@@ -1221,7 +1221,7 @@ class Utility
      */
     public static function validEmail(string $email): bool
     {
-        return (bool)filter_var($email, FILTER_VALIDATE_EMAIL);
+        return (bool) filter_var($email, FILTER_VALIDATE_EMAIL);
     }
 
     /**
@@ -1417,7 +1417,7 @@ class Utility
      */
     public static function isPrivateIp(string $ipaddress): bool
     {
-        return !(bool)filter_var(
+        return !(bool) filter_var(
             $ipaddress,
             FILTER_VALIDATE_IP,
             FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6 | FILTER_FLAG_NO_PRIV_RANGE
@@ -1434,7 +1434,7 @@ class Utility
      */
     public static function isReservedIp(string $ipaddress): bool
     {
-        return !(bool)filter_var(
+        return !(bool) filter_var(
             $ipaddress,
             FILTER_VALIDATE_IP,
             FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6 | FILTER_FLAG_NO_RES_RANGE
@@ -1473,7 +1473,7 @@ class Utility
 
         // Split and process
         $email = str_split($email);
-        $email = array_map(function ($char) {
+        $email = array_map(function($char) {
             return '&#' . ord($char) . ';';
         }, $email);
         return implode('', $email);
@@ -1484,14 +1484,18 @@ class Utility
      *
      * Determines current hostname.
      *
-     * @param   bool    $stripWww  True to strip www. off the host, false to
-     *                             leave it be.
+     * @param   bool    $stripWww         True to strip www. off the host, false to leave it be.
+     * @param   bool    $acceptForwarded  True to accept 
      * @return  string
      */
-    public static function currentHost(bool $stripWww = false): string
+    public static function currentHost(bool $stripWww = false, bool $acceptForwarded = false): string
     {
         /** @var string $host **/
-        $host = ($_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? '');
+        $host = (
+            ($acceptForwarded AND isset($_SERVER['HTTP_X_FORWARDED_HOST'])) ? 
+            $_SERVER['HTTP_X_FORWARDED_HOST'] : 
+            ($_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? '')
+        );
         $host = trim(strval($host));
 
         if ($host === '' OR preg_match('#^\[?(?:[a-z0-9-:\]_]+\.?)+$#', $host) === 0) {
@@ -1522,7 +1526,7 @@ class Utility
         if (static::doesNotContain(PHP_SAPI, 'cli')) {
             /** @var array<mixed> $keys **/
             $keys = static::arrayMapDeep(array_keys($_SERVER), [static::class, 'lower']);
-            $keys = array_filter($keys, function ($key) {
+            $keys = array_filter($keys, function($key) {
                 /** @var string $key **/
                 return (static::beginsWith($key, 'http_'));
             });
@@ -1564,6 +1568,7 @@ class Utility
         return false;
     }
 
+
     /**
      * currentUrl()
      *
@@ -1575,30 +1580,28 @@ class Utility
     public static function currentUrl(bool $parse = false): mixed
     {
         // Scheme
-        $url = (static::isHttps()) ? 'https://' : 'http://';
+        $scheme = (static::isHttps()) ? 'https://' : 'http://';
 
         // Auth
+        $auth = '';
+
         if (isset($_SERVER['PHP_AUTH_USER'])) {
-            $url .= $_SERVER['PHP_AUTH_USER'];
+            $auth = $_SERVER['PHP_AUTH_USER'];
 
             if (isset($_SERVER['PHP_AUTH_PW'])) {
-                $url .= ':';
-                $url .= $_SERVER['PHP_AUTH_PW'];
+                $auth .= ':';
+                $auth .= $_SERVER['PHP_AUTH_PW'];
             }
-            $url .= '@';
+            $auth .= '@';
         }
 
         // Host and port
-        $url .= static::currentHost();
+        $host = static::currentHost();
 
         /** @var int $port **/
         $port = $_SERVER['SERVER_PORT'] ?? '';
         $port = intval($port);
-        $port = ((static::isHttps() AND $port !== 443) OR (!static::isHttps() AND $port !== 80)) ? $port : 0;
-
-        if ($port > 0) {
-            $url .= ":$port";
-        }
+        $port = ((static::isHttps() AND $port === 443) OR (!static::isHttps() AND $port === 80)) ? 0 : $port;
 
         // Path
         /** @var string $self **/
@@ -1607,22 +1610,15 @@ class Utility
         $query = $_SERVER['QUERY_STRING'] ?? '';
         /** @var string $request **/
         $request = $_SERVER['REQUEST_URI'] ?? '';
+        /** @var string $path **/
+        $path = ($request === '' ? $self . ($query !== '' ? '?' . $query : '') : $request);
 
-        if ($request === '') {
-            $url .= trim(strval($self));
-
-            if ($query !== '') {
-                $url .= '?' . trim(strval($query));
-            }
-        } else {
-            $url .= trim(strval($request));
-        }
+        // Put it all together
+        /** @var string $url **/
+        $url = sprintf('%s%s%s%s%s', $scheme, $auth, $host, ($port > 0 ? ":$port" : ''), $path);
 
         // If $parse is true, parse into array
-        if ($parse) {
-            $url = parse_url($url);
-        }
-        return $url;
+        return ($parse ? parse_url($url) : $url);
     }
 
     /**
@@ -1840,7 +1836,7 @@ class Utility
      *
      * @throws  RuntimeException|InvalidArgumentException
      */
-    public static function iniGet(string $option, bool $standardize = false): string|false
+    public static function iniGet(string $option, bool $standardize = false): string | false
     {
         if (!function_exists('\\ini_get')) {
             // disabled_functions?
@@ -1879,7 +1875,7 @@ class Utility
      *
      * @throws RuntimeException|InvalidArgumentException
      */
-    public static function iniSet(string $option, string $value): string|false
+    public static function iniSet(string $option, string $value): string | false
     {
         if (!function_exists('\\ini_set')) {
             // disabled_functions?

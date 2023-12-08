@@ -1,13 +1,13 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /**
  * Utility - Collection of various PHP utility functions.
  *
  * @author    Eric Sizemore <admin@secondversion.com>
  * @package   Utility
- * @link      http://www.secondversion.com/
+ * @link      https://www.secondversion.com/
  * @version   1.2.0
  * @copyright (C) 2017 - 2023 Eric Sizemore
  * @license   The MIT License (MIT)
@@ -22,7 +22,7 @@ use PHPUnit\Framework\TestCase;
  *
  * @author    Eric Sizemore <admin@secondversion.com>
  * @package   Utility
- * @link      http://www.secondversion.com/
+ * @link      https://www.secondversion.com/
  * @version   1.2.0
  * @copyright (C) 2017 - 2023 Eric Sizemore
  * @license   The MIT License (MIT)
@@ -61,6 +61,51 @@ use PHPUnit\Framework\TestCase;
 class UtilityTest extends TestCase
 {
     /**
+     * @var string
+     */
+    protected static string $testDir;
+
+    /**
+     * @var array<string>
+     */
+    protected static array $testFiles;
+
+    /**
+     */
+    public static function setUpBeforeClass(): void
+    {
+        self::$testDir = \dirname(__FILE__) . \DIRECTORY_SEPARATOR . 'dir1';
+        self::$testFiles = [
+            'file1' => self::$testDir . \DIRECTORY_SEPARATOR . 'file1',
+            'file2' => self::$testDir . \DIRECTORY_SEPARATOR . 'file2'
+        ];
+
+        if (!\is_dir(self::$testDir)) {
+            \mkdir(self::$testDir);
+        }
+
+        if (!\file_exists(self::$testFiles['file1'])) {
+            \touch(self::$testFiles['file1']);
+        }
+
+        if (!\file_exists(self::$testFiles['file2'])) {
+            \touch(self::$testFiles['file2']);
+        }
+    }
+
+    /**
+     */
+    public static function tearDownAfterClass(): void
+    {
+        \unlink(self::$testFiles['file1']);
+        \unlink(self::$testFiles['file2']);
+        \rmdir(self::$testDir);
+
+        self::$testDir = '';
+        self::$testFiles = [];
+    }
+
+    /**
      * Test Utility::getEncoding()
      */
     public function testGetEncoding(): void
@@ -73,11 +118,21 @@ class UtilityTest extends TestCase
      */
     public function testSetEncoding(): void
     {
+        // With no ini update
         Utility::setEncoding('UCS-2');
 
         $this->assertEquals('UCS-2', Utility::getEncoding());
 
         Utility::setEncoding('UTF-8');
+
+        // With ini update
+        Utility::setEncoding('UCS-2', true);
+
+        $this->assertEquals('UCS-2', Utility::getEncoding());
+        $this->assertEquals('UCS-2', Utility::iniGet('default_charset'));
+        $this->assertEquals('UCS-2', Utility::iniGet('internal_encoding'));
+
+        Utility::setEncoding('UTF-8', true);
     }
 
     /**
@@ -103,6 +158,11 @@ class UtilityTest extends TestCase
             [0 => 'a', 1 => 'b', 2 => 'c', 3 => 'd', '4.0' => 'e', '4.1' => 'f', '4.2' => 'g'], 
             Utility::arrayFlatten(['a', 'b', 'c', 'd', ['e', 'f', 'g']])
         );
+
+        $this->assertEquals(
+            ['k0' => 'a', 'k1' => 'b', 'k2' => 'c', 'k3' => 'd', 'k4.0' => 'e', 'k4.1' => 'f', 'k4.2' => 'g'], 
+            Utility::arrayFlatten(['a', 'b', 'c', 'd', ['e', 'f', 'g']], '.', 'k')
+        );
     }
 
     /**
@@ -123,6 +183,16 @@ class UtilityTest extends TestCase
             'def',
             ['&', 'test', '123']
         ], 'htmlentities'));
+
+        $var = new \stdClass();
+        $var->test = ['test' => '>'];
+        $var->what = '<';
+
+        $var2 = new \stdClass();
+        $var2->test = ['test' => '&gt;'];
+        $var2->what = '&lt;';
+
+        $this->assertEquals($var2, Utility::arrayMapDeep($var, 'htmlentities'));
     }
 
     /**
@@ -134,6 +204,12 @@ class UtilityTest extends TestCase
         $expect = [1, 'a', 2, 'b', 3, 'c'];
 
         $this->assertEquals($expect, $input);
+
+        // With no arguments
+        $this->assertFalse(Utility::arrayInterlace());
+
+        // With one argument
+        $this->assertEquals([1, 2, 3], Utility::arrayInterlace([1, 2, 3]));
     }
 
     /**
@@ -217,6 +293,9 @@ class UtilityTest extends TestCase
     {
         $this->assertTrue(Utility::beginsWith('this is a test', 'this'));
         $this->assertFalse(Utility::beginsWith('this is a test', 'test'));
+
+        $this->assertTrue(Utility::beginsWith('THIS IS A TEST', 'this', true));
+        $this->assertFalse(Utility::beginsWith('THIS IS A TEST', 'test', true));
     }
 
     /**
@@ -226,6 +305,9 @@ class UtilityTest extends TestCase
     {
         $this->assertTrue(Utility::endsWith('this is a test', 'test'));
         $this->assertFalse(Utility::endsWith('this is a test', 'this'));
+
+        $this->assertTrue(Utility::endsWith('THIS IS A TEST', 'test', true));
+        $this->assertFalse(Utility::endsWith('THIS IS A TEST', 'this', true));
     }
 
     /**
@@ -235,6 +317,9 @@ class UtilityTest extends TestCase
     {
         $this->assertTrue(Utility::doesContain('start a string', 'a string'));
         $this->assertFalse(Utility::doesContain('start a string', 'starting'));
+
+        $this->assertTrue(Utility::doesContain('START A STRING', 'a string', true));
+        $this->assertFalse(Utility::doesContain('START A STRING', 'starting', true));
     }
 
     /**
@@ -244,6 +329,9 @@ class UtilityTest extends TestCase
     {
         $this->assertTrue(Utility::doesNotContain('start a string', 'stringly'));
         $this->assertFalse(Utility::doesNotContain('start a string', 'string'));
+
+        $this->assertTrue(Utility::doesNotContain('START A STRING', 'stringly', true));
+        $this->assertFalse(Utility::doesNotContain('START A STRING', 'string', true));
     }
 
     /**
@@ -287,6 +375,13 @@ class UtilityTest extends TestCase
     {
         $bytes = Utility::randomBytes(8);
         $this->assertNotEmpty($bytes);
+
+        try {
+            $this->expectException(\Random\RandomException::class);
+            $bytes = Utility::randomBytes(0);
+        } finally {
+            //
+        }
     }
 
     /**
@@ -296,6 +391,16 @@ class UtilityTest extends TestCase
     {
         $int = Utility::randomInt(100, 250);
         $this->assertTrue(($int >= 100 and $int <= 250));
+
+        try {
+            $this->expectException(\Random\RandomException::class);
+            $int = Utility::randomInt(intval(\PHP_INT_MIN - 1), \PHP_INT_MAX);
+
+            $this->expectException(\Random\RandomException::class);
+            $int = Utility::randomInt(\PHP_INT_MAX, \PHP_INT_MIN);
+        } finally {
+            //
+        }
     }
 
     /**
@@ -305,6 +410,13 @@ class UtilityTest extends TestCase
     {
         $str = Utility::randomString(16);
         $this->assertTrue(Utility::length($str) === 16);
+
+        try {
+            $this->expectException(\Random\RandomException::class);
+            $str = Utility::randomString(-10);
+        } finally {
+            //
+        }
     }
 
     /**
@@ -312,18 +424,17 @@ class UtilityTest extends TestCase
      */
     public function testLineCounter(): void
     {
-        $dir = \dirname(__FILE__) . \DIRECTORY_SEPARATOR . 'dir1';
-        \mkdir($dir);
+        Utility::fileWrite(self::$testFiles['file1'], "This\nis\na\nnew\nline.\n");
+        $this->assertEquals(5, \array_sum(Utility::lineCounter(directory: self::$testDir, onlyLineCount: true)));
+        $this->assertEquals(0, \array_sum(Utility::lineCounter(directory: self::$testDir, ignore: ['dir1'], onlyLineCount: true)));
+        Utility::fileWrite(self::$testFiles['file1'], '');
 
-        $file1 = $dir . \DIRECTORY_SEPARATOR . 'file1';
-        \touch($file1);
-
-        Utility::fileWrite($file1, "This\nis\na\nnew\nline.\n");
-
-        $this->assertEquals(5, \array_sum(Utility::lineCounter(directory: $dir, onlyLineCount: true)));
-
-        \unlink($file1);
-        \rmdir($dir);
+        try {
+            $this->expectException(\InvalidArgumentException::class);
+            $count = \array_sum(Utility::lineCounter('/this/should/not/exist', onlyLineCount: true));
+        } finally {
+            //
+        }
     }
 
     /**
@@ -331,24 +442,21 @@ class UtilityTest extends TestCase
      */
     public function testDirectorySize(): void
     {
-        $dir = \dirname(__FILE__) . \DIRECTORY_SEPARATOR . 'dir1';
-        \mkdir($dir);
+        Utility::fileWrite(self::$testFiles['file1'], '1234567890');
+        Utility::fileWrite(self::$testFiles['file2'], \implode('', \range('a', 'z')));
 
-        $file1 = $dir . \DIRECTORY_SEPARATOR . 'file1';
-        \touch($file1);
+        $this->assertEquals(10 + 26, Utility::directorySize(self::$testDir));
+        $this->assertEquals(0, Utility::directorySize(self::$testDir, ['dir1']));
 
-        Utility::fileWrite($file1, '1234567890');
+        Utility::fileWrite(self::$testFiles['file1'], '');
+        Utility::fileWrite(self::$testFiles['file2'], '');
 
-        $file2 = $dir . \DIRECTORY_SEPARATOR . 'file2';
-        \touch($file2);
-
-        Utility::fileWrite($file2, \implode('', \range('a', 'z')));
-
-        $this->assertEquals(10 + 26, Utility::directorySize($dir));
-
-        \unlink($file1);
-        \unlink($file2);
-        \rmdir($dir);
+        try {
+            $this->expectException(\InvalidArgumentException::class);
+            $count = \array_sum(Utility::directorySize('/this/should/not/exist'));
+        } finally {
+            //
+        }
     }
 
     /**
@@ -356,29 +464,29 @@ class UtilityTest extends TestCase
      */
     public function testDirectoryList(): void
     {
-        $dir = \dirname(__FILE__) . \DIRECTORY_SEPARATOR . 'dir1';
-        \mkdir($dir);
-
-        $file1 = $dir . \DIRECTORY_SEPARATOR . 'file1';
-        \touch($file1);
-
-        Utility::fileWrite($file1, '1234567890');
-
-        $file2 = $dir . \DIRECTORY_SEPARATOR . 'file2';
-        \touch($file2);
-
-        Utility::fileWrite($file2, \implode('', \range('a', 'z')));
+        Utility::fileWrite(self::$testFiles['file1'], '1234567890');
+        Utility::fileWrite(self::$testFiles['file2'], \implode('', \range('a', 'z')));
 
         $expected = [
-            0 => $file2,
-            1 => $file1
+            0 => self::$testFiles['file1'],
+            1 => self::$testFiles['file2']
         ];
+        \natsort($expected);
 
-        $this->assertEquals($expected, Utility::directoryList($dir));
+        $actual = Utility::directoryList(self::$testDir);
 
-        \unlink($file1);
-        \unlink($file2);
-        \rmdir($dir);
+        $this->assertEquals($expected, $actual);
+        $this->assertEquals([], Utility::directoryList(self::$testDir, ['dir1']));
+
+        Utility::fileWrite(self::$testFiles['file1'], '');
+        Utility::fileWrite(self::$testFiles['file2'], '');
+
+        try {
+            $this->expectException(\InvalidArgumentException::class);
+            $count = Utility::directoryList('/this/should/not/exist');
+        } finally {
+            //
+        }
     }
 
     /**
@@ -401,28 +509,21 @@ class UtilityTest extends TestCase
      */
     public function testFileRead(): void
     {
-        $dir = \dirname(__FILE__) . \DIRECTORY_SEPARATOR . 'dir1';
-
-        if (!\is_dir($dir)) {
-            \mkdir($dir);
-        }
-
-        $file1 = $dir . \DIRECTORY_SEPARATOR . 'file1';
-
-        if (!\file_exists($file1)) {
-            \touch($file1);
-        }
-
-        Utility::fileWrite($file1, "This is a test.");
+        Utility::fileWrite(self::$testFiles['file1'], "This is a test.");
 
         /** @var string $data **/
-        $data = Utility::fileRead($file1);
+        $data = Utility::fileRead(self::$testFiles['file1']);
         $data = \trim($data);
 
         $this->assertEquals('This is a test.', $data);
 
-        if (\unlink($file1)) {
-            \rmdir($dir);
+        Utility::fileWrite(self::$testFiles['file1'], '');
+
+        try {
+            $this->expectException(\InvalidArgumentException::class);
+            $read = Utility::fileRead(self::$testFiles['file1'] . '.php');
+        } finally {
+            //
         }
     }
 
@@ -431,22 +532,15 @@ class UtilityTest extends TestCase
      */
     public function testFileWrite(): void
     {
-        $dir = \dirname(__FILE__) . \DIRECTORY_SEPARATOR . 'dir1';
+        $this->assertEquals(15, Utility::fileWrite(self::$testFiles['file1'], "This is a test."));
 
-        if (!\is_dir($dir)) {
-            \mkdir($dir);
-        }
+        Utility::fileWrite(self::$testFiles['file1'], '');
 
-        $file1 = $dir . \DIRECTORY_SEPARATOR . 'file1';
-
-        if (!\file_exists($file1)) {
-            \touch($file1);
-        }
-
-        $this->assertEquals(15, Utility::fileWrite($file1, "This is a test."));
-
-        if (\unlink($file1)) {
-            \rmdir($dir);
+        try {
+            $this->expectException(\InvalidArgumentException::class);
+            $read = Utility::fileWrite(self::$testFiles['file1'] . '.php');
+        } finally {
+            //
         }
     }
 
@@ -566,6 +660,7 @@ class UtilityTest extends TestCase
         $this->assertTrue(Utility::validEmail('john.smith@gmail.com'));
         $this->assertTrue(Utility::validEmail('john.smith+label@gmail.com'));
         $this->assertTrue(Utility::validEmail('john.smith@gmail.co.uk'));
+        $this->assertFalse(Utility::validEmail('j@'));
     }
 
     /**
@@ -624,6 +719,19 @@ class UtilityTest extends TestCase
         $this->assertEquals('1 year(s) old', Utility::timeDifference(\time() - (2592000 * 15)));
         $this->assertEquals('2 year(s) old', Utility::timeDifference(\time() - (2592000 * 36)));
         $this->assertEquals('11 year(s) old', Utility::timeDifference(\time() - (2592000 * 140)));
+
+        $this->assertEquals('1 second(s) old', Utility::timeDifference(\time() - 1, 0, ''));
+
+        try {
+            $this->expectException(\InvalidArgumentException::class);
+            $time = Utility::timeDifference(\time() - 30, 0, 'INVALID');
+
+            $this->expectException(\InvalidArgumentException::class);
+            $time = Utility::timeDifference(-8400, 0);
+        } finally {
+            //
+        }
+
     }
 
     /**
@@ -646,6 +754,14 @@ class UtilityTest extends TestCase
         unset($_SERVER['HTTP_X_REAL_IP']);
 
         $this->assertEquals('1.1.1.2', Utility::getIpAddress(true));
+
+        // What if from cloudflare?
+        $_SERVER['HTTP_CF_CONNECTING_IP'] = '1.1.1.5';
+
+        $this->assertEquals('1.1.1.5', Utility::getIpAddress());
+        $this->assertEquals('1.1.1.2', Utility::getIpAddress(true));
+
+        unset($_SERVER['HTTP_CF_CONNECTING_IP']);
     }
 
     /**
@@ -685,6 +801,13 @@ class UtilityTest extends TestCase
             '&#97;&#100;&#109;&#105;&#110;&#64;&#115;&#101;&#99;&#111;&#110;&#100;&#118;&#101;&#114;&#115;&#105;&#111;&#110;&#46;&#99;&#111;&#109;',
             Utility::obscureEmail('admin@secondversion.com')
         );
+
+        try {
+            $this->expectException(\InvalidArgumentException::class);
+            $email = Utility::obscureEmail('thisisnotvalid&!--');
+        } finally {
+            //
+        }
     }
 
     /**
@@ -692,11 +815,29 @@ class UtilityTest extends TestCase
      */
     public function testCurrentHost(): void
     {
-        $_SERVER['HTTP_HOST'] = 'example.com';
+        $origHost = $_SERVER['HTTP_HOST'] ?? '';
+        $origFwdHost = $_SERVER['HTTP_X_FORWARDED_HOST'] ?? '';
+        $origSrvName = $_SERVER['SERVER_NAME'] ?? '';
 
+        $_SERVER['HTTP_HOST'] = 'example.com';
+        $_SERVER['HTTP_X_FORWARDED_HOST'] = 'example2.com';
+        $_SERVER['SERVER_NAME'] = '';
+
+        $this->assertEquals('example2.com', Utility::currentHost(false, true));
         $this->assertEquals('example.com', Utility::currentHost());
 
-        unset($_SERVER['HTTP_HOST']);
+        $_SERVER['HTTP_HOST'] = 'www.example.com';
+
+        $this->assertEquals('www.example.com', Utility::currentHost());
+        $this->assertEquals('example.com', Utility::currentHost(true));
+
+        $_SERVER['HTTP_HOST'] = '';
+        $_SERVER['SERVER_NAME'] = '';
+        $this->assertEquals('localhost', Utility::currentHost());
+
+        $_SERVER['HTTP_HOST'] = $origHost;
+        $_SERVER['HTTP_X_FORWARDED_HOST'] = $origFwdHost;
+        $_SERVER['SERVER_NAME'] = $origSrvName;
     }
 
     /**

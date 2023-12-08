@@ -6,6 +6,10 @@ you can use the following url: https://github.com/ericsizemore/utility/compare/v
 
 Simply replace the version numbers depending on which set of changes you wish to see.
 
+### 1.2.1-dev
+  * Code cleanup per PHPCS and PHPScrutinizer
+  * Attempt at increasing test coverage.
+
 ### 1.2.0 (2023-09-22)
   * Code cleanup per PHPStan (level: 9, strict, bleeding edge)
   * New function arrayInterlace

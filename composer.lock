@@ -249,12 +249,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "b1484c7b7396908ea1cfd05b71032fdf6ca54ccd"
+                "reference": "9740eaf2b0f2bb649733b02d7de3e8c5419f2b78"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/b1484c7b7396908ea1cfd05b71032fdf6ca54ccd",
-                "reference": "b1484c7b7396908ea1cfd05b71032fdf6ca54ccd",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/9740eaf2b0f2bb649733b02d7de3e8c5419f2b78",
+                "reference": "9740eaf2b0f2bb649733b02d7de3e8c5419f2b78",
                 "shasum": ""
             },
             "require": {
@@ -304,7 +304,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-12-07T07:53:53+00:00"
+            "time": "2023-12-07T22:43:43+00:00"
         },
         {
             "name": "phpstan/phpstan-phpunit",
@@ -692,12 +692,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "70d645f3cc40a011cdfce67d8873d16ada71e20e"
+                "reference": "af7fc81d5ab91ea5b7d1ce39338d573c5d569c3a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/70d645f3cc40a011cdfce67d8873d16ada71e20e",
-                "reference": "70d645f3cc40a011cdfce67d8873d16ada71e20e",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/af7fc81d5ab91ea5b7d1ce39338d573c5d569c3a",
+                "reference": "af7fc81d5ab91ea5b7d1ce39338d573c5d569c3a",
                 "shasum": ""
             },
             "require": {
@@ -785,7 +785,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-12-06T12:00:35+00:00"
+            "time": "2023-12-07T14:35:55+00:00"
         },
         {
             "name": "sebastian/cli-parser",
