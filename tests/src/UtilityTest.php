@@ -453,7 +453,7 @@ class UtilityTest extends TestCase
 
         try {
             $this->expectException(\InvalidArgumentException::class);
-            $count = \array_sum(Utility::directorySize('/this/should/not/exist'));
+            $count = Utility::directorySize('/this/should/not/exist');
         } finally {
             //
         }
