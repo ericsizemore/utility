@@ -376,12 +376,9 @@ class UtilityTest extends TestCase
         $bytes = Utility::randomBytes(8);
         $this->assertNotEmpty($bytes);
 
-        try {
-            $this->expectException(\Random\RandomException::class);
-            $bytes = Utility::randomBytes(0);
-        } finally {
-            //
-        }
+        $this->expectException(\Random\RandomException::class);
+        $bytes = Utility::randomBytes(0);
+
     }
 
     /**
@@ -392,15 +389,11 @@ class UtilityTest extends TestCase
         $int = Utility::randomInt(100, 250);
         $this->assertTrue(($int >= 100 and $int <= 250));
 
-        try {
-            $this->expectException(\Random\RandomException::class);
-            $int = Utility::randomInt(intval(\PHP_INT_MIN - 1), \PHP_INT_MAX);
 
-            $this->expectException(\Random\RandomException::class);
-            $int = Utility::randomInt(\PHP_INT_MAX, \PHP_INT_MIN);
-        } finally {
-            //
-        }
+        $this->expectException(\Random\RandomException::class);
+        $int = Utility::randomInt(\intval(\PHP_INT_MIN - 1), \PHP_INT_MAX);
+        $int = Utility::randomInt(\PHP_INT_MAX, \PHP_INT_MIN);
+
     }
 
     /**
@@ -411,12 +404,9 @@ class UtilityTest extends TestCase
         $str = Utility::randomString(16);
         $this->assertTrue(Utility::length($str) === 16);
 
-        try {
-            $this->expectException(\Random\RandomException::class);
-            $str = Utility::randomString(-10);
-        } finally {
-            //
-        }
+        $this->expectException(\Random\RandomException::class);
+        $str = Utility::randomString(-10);
+
     }
 
     /**
@@ -429,12 +419,8 @@ class UtilityTest extends TestCase
         $this->assertEquals(0, \array_sum(Utility::lineCounter(directory: self::$testDir, ignore: ['dir1'], onlyLineCount: true)));
         Utility::fileWrite(self::$testFiles['file1'], '');
 
-        try {
-            $this->expectException(\InvalidArgumentException::class);
-            $count = \array_sum(Utility::lineCounter('/this/should/not/exist', onlyLineCount: true));
-        } finally {
-            //
-        }
+        $this->expectException(\InvalidArgumentException::class);
+        $count = \array_sum(Utility::lineCounter('/this/should/not/exist', onlyLineCount: true));
     }
 
     /**
@@ -451,12 +437,8 @@ class UtilityTest extends TestCase
         Utility::fileWrite(self::$testFiles['file1'], '');
         Utility::fileWrite(self::$testFiles['file2'], '');
 
-        try {
-            $this->expectException(\InvalidArgumentException::class);
-            $count = Utility::directorySize('/this/should/not/exist');
-        } finally {
-            //
-        }
+        $this->expectException(\InvalidArgumentException::class);
+        $count = Utility::directorySize('/this/should/not/exist');
     }
 
     /**
@@ -482,12 +464,8 @@ class UtilityTest extends TestCase
         Utility::fileWrite(self::$testFiles['file1'], '');
         Utility::fileWrite(self::$testFiles['file2'], '');
 
-        try {
-            $this->expectException(\InvalidArgumentException::class);
-            $count = Utility::directoryList('/this/should/not/exist');
-        } finally {
-            //
-        }
+        $this->expectException(\InvalidArgumentException::class);
+        $count = Utility::directoryList('/this/should/not/exist');
     }
 
     /**
@@ -520,12 +498,8 @@ class UtilityTest extends TestCase
 
         Utility::fileWrite(self::$testFiles['file1'], '');
 
-        try {
-            $this->expectException(\InvalidArgumentException::class);
-            $read = Utility::fileRead(self::$testFiles['file1'] . '.php');
-        } finally {
-            //
-        }
+        $this->expectException(\InvalidArgumentException::class);
+        $read = Utility::fileRead(self::$testFiles['file1'] . '.php');
     }
 
     /**
@@ -537,12 +511,8 @@ class UtilityTest extends TestCase
 
         Utility::fileWrite(self::$testFiles['file1'], '');
 
-        try {
-            $this->expectException(\InvalidArgumentException::class);
-            $read = Utility::fileWrite(self::$testFiles['file1'] . '.php');
-        } finally {
-            //
-        }
+        $this->expectException(\InvalidArgumentException::class);
+        $read = Utility::fileWrite(self::$testFiles['file1'] . '.php');
     }
 
     /**
@@ -723,16 +693,9 @@ class UtilityTest extends TestCase
 
         $this->assertEquals('1 second(s) old', Utility::timeDifference(\time() - 1, 0, ''));
 
-        try {
-            $this->expectException(\InvalidArgumentException::class);
-            $time = Utility::timeDifference(\time() - 30, 0, 'INVALID');
-
-            $this->expectException(\InvalidArgumentException::class);
-            $time = Utility::timeDifference(-8400, 0);
-        } finally {
-            //
-        }
-
+        $this->expectException(\InvalidArgumentException::class);
+        $time = Utility::timeDifference(\time() - 30, 0, 'INVALID');
+        $time = Utility::timeDifference(-8400, 0);
     }
 
     /**
@@ -803,12 +766,8 @@ class UtilityTest extends TestCase
             Utility::obscureEmail('admin@secondversion.com')
         );
 
-        try {
-            $this->expectException(\InvalidArgumentException::class);
-            $email = Utility::obscureEmail('thisisnotvalid&!--');
-        } finally {
-            //
-        }
+        $this->expectException(\InvalidArgumentException::class);
+        $email = Utility::obscureEmail('thisisnotvalid&!--');
     }
 
     /**
