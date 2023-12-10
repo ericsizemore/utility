@@ -57,7 +57,7 @@ use PHPUnit\Framework\TestCase;
  * Some of these test methods are... messy. This is just to get testing started.
  *
  * @todo Further refine and improve testing.
- */ 
+ */
 class UtilityTest extends TestCase
 {
     /**
