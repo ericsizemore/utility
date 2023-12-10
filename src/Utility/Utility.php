@@ -899,13 +899,13 @@ class Utility
     {
         clearstatcache();
 
+        if (!file_exists($file)) {
+            throw new RuntimeException('Invalid file or directory specified');
+        }
+
         // If we are on Unix/Linux just run is_writable()
         if (PHP_OS_FAMILY !== 'Windows') {
             return is_writable($file);
-        }
-
-        if (!file_exists($file)) {
-            throw new RuntimeException('Invalid file or directory specified');
         }
 
         // Otherwise, if on Windows...
