@@ -8,7 +8,11 @@ Simply replace the version numbers depending on which set of changes you wish to
 
 ### 1.2.1-dev
   * Code cleanup per PHPCS and PHPScrutinizer
+    * Small refactoring of some functions, such as currentUrl and isReallyWritable
   * Attempt at increasing test coverage.
+  * Further cleanup to try and adhere to PSR-12.
+    * Adding information into README.md for PHPDoc related guidelines, in an effort
+      to adhere to PSR-5 and PSR-19.
 
 ### 1.2.0 (2023-09-22)
   * Code cleanup per PHPStan (level: 9, strict, bleeding edge)

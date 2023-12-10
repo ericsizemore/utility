@@ -14,17 +14,8 @@ declare(strict_types=1);
  */
 namespace Esi\Utility;
 
-// BEGIN: Imports
-/*
-    T-that's a lot of imports...
-
-    Though I suppose it's nice to know what's being used 
-    at a glance.
-*/
-
 // Exceptions
 use Exception, InvalidArgumentException, RuntimeException, ValueError;
-use Random\RandomException;
 use FilesystemIterator, RecursiveDirectoryIterator, RecursiveIteratorIterator;
 
 // Classes
@@ -32,7 +23,7 @@ use DateTime, DateTimeZone;
 
 // Functions
 use function abs, array_filter, array_keys, array_map, array_pop, array_merge_recursive;
-use function bin2hex, call_user_func, ceil, chmod, count, date;
+use function bin2hex, call_user_func, ceil, chmod, count, date, trigger_error;
 use function end, explode, fclose, file, file_get_contents, file_put_contents;
 use function filter_var, floatval, fopen, function_exists, hash, header, headers_sent;
 use function implode, in_array, inet_ntop, inet_pton, ini_get, ini_set, intval, is_array;
@@ -47,8 +38,7 @@ use const DIRECTORY_SEPARATOR, FILE_IGNORE_NEW_LINES, FILE_SKIP_EMPTY_LINES;
 use const FILTER_FLAG_IPV4, FILTER_FLAG_IPV6, FILTER_FLAG_NO_PRIV_RANGE;
 use const FILTER_FLAG_NO_RES_RANGE, FILTER_VALIDATE_EMAIL, FILTER_VALIDATE_IP;
 use const JSON_ERROR_NONE, MB_CASE_LOWER, MB_CASE_TITLE, MB_CASE_UPPER;
-use const PHP_INT_MAX, PHP_INT_MIN, PHP_SAPI, PHP_OS_FAMILY;
-// END: Imports
+use const PHP_INT_MAX, PHP_INT_MIN, PHP_SAPI, PHP_OS_FAMILY, E_USER_DEPRECATED;
 
 /**
  * Utility - Collection of various PHP utility functions.
@@ -138,8 +128,8 @@ class Utility
     {
         $result = [];
 
-        foreach ($array AS $key => $value) {
-            if (is_array($value) AND $value !== []) {
+        foreach ($array as $key => $value) {
+            if (is_array($value) && $value !== []) {
                 $result[] = static::arrayFlatten($value, $separator, $prepend . $key . $separator);
             } else {
                 $result[] = [$prepend . $key => $value];
@@ -167,11 +157,11 @@ class Utility
     public static function arrayMapDeep(mixed $array, callable $callback): mixed
     {
         if (is_array($array)) {
-            foreach ($array AS $key => $value) {
+            foreach ($array as $key => $value) {
                 $array[$key] = static::arrayMapDeep($value, $callback);
             }
         } elseif (is_object($array)) {
-            foreach (get_object_vars($array) AS $key => $value) {
+            foreach (get_object_vars($array) as $key => $value) {
                 $array->$key = static::arrayMapDeep($value, $callback);
             }
         } else {
@@ -461,12 +451,12 @@ class Utility
      * @see https://packagist.org/packages/laravel/lumen-framework < v5.5
      * @see http://opensource.org/licenses/MIT
      *
-     * @param   string       $value  Value to transliterate.
+     * @param   string  $value  Value to transliterate.
      * @return  string
      */
     public static function ascii(string $value): string
     {
-        foreach (static::charMap() AS $key => $val) {
+        foreach (static::charMap() as $key => $val) {
             $value = str_replace($key, $val, $value);
         }
         // preg_replace can return null if it encounters an error, so we return
@@ -597,21 +587,21 @@ class Utility
      * @param   int     $length  Length of the random string that should be returned in bytes.
      * @return  string
      *
-     * @throws RandomException If an invalid length is specified.
-     *                         If the random_bytes() function somehow fails.
+     * @throws \Random\RandomException If an invalid length is specified.
+     *                                 If the random_bytes() function somehow fails.
      */
     public static function randomBytes(int $length): string
     {
         // Sanity check
-        if ($length < 1 OR $length > PHP_INT_MAX) {
-            throw new RandomException('Invalid $length specified.');
+        if ($length < 1 || $length > PHP_INT_MAX) {
+            throw new \Random\RandomException('Invalid $length specified.');
         }
 
         // Generate bytes
         try {
             $bytes = random_bytes($length);
-        } catch (RandomException | Exception $e) {
-            throw new RandomException(
+        } catch (\Random\RandomException $e) {
+            throw new \Random\RandomException(
                 'Utility was unable to generate random bytes: ' . $e->getMessage(), $e->getCode(), $e->getPrevious()
             );
         }
@@ -627,28 +617,24 @@ class Utility
      * @param   int  $max  The highest value to be returned, which must be less than or equal to PHP_INT_MAX.
      * @return  int
      *
-     * @throws RandomException
+     * @throws \Random\RandomException
      */
     public static function randomInt(int $min, int $max): int
     {
         // Sanity check
-        if ($min < PHP_INT_MIN) {
-            throw new RandomException('$min value too low.');
-        }
-
-        if ($max > PHP_INT_MAX) {
-            throw new RandomException('$max value too high.');
+        if ($min < PHP_INT_MIN || $max > PHP_INT_MAX) {
+            throw new \Random\RandomException('$min and $max values must be within the \PHP_INT_MIN, \PHP_INT_MAX range');
         }
 
         if ($min >= $max) {
-            throw new RandomException('$min value must be less than $max.');
+            throw new \Random\RandomException('$min value must be less than $max.');
         }
 
         // Generate random int
         try {
             $int = random_int($min, $max);
-        } catch (RandomException | Exception $e) {
-            throw new RandomException(
+        } catch (\Random\RandomException $e) {
+            throw new \Random\RandomException(
                 'Utility was unable to generate random int: ' . $e->getMessage(), $e->getCode(), $e->getPrevious()
             );
         }
@@ -665,13 +651,13 @@ class Utility
      * @param   int     $length  Length the random string should be.
      * @return  string
      *
-     * @throws RandomException
+     * @throws \Random\RandomException
      */
     public static function randomString(int $length = 8): string
     {
         // Sanity check
         if ($length <= 0) {
-            throw new RandomException('$length must be greater than 0.');
+            throw new \Random\RandomException('$length must be greater than 0.');
         }
 
         // Attempt to get random bytes
@@ -679,10 +665,10 @@ class Utility
             $bytes = static::randomBytes($length * 2);
 
             if ($bytes === '') {
-                throw new RandomException('Random bytes generator failure.');
+                throw new \Random\RandomException('Random bytes generator failure.');
             }
-        } catch (RandomException $e) {
-            throw new RandomException($e->getMessage(), 0, $e);
+        } catch (\Random\RandomException $e) {
+            throw new \Random\RandomException($e->getMessage(), 0, $e);
         }
         return static::substr(bin2hex($bytes), 0, $length);
     }
@@ -711,12 +697,8 @@ class Utility
     public static function lineCounter(string $directory, array $ignore = [], array $extensions = [], bool $skipEmpty = true, bool $onlyLineCount = false): array
     {
         // Sanity check
-        if (!is_dir($directory)) {
-            throw new InvalidArgumentException('Invalid $directory provided.');
-        }
-
-        if (!is_readable($directory)) {
-            throw new InvalidArgumentException('Unable to read $directory.');
+        if (!is_dir($directory) || !is_readable($directory)) {
+            throw new InvalidArgumentException('Invalid $directory specified');
         }
 
         // Initialize
@@ -744,11 +726,11 @@ class Utility
 
         // Build the actual contents of the directory
         /** @var RecursiveDirectoryIterator $val **/
-        foreach ($iterator AS $key => $val) {
+        foreach ($iterator as $key => $val) {
             if ($val->isFile()) {
                 if (
-                    (is_string($ignore) AND preg_match("#($ignore)#i", $val->getPath()) === 1)
-                    OR (count($extensions) > 0 AND !in_array($val->getExtension(), $extensions, true))
+                    (is_string($ignore) && preg_match("#($ignore)#i", $val->getPath()) === 1)
+                    || (count($extensions) > 0 && !in_array($val->getExtension(), $extensions, true))
                 ) {
                     continue;
                 }
@@ -759,18 +741,14 @@ class Utility
                     continue;
                 }
                 /** @var int<0, max> $content **/
-                $content = count($content);
+                $content = count(/** @scrutinizer ignore-type */$content);
 
                 $lines[$val->getPath()][$val->getFilename()] = $content;
             }
         }
         unset($iterator);
 
-        // Do we want the content or only the count?
-        if ($onlyLineCount) {
-            return static::arrayFlatten($lines);
-        }
-        return $lines;
+        return ($onlyLineCount ? static::arrayFlatten($lines) : $lines);
     }
 
     /**
@@ -787,21 +765,15 @@ class Utility
     public static function directorySize(string $directory, array $ignore = []): int
     {
         // Sanity checks
-        if (!is_dir($directory)) {
-            throw new InvalidArgumentException('Invalid $directory provided.');
-        }
-
-        if (!is_readable($directory)) {
-            throw new InvalidArgumentException('Unable to read $directory.');
+        if (!is_dir($directory) || !is_readable($directory)) {
+            throw new InvalidArgumentException('Invalid $directory specified');
         }
 
         // Initialize
         $size = 0;
 
         // Directories we wish to ignore, if any
-        if (count($ignore) > 0) {
-            $ignore = preg_quote(implode('|', $ignore), '#');
-        }
+        $ignore = (count($ignore) > 0) ? preg_quote(implode('|', $ignore), '#') : '';
 
         // Traverse the directory
         $iterator = new RecursiveIteratorIterator(
@@ -813,8 +785,8 @@ class Utility
 
         // Determine directory size by checking file sizes
         /** @var RecursiveDirectoryIterator $val **/
-        foreach ($iterator AS $key => $val) {
-            if (is_string($ignore) AND preg_match("#($ignore)#i", $val->getPath()) === 1) {
+        foreach ($iterator as $key => $val) {
+            if ($ignore !== '' && preg_match("#($ignore)#i", $val->getPath()) === 1) {
                 continue;
             }
 
@@ -839,21 +811,15 @@ class Utility
     public static function directoryList(string $directory, array $ignore = []): array
     {
         // Sanity checks
-        if (!is_dir($directory)) {
-            throw new InvalidArgumentException('Invalid $directory provided.');
-        }
-
-        if (!is_readable($directory)) {
-            throw new InvalidArgumentException('Unable to read $directory.');
+        if (!is_dir($directory) || !is_readable($directory)) {
+            throw new InvalidArgumentException('Invalid $directory specified');
         }
 
         // Initialize
         $contents = [];
 
         // Directories to ignore, if any
-        if (count($ignore) > 0) {
-            $ignore = preg_quote(implode('|', $ignore), '#');
-        }
+        $ignore = (count($ignore) > 0) ? preg_quote(implode('|', $ignore), '#') : '';
 
         // Traverse the directory
         $iterator = new RecursiveIteratorIterator(
@@ -866,7 +832,7 @@ class Utility
         // Build the actual contents of the directory
         /** @var RecursiveDirectoryIterator $val **/
         foreach ($iterator AS $key => $val) {
-            if (is_string($ignore) AND preg_match("#($ignore)#i", $val->getPath()) === 1) {
+            if ($ignore !== '' && preg_match("#($ignore)#i", $val->getPath()) === 1) {
                 continue;
             }
             $contents[] = $key;
@@ -881,18 +847,20 @@ class Utility
      *
      * Normalizes a file or directory path.
      *
-     * @param   string            $path       The file or directory path.
-     * @param   non-empty-string  $separator  The directory separator. Defaults to DIRECTORY_SEPARATOR.
-     * @return  string                        The normalized file or directory path
+     * @param   string  $path       The file or directory path.
+     * @param   string  $separator  The directory separator. Defaults to DIRECTORY_SEPARATOR.
+     * @return  string              The normalized file or directory path
      */
     public static function normalizeFilePath(string $path, string $separator = DIRECTORY_SEPARATOR): string
     {
         // Clean up our path
+        $separator = ($separator === '' ? DIRECTORY_SEPARATOR : $separator);
+
         $path = rtrim(strtr($path, '/\\', $separator . $separator), $separator);
 
         if (
             static::doesNotContain($separator . $path, "{$separator}.")
-            AND static::doesNotContain($path, $separator . $separator)
+            && static::doesNotContain($path, $separator . $separator)
         ) {
             return $path;
         }
@@ -901,10 +869,10 @@ class Utility
         $parts = [];
 
         // Grab file path parts
-        foreach (explode($separator, $path) AS $part) {
-            if ($part === '..' AND count($parts) > 0 AND end($parts) !== '..') {
+        foreach (explode($separator, $path) as $part) {
+            if ($part === '..' && count($parts) > 0 && end($parts) !== '..') {
                 array_pop($parts);
-            } elseif ($part === '.' OR $part === '' AND count($parts) > 0) {
+            } elseif ($part === '.' || $part === '' && count($parts) > 0) {
                 continue;
             } else {
                 $parts[] = $part;
@@ -924,35 +892,38 @@ class Utility
      * @param   string  $file  File or directory to check.
      * @return  bool
      *
-     * @throws RandomException
+     * @throws \Random\RandomException  If unable to generate random string for the temp file
+     * @throws RuntimeException         If the file or directory does not exist
      */
     public static function isReallyWritable(string $file): bool
     {
+        clearstatcache();
+
         // If we are on Unix/Linux just run is_writable()
         if (PHP_OS_FAMILY !== 'Windows') {
             return is_writable($file);
         }
 
-        // Otherwise, if on Windows...
-        if (is_dir($file)) {
-            // Generate random filename.
-            $file = rtrim($file, '\\/') . DIRECTORY_SEPARATOR;
-            $file .= hash('md5', static::randomString());
-
-            if (($fp = fopen($file, 'ab')) === false) {
-                return false;
-            }
-
-            fclose($fp);
-            chmod($file, 0777);
-            @unlink($file);
-        } else {
-            if (!is_file($file) OR ($fp = fopen($file, 'ab')) === false) {
-                return false;
-            }
-            fclose($fp);
+        if (!file_exists($file)) {
+            throw new RuntimeException('Invalid file or directory specified');
         }
-        return true;
+
+        // Otherwise, if on Windows...
+        $tmpFile = rtrim($file, '\\/') . DIRECTORY_SEPARATOR . hash('md5', static::randomString()) . '.txt';
+        $tmpData = 'tmpData';
+
+        $directoryOrFile = (is_dir($file));
+
+        if ($directoryOrFile) {
+            $data = file_put_contents($tmpFile, $tmpData, FILE_APPEND);
+        } else {
+            $data = file_get_contents($file);
+        }
+
+        if (file_exists($tmpFile)) {
+            unlink($tmpFile);
+        }
+        return ($data !== false ? true : false);
     }
 
     /**
@@ -986,7 +957,7 @@ class Utility
      *                          {@link http://php.net/file_put_contents}
      * @return  string|int<0, max>|false
      *
-     * @throws InvalidArgumentException|RandomException
+     * @throws InvalidArgumentException|\Random\RandomException
      */
     public static function fileWrite(string $file, string $data = '', int $flags = 0): string | false | int
     {
@@ -1306,12 +1277,9 @@ class Utility
             $validTimezones = DateTimeZone::listIdentifiers();
         }
 
-        // Default timezone
-        if ($timezone === '') {
-            $timezone = 'UTC';
-        }
-
         // Check to see if it is a valid timezone
+        $timezone = ($timezone === '' ? 'UTC' : $timezone);
+
         if (!in_array($timezone, $validTimezones, true)) {
             throw new InvalidArgumentException('$timezone appears to be invalid.');
         }
@@ -1389,9 +1357,9 @@ class Utility
         $ips = static::arrayMapDeep($ips, 'trim');
 
         if (count($ips) > 0) {
-            foreach ($ips AS $val) {
+            foreach ($ips as $val) {
                 /** @phpstan-ignore-next-line */
-                if (inet_ntop(inet_pton($val)) === $val AND static::isPublicIp($val)) {
+                if (inet_ntop(inet_pton($val)) === $val && static::isPublicIp($val)) {
                     /** @var string $ip **/
                     $ip = $val;
                     break;
@@ -1451,7 +1419,7 @@ class Utility
      */
     public static function isPublicIp(string $ipaddress): bool
     {
-        return (!static::isPrivateIp($ipaddress) AND !static::isReservedIp($ipaddress));
+        return (!static::isPrivateIp($ipaddress) && !static::isReservedIp($ipaddress));
     }
 
     /**
@@ -1472,10 +1440,10 @@ class Utility
         }
 
         // Split and process
-        $email = str_split($email);
         $email = array_map(function($char) {
             return '&#' . ord($char) . ';';
-        }, $email);
+        }, str_split($email));
+
         return implode('', $email);
     }
 
@@ -1492,13 +1460,13 @@ class Utility
     {
         /** @var string $host **/
         $host = (
-            ($acceptForwarded AND isset($_SERVER['HTTP_X_FORWARDED_HOST'])) ? 
+            ($acceptForwarded && isset($_SERVER['HTTP_X_FORWARDED_HOST'])) ? 
             $_SERVER['HTTP_X_FORWARDED_HOST'] : 
             ($_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? '')
         );
         $host = trim(strval($host));
 
-        if ($host === '' OR preg_match('#^\[?(?:[a-z0-9-:\]_]+\.?)+$#', $host) === 0) {
+        if ($host === '' || preg_match('#^\[?(?:[a-z0-9-:\]_]+\.?)+$#', $host) === 0) {
             $host = 'localhost';
         }
 
@@ -1532,7 +1500,7 @@ class Utility
             });
 
             if (count($keys) > 0) {
-                foreach ($keys AS $key) {
+                foreach ($keys as $key) {
                     /** @var string $key **/
                     $headers[strtr(
                         ucwords(strtr(static::substr($key, 5), '_', ' ')),
@@ -1559,9 +1527,9 @@ class Utility
 
         // Generally, as long as HTTPS is not set or is any empty value, it is considered to be "off"
         if (
-            (isset($_SERVER['HTTPS']) AND $_SERVER['HTTPS'] !== '' AND $_SERVER['HTTPS'] !== 'off')
-            OR (isset($headers['X-Forwarded-Proto']) AND $headers['X-Forwarded-Proto'] === 'https')
-            OR (isset($headers['Front-End-Https']) AND $headers['Front-End-Https'] !== 'off')
+            (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== '' && $_SERVER['HTTPS'] !== 'off')
+            || (isset($headers['X-Forwarded-Proto']) && $headers['X-Forwarded-Proto'] === 'https')
+            || (isset($headers['Front-End-Https']) && $headers['Front-End-Https'] !== 'off')
         ) {
             return true;
         }
@@ -1586,22 +1554,17 @@ class Utility
         $auth = '';
 
         if (isset($_SERVER['PHP_AUTH_USER'])) {
-            $auth = $_SERVER['PHP_AUTH_USER'];
-
-            if (isset($_SERVER['PHP_AUTH_PW'])) {
-                $auth .= ':';
-                $auth .= $_SERVER['PHP_AUTH_PW'];
-            }
-            $auth .= '@';
+            $auth = $_SERVER['PHP_AUTH_USER'] . (
+                isset($_SERVER['PHP_AUTH_PW']) ? ':' . $_SERVER['PHP_AUTH_PW'] : ''
+            ) . '@';
         }
 
         // Host and port
         $host = static::currentHost();
 
         /** @var int $port **/
-        $port = $_SERVER['SERVER_PORT'] ?? '';
-        $port = intval($port);
-        $port = ((static::isHttps() AND $port === 443) OR (!static::isHttps() AND $port === 80)) ? 0 : $port;
+        $port = $_SERVER['SERVER_PORT'] ?? 0;
+        $port = ($port === (static::isHttps() ? 443 : 80)) ? 0 : $port;
 
         // Path
         /** @var string $self **/
@@ -1635,7 +1598,7 @@ class Utility
     {
         static $suffixes = ['th', 'st', 'nd', 'rd'];
 
-        if (abs($number) % 100 > 10 AND abs($number) % 100 < 20) {
+        if (abs($number) % 100 > 10 && abs($number) % 100 < 20) {
             $suffix = $suffixes[0];
         } elseif (abs($number) % 10 < 4) {
             $suffix = $suffixes[(abs($number) % 10)];
@@ -1712,7 +1675,7 @@ class Utility
         }
 
         // Sanity check
-        if ($code < 0 OR $code > 505) {
+        if ($code < 0 || $code > 505) {
             throw new InvalidArgumentException('$code is invalid.');
         }
 
@@ -1745,7 +1708,7 @@ class Utility
      * Generate a Globally/Universally Unique Identifier (version 4).
      *
      * @return  string
-     * @throws RandomException
+     * @throws \Random\RandomException
      */
     public static function guid(): string
     {
@@ -1763,8 +1726,8 @@ class Utility
                 static::randomInt(0, 0xffff),
                 static::randomInt(0, 0xffff)
             );
-        } catch (RandomException | Exception $e) {
-            throw new RandomException('Unable to generate GUID: ' . $e->getMessage(), 0, $e);
+        } catch (\Random\RandomException $e) {
+            throw new \Random\RandomException('Unable to generate GUID: ' . $e->getMessage(), 0, $e);
         }
         return $guid;
     }
@@ -1792,14 +1755,15 @@ class Utility
         }
 
         // Check to see if it is a valid timezone
-        if ($timezone === '' OR !in_array($timezone, $validTimezones, true)) {
+        $timezone = ($timezone === '' ? 'UTC' : $timezone);
+
+        if (!in_array($timezone, $validTimezones, true)) {
             throw new InvalidArgumentException('$timezone appears to be invalid.');
         }
 
         try {
             $tz = new DateTimeZone($timezone);
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             throw new InvalidArgumentException($e->getMessage(), 0, $e);
         }
 
@@ -1858,7 +1822,8 @@ class Utility
         if ($standardize) {
             $value = match (static::lower($option)) {
                 'yes', 'on', 'true', '1' => '1',
-                default => '0'
+                'no', 'off', 'false', '0' => '0',
+                default => $value
             };
         }
         return $value;

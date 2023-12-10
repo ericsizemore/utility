@@ -296,6 +296,9 @@ class UtilityTest extends TestCase
 
         $this->assertTrue(Utility::beginsWith('THIS IS A TEST', 'this', true));
         $this->assertFalse(Utility::beginsWith('THIS IS A TEST', 'test', true));
+
+        $this->assertTrue(Utility::beginsWith('THIS IS A TEST', 'this', true, true));
+        $this->assertFalse(Utility::beginsWith('THIS IS A TEST', 'test', true, true));
     }
 
     /**
@@ -308,6 +311,9 @@ class UtilityTest extends TestCase
 
         $this->assertTrue(Utility::endsWith('THIS IS A TEST', 'test', true));
         $this->assertFalse(Utility::endsWith('THIS IS A TEST', 'this', true));
+
+        $this->assertTrue(Utility::endsWith('THIS IS A TEST', 'test', true, true));
+        $this->assertFalse(Utility::endsWith('THIS IS A TEST', 'this', true, true));
     }
 
     /**
@@ -320,6 +326,9 @@ class UtilityTest extends TestCase
 
         $this->assertTrue(Utility::doesContain('START A STRING', 'a string', true));
         $this->assertFalse(Utility::doesContain('START A STRING', 'starting', true));
+
+        $this->assertTrue(Utility::doesContain('START A STRING', 'a string', true, true));
+        $this->assertFalse(Utility::doesContain('START A STRING', 'starting', true, true));
     }
 
     /**
@@ -332,6 +341,9 @@ class UtilityTest extends TestCase
 
         $this->assertTrue(Utility::doesNotContain('START A STRING', 'stringly', true));
         $this->assertFalse(Utility::doesNotContain('START A STRING', 'string', true));
+
+        $this->assertTrue(Utility::doesNotContain('START A STRING', 'stringly', true, true));
+        $this->assertFalse(Utility::doesNotContain('START A STRING', 'string', true, true));
     }
 
     /**
@@ -366,6 +378,9 @@ class UtilityTest extends TestCase
         $this->assertEquals('a_simple_title', Utility::slugify('A simple title', '_'));
         $this->assertEquals('this_post_it_has_a_dash', Utility::slugify('This post -- it has a dash', '_'));
         $this->assertEquals('123_1251251', Utility::slugify('123----1251251', '_'));
+
+        $this->assertEquals('a-simple-title', Utility::slugify('a-simple-title'));
+        $this->assertEquals(null, Utility::slugify(' '));
     }
 
     /**
@@ -417,10 +432,24 @@ class UtilityTest extends TestCase
         Utility::fileWrite(self::$testFiles['file1'], "This\nis\na\nnew\nline.\n");
         $this->assertEquals(5, \array_sum(Utility::lineCounter(directory: self::$testDir, onlyLineCount: true)));
         $this->assertEquals(0, \array_sum(Utility::lineCounter(directory: self::$testDir, ignore: ['dir1'], onlyLineCount: true)));
+
+        $this->assertEquals([
+            self::$testDir => [
+                'file1' => 5,
+                'file2' => 0
+            ]
+        ], Utility::lineCounter(directory: self::$testDir, onlyLineCount: false));
+
+        $this->assertEquals([], Utility::lineCounter(directory: self::$testDir, ignore: ['dir1'], onlyLineCount: false));
+
         Utility::fileWrite(self::$testFiles['file1'], '');
 
         $this->expectException(\InvalidArgumentException::class);
         $count = \array_sum(Utility::lineCounter('/this/should/not/exist', onlyLineCount: true));
+        $count = \count(Utility::lineCounter('/this/should/not/exist', onlyLineCount: false));
+
+        $count = \array_sum(Utility::lineCounter('/this/should/not/exist', ignore: ['dir1'], onlyLineCount: true));
+        $count = \count(Utility::lineCounter('/this/should/not/exist', ignore: ['dir1'], onlyLineCount: false));
     }
 
     /**
@@ -473,14 +502,22 @@ class UtilityTest extends TestCase
      */
     public function testNormalizeFilePath(): void
     {
-        $path1 = \dirname(__FILE__) . \DIRECTORY_SEPARATOR . 'dir1'. \DIRECTORY_SEPARATOR . 'file1';
+        $separator = \DIRECTORY_SEPARATOR;
+
+        $path1 = \dirname(__FILE__) . $separator . 'dir1'. $separator . 'file1';
         $this->assertEquals($path1, Utility::normalizeFilePath($path1));
 
-        $path2 = \dirname(__FILE__) . \DIRECTORY_SEPARATOR . 'dir1'. \DIRECTORY_SEPARATOR . 'file1'. \DIRECTORY_SEPARATOR;
+        $path2 = $path1 . $separator;
         $this->assertEquals($path1, Utility::normalizeFilePath($path2));
 
-        $path3 = \str_replace(\DIRECTORY_SEPARATOR, '\\//', $path2);
+        $path3 = \str_replace($separator, '\\//', $path2);
         $this->assertEquals($path1, Utility::normalizeFilePath($path3));
+
+        $path4 = $path2 . '..' . \DIRECTORY_SEPARATOR;
+        $this->assertEquals(\str_replace($separator . 'file1', '', $path1), Utility::normalizeFilePath($path4));
+
+        $path5 = $path4 . '..';
+        $this->assertEquals(\str_replace($separator . 'dir1' . $separator . 'file1', '', $path1), Utility::normalizeFilePath($path5));
     }
 
     /**
@@ -511,8 +548,24 @@ class UtilityTest extends TestCase
 
         Utility::fileWrite(self::$testFiles['file1'], '');
 
+        $this->assertEquals(15, Utility::fileWrite(self::$testFiles['file1'], "This is a test.", -1));
+
         $this->expectException(\InvalidArgumentException::class);
         $read = Utility::fileWrite(self::$testFiles['file1'] . '.php');
+    }
+
+    /**
+     * Test Utility::isReallyWritable()
+     */
+    public function testIsReallyWritable(): void
+    {
+        $this->assertTrue(Utility::isReallyWritable(self::$testDir));
+        $this->assertTrue(Utility::isReallyWritable(self::$testFiles['file1']));
+        $this->assertTrue(Utility::isReallyWritable(self::$testFiles['file2']));
+
+        $this->expectException(\RuntimeException::class);
+        $this->assertFalse(Utility::isReallyWritable('/this/should/not/exist'));
+        $this->assertFalse(Utility::isReallyWritable('/this/should/not/exist/file'));
     }
 
     /**
@@ -695,7 +748,7 @@ class UtilityTest extends TestCase
 
         $this->expectException(\InvalidArgumentException::class);
         $time = Utility::timeDifference(\time() - 30, 0, 'INVALID');
-        $time = Utility::timeDifference(-8400, 0);
+        $time = Utility::timeDifference(0, 0);
     }
 
     /**
@@ -884,8 +937,12 @@ class UtilityTest extends TestCase
         $this->assertEquals('7th', Utility::ordinal(7));
         $this->assertEquals('8th', Utility::ordinal(8));
         $this->assertEquals('9th', Utility::ordinal(9));
+        $this->assertEquals('11th', Utility::ordinal(11));
+        $this->assertEquals('15th', Utility::ordinal(15));
         $this->assertEquals('22nd', Utility::ordinal(22));
         $this->assertEquals('23rd', Utility::ordinal(23));
+        $this->assertEquals('102nd', Utility::ordinal(102));
+        $this->assertEquals('104th', Utility::ordinal(104));
         $this->assertEquals('143rd', Utility::ordinal(143));
     }
 
@@ -901,6 +958,10 @@ class UtilityTest extends TestCase
         Utility::statusHeader(500);
 
         $this->assertEquals(500, http_response_code());
+
+        $this->expectException(\InvalidArgumentException::class);
+        Utility::statusHeader(-1);
+        Utility::statusHeader(600);
     }
 
     /**
@@ -930,6 +991,14 @@ class UtilityTest extends TestCase
     public function testIniGet(): void
     {
         $this->assertNotEmpty(Utility::iniGet('request_order'));
+
+        $this->assertLessThanOrEqual('1', Utility::iniGet('display_errors', true));
+
+        $this->expectException(\InvalidArgumentException::class);
+        Utility::iniGet('');
+
+        $this->expectException(\RuntimeException::class);
+        Utility::iniGet('nota_valid_option');
     }
 
     /**
@@ -941,5 +1010,12 @@ class UtilityTest extends TestCase
         $oldValue = Utility::iniSet('display_errors', (string)Utility::iniGet('display_errors'));
 
         $this->assertEquals($oldValue, Utility::iniSet('display_errors', $oldValue));
+
+        $this->expectException(\ArgumentCountError::class);
+        /** @phpstan-ignore-next-line **/
+        Utility::iniSet('');
+
+        $this->expectException(\InvalidArgumentException::class);
+        Utility::iniSet('', '');
     }
 }

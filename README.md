@@ -125,6 +125,9 @@ on the [Utility repository](https://github.com/ericsizemore/utility).
 Utility is licensed under the MIT license. When submitting new features or patches to Utility, you are 
 giving permission to license those features or patches under the MIT license.
 
+Utility tries to adhere to PHPStan level 9 with strict rules and bleeding edge. Please ensure any 
+contributions do as well.
+
 #### Guidelines
 
 Before we look into how, here are the guidelines. If your Pull Requests fail to
@@ -134,8 +137,8 @@ me to maintain quality of the code-base.
 
 #### PHP Style
 
-Please ensure all new contributions match the [PSR-2](http://www.php-fig.org/psr/psr-2/)
-coding style guide. The project is not fully PSR-2 compatible, yet; however, to ensure 
+Please ensure all new contributions match the [PSR-12](https://www.php-fig.org/psr/psr-12/)
+coding style guide. The project is not fully PSR-12 compatible, yet; however, to ensure 
 the easiest transition to the coding guidelines, I would like to go ahead and request 
 that any contributions follow them.
 
@@ -146,6 +149,14 @@ need to add it. New methods, parameters, changing default values, adding
 constants, etc are all things that will require a change to documentation. The
 change-log must also be updated for every change. Also PHPDoc blocks must be
 maintained.
+
+##### Documenting functions/variables (PHPDoc)
+
+Please ensure all new contributions adhere to:
+  * [PSR-5 PHPDoc](https://github.com/php-fig/fig-standards/blob/master/proposed/phpdoc.md)
+  * [PSR-19 PHPDoc Tags](https://github.com/php-fig/fig-standards/blob/master/proposed/phpdoc-tags.md)
+
+when documenting new functions, or changing existing documentation.
 
 #### Branching
 
