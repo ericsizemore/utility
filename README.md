@@ -1,10 +1,15 @@
 # Utility - Collection of various PHP utility functions.
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fericsizemore%2Futility.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fericsizemore%2Futility?ref=badge_shield)
+[![Build Status](https://scrutinizer-ci.com/g/ericsizemore/utility/badges/build.png?b=master)](https://scrutinizer-ci.com/g/ericsizemore/utility/build-status/master)
+[![Code Coverage](https://scrutinizer-ci.com/g/ericsizemore/utility/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/ericsizemore/utility/?branch=master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/ericsizemore/utility/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/ericsizemore/utility/?branch=master)
 [![Tests](https://github.com/ericsizemore/utility/actions/workflows/tests.yml/badge.svg)](https://github.com/ericsizemore/utility/actions/workflows/tests.yml)
 [![PHPStan](https://github.com/ericsizemore/utility/actions/workflows/main.yml/badge.svg)](https://github.com/ericsizemore/utility/actions/workflows/main.yml)
+
 [![Latest Stable Version](https://img.shields.io/packagist/v/esi/utility.svg)](https://packagist.org/packages/esi/utility)
 [![Downloads per Month](https://img.shields.io/packagist/dm/esi/utility.svg)](https://packagist.org/packages/esi/utility)
 [![License](https://img.shields.io/packagist/l/esi/utility.svg)](https://packagist.org/packages/esi/utility)
+
 
 [Utility](http://github.com/ericsizemore/utility/) is (currently) a small collection of 
 useful functions that are aimed to make developers' lives just a tad bit easier.
