@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9f447abbbd382274d887cb597f677e09",
+    "content-hash": "a6dbc614f1209cdb0a2552d9966c9eaf",
     "packages": [
         {
             "name": "ralouphie/getallheaders",
@@ -737,12 +737,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "4272cbdfbaa246744835c7b5985b28bbc50a9feb"
+                "reference": "dd0bef1da7e508aeb6ff68f1ac269d87ba20c8e8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/4272cbdfbaa246744835c7b5985b28bbc50a9feb",
-                "reference": "4272cbdfbaa246744835c7b5985b28bbc50a9feb",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/dd0bef1da7e508aeb6ff68f1ac269d87ba20c8e8",
+                "reference": "dd0bef1da7e508aeb6ff68f1ac269d87ba20c8e8",
                 "shasum": ""
             },
             "require": {
@@ -830,7 +830,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-12-11T16:52:48+00:00"
+            "time": "2023-12-12T07:07:31+00:00"
         },
         {
             "name": "sebastian/cli-parser",
