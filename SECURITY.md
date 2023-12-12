@@ -2,11 +2,12 @@
 
 ## Supported Versions
 
-| Version | Supported          |
-| ------- | ------------------ |
-| 1.2.x   | :white_check_mark: |
-| 1.1.x   | :white_check_mark: |
-| 1.0.x   | :x:                |
+| Version | Supported          | [Tidelift Only](https://github.com/ericsizemore/utility/security/policy#tidelift-subscribers) ** |
+| ------- | ------------------ | ---------------- |
+| 1.3.x   | :white_check_mark: | No               |
+| 1.2.x   | :white_check_mark: | No               |
+| 1.1.x   | :x:                | Yes              |
+| 1.0.x   | :x:                | No               |
 
 ## Reporting a Vulnerability
 
@@ -20,7 +21,10 @@ I will evaluate the vulnerability and, if necessary, release a fix or mitigating
 
 Once either a) a fix has been published, or b) I have declined to address the vulnerability for whatever reason, you are free to publicly disclose it.
 
-## Tidelift subscribers
+## Tidelift subscribers **
+
+Any packages marked as `Yes` under `Tidelift Only` in the [Supported Versions](https://github.com/ericsizemore/utility/security/policy#supported-versions) table above means that particular version 
+will only recieve updates for Tidelift Subscribrs.
 
 If you're a [Tidelift](https://tidelift.com/) subscriber, please use this route instead:
 
