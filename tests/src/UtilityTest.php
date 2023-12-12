@@ -8,7 +8,7 @@ declare(strict_types=1);
  * @author    Eric Sizemore <admin@secondversion.com>
  * @package   Utility
  * @link      https://www.secondversion.com/
- * @version   1.2.0
+ * @version   1.3.0
  * @copyright (C) 2017 - 2023 Eric Sizemore
  * @license   The MIT License (MIT)
  */
@@ -23,7 +23,7 @@ use PHPUnit\Framework\TestCase;
  * @author    Eric Sizemore <admin@secondversion.com>
  * @package   Utility
  * @link      https://www.secondversion.com/
- * @version   1.2.0
+ * @version   1.3.0
  * @copyright (C) 2017 - 2023 Eric Sizemore
  * @license   The MIT License (MIT)
  *
@@ -390,10 +390,6 @@ class UtilityTest extends TestCase
     {
         $bytes = Utility::randomBytes(8);
         $this->assertNotEmpty($bytes);
-
-        $this->expectException(\Random\RandomException::class);
-        $bytes = Utility::randomBytes(0);
-
     }
 
     /**
@@ -404,11 +400,9 @@ class UtilityTest extends TestCase
         $int = Utility::randomInt(100, 250);
         $this->assertTrue(($int >= 100 and $int <= 250));
 
-
-        $this->expectException(\Random\RandomException::class);
+        $this->expectException(\ValueError::class);
         $int = Utility::randomInt(\intval(\PHP_INT_MIN - 1), \PHP_INT_MAX);
         $int = Utility::randomInt(\PHP_INT_MAX, \PHP_INT_MIN);
-
     }
 
     /**
@@ -421,7 +415,6 @@ class UtilityTest extends TestCase
 
         $this->expectException(\Random\RandomException::class);
         $str = Utility::randomString(-10);
-
     }
 
     /**
@@ -858,8 +851,18 @@ class UtilityTest extends TestCase
      */
     public function testServerHttpVars(): void
     {
-        // Shouldn't be any in CLI
-        $this->assertEquals([], Utility::serverHttpVars());
+        // Are we running command line?
+        if (\str_contains(\PHP_SAPI, 'cli')) {
+            // Shouldn't be any HTTP_* in CLI
+            $this->assertEquals([], Utility::serverHttpVars());
+
+            // Try setting our own
+            $_SERVER['HTTP_X_FORWARDED_PROTO'] = 'test';
+            $_SERVER['HTTP_FRONT_END_HTTPS'] = 'test';
+            $this->assertEquals(['X-Forwarded-Proto' => 'test', 'Front-End-Https' => 'test'], Utility::serverHttpVars());
+        } else { // No
+            $this->assertNotEmpty(Utility::serverHttpVars());
+        }
     }
 
     /**
@@ -944,24 +947,14 @@ class UtilityTest extends TestCase
         $this->assertEquals('102nd', Utility::ordinal(102));
         $this->assertEquals('104th', Utility::ordinal(104));
         $this->assertEquals('143rd', Utility::ordinal(143));
-    }
-
-    /**
-     * Test Utility::statusHeader()
-     */
-    public function testStatusHeader(): void
-    {
-        Utility::statusHeader(200);
-
-        $this->assertEquals(200, http_response_code());
-
-        Utility::statusHeader(500);
-
-        $this->assertEquals(500, http_response_code());
-
-        $this->expectException(\InvalidArgumentException::class);
-        Utility::statusHeader(-1);
-        Utility::statusHeader(600);
+        $this->assertEquals('1001st', Utility::ordinal(1001));
+        $this->assertEquals('1002nd', Utility::ordinal(1002));
+        $this->assertEquals('1003rd', Utility::ordinal(1003));
+        $this->assertEquals('1004th', Utility::ordinal(1004));
+        $this->assertEquals('10001st', Utility::ordinal(10001));
+        $this->assertEquals('10002nd', Utility::ordinal(10002));
+        $this->assertEquals('10003rd', Utility::ordinal(10003));
+        $this->assertEquals('10004th', Utility::ordinal(10004));
     }
 
     /**

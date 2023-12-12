@@ -8,21 +8,21 @@ declare(strict_types=1);
  * @author    Eric Sizemore <admin@secondversion.com>
  * @package   Utility
  * @link      https://www.secondversion.com/
- * @version   1.2.0
+ * @version   1.3.0
  * @copyright (C) 2017 - 2023 Eric Sizemore
  * @license   The MIT License (MIT)
  */
 namespace Esi\Utility;
 
 // Exceptions
-use Exception, InvalidArgumentException, RuntimeException, ValueError;
+use Exception, InvalidArgumentException, RuntimeException, ValueError, TypeError;
 use FilesystemIterator, RecursiveDirectoryIterator, RecursiveIteratorIterator;
 
 // Classes
 use DateTime, DateTimeZone;
 
 // Functions
-use function abs, array_filter, array_keys, array_map, array_pop, array_merge_recursive;
+use function abs, array_filter, array_keys, array_map, array_pop, array_merge_recursive, array_sum;
 use function bin2hex, call_user_func, ceil, chmod, count, date, trigger_error;
 use function end, explode, fclose, file, file_get_contents, file_put_contents;
 use function filter_var, floatval, fopen, function_exists, hash, header, headers_sent;
@@ -46,7 +46,7 @@ use const PHP_INT_MAX, PHP_INT_MIN, PHP_SAPI, PHP_OS_FAMILY, E_USER_DEPRECATED;
  * @author    Eric Sizemore <admin@secondversion.com>
  * @package   Utility
  * @link      https://www.secondversion.com/
- * @version   1.2.0
+ * @version   1.3.0
  * @copyright (C) 2017 - 2023 Eric Sizemore
  * @license   The MIT License (MIT)
  *
@@ -130,16 +130,12 @@ class Utility
 
         foreach ($array as $key => $value) {
             if (is_array($value) && $value !== []) {
-                $result[] = static::arrayFlatten($value, $separator, $prepend . $key . $separator);
+                $result = array_merge($result, static::arrayFlatten($value, $separator, $prepend . $key . $separator));
             } else {
-                $result[] = [$prepend . $key => $value];
+                $result[$prepend . $key] = $value;
             }
         }
-
-        if (count($result) === 0) {
-            return [];
-        }
-        return array_merge_recursive([], ...$result);
+        return $result;
     }
 
     /**
@@ -209,18 +205,13 @@ class Utility
             return $args[0];
         }
 
-        $totalElements = 0;
-
-        for ($i = 0; $i < $numArgs; $i++) {
-            $totalElements += count($args[$i]);
-        }
-
         $newArray = [];
+        $totalElements = array_sum(array_map('count', $args));
 
         for ($i = 0; $i < $totalElements; $i++) {
-            for ($a = 0; $a < $numArgs; $a++) {
-                if (isset($args[$a][$i])) {
-                    $newArray[] = $args[$a][$i];
+            foreach ($args as $arr) {
+                if (isset($arr[$i])) {
+                    $newArray[] = $arr[$i];
                 }
             }
         }
@@ -341,18 +332,15 @@ class Utility
      */
     public static function beginsWith(string $haystack, string $needle, bool $insensitive = false, bool $multibyte = false): bool
     {
-        if ($multibyte === true) {
-            if ($insensitive) {
-                return mb_stripos($haystack, $needle) === 0;
-            }
-            return mb_strpos($haystack, $needle) === 0;
-        }
-
         if ($insensitive) {
             $haystack = static::lower($haystack);
             $needle   = static::lower($needle);
         }
-        return str_starts_with($haystack, $needle);
+        return (
+            $multibyte
+            ? mb_strpos($haystack, $needle) === 0
+            : str_starts_with($haystack, $needle)
+        );
     }
 
     /**
@@ -531,7 +519,6 @@ class Utility
             "\xE2\x80\x85" => ' ', "\xE2\x80\x86" => ' ', "\xE2\x80\x87" => ' ',
             "\xE2\x80\x88" => ' ', "\xE2\x80\x89" => ' ', "\xE2\x80\x8A" => ' ',
             "\xE2\x80\xAF" => ' ', "\xE2\x81\x9F" => ' ', "\xE3\x80\x80" => ' '
-
         ];
     }
 
@@ -584,28 +571,22 @@ class Utility
      *
      * Generate cryptographically secure pseudo-random bytes.
      *
-     * @param   int     $length  Length of the random string that should be returned in bytes.
+     * @param   int<1, max>  $length  Length of the random string that should be returned in bytes.
      * @return  string
      *
-     * @throws \Random\RandomException If an invalid length is specified.
-     *                                 If the random_bytes() function somehow fails.
+     * @throws \Random\RandomException If the random_bytes() function somehow fails.
+     * @throws \ValueError
      */
     public static function randomBytes(int $length): string
     {
-        // Sanity check
-        if ($length < 1 || $length > PHP_INT_MAX) {
-            throw new \Random\RandomException('Invalid $length specified.');
-        }
-
         // Generate bytes
         try {
-            $bytes = random_bytes($length);
+            return random_bytes($length);
         } catch (\Random\RandomException $e) {
             throw new \Random\RandomException(
-                'Utility was unable to generate random bytes: ' . $e->getMessage(), $e->getCode(), $e->getPrevious()
+                'Unable to generate random bytes: ' . $e->getMessage(), $e->getCode(), $e->getPrevious()
             );
         }
-        return $bytes;
     }
 
     /**
@@ -613,32 +594,22 @@ class Utility
      *
      * Generate a cryptographically secure pseudo-random integer.
      *
-     * @param   int  $min  The lowest value to be returned, which must be PHP_INT_MIN or higher.
-     * @param   int  $max  The highest value to be returned, which must be less than or equal to PHP_INT_MAX.
-     * @return  int
+     * @param   int<min, max>  $min  The lowest value to be returned, which must be PHP_INT_MIN or higher.
+     * @param   int<min, max>  $max  The highest value to be returned, which must be less than or equal to PHP_INT_MAX.
+     * @return  int<min, max>
      *
-     * @throws \Random\RandomException
+     * @throws \Random\RandomException | \ValueError
      */
     public static function randomInt(int $min, int $max): int
     {
-        // Sanity check
-        if ($min < PHP_INT_MIN || $max > PHP_INT_MAX) {
-            throw new \Random\RandomException('$min and $max values must be within the \PHP_INT_MIN, \PHP_INT_MAX range');
-        }
-
-        if ($min >= $max) {
-            throw new \Random\RandomException('$min value must be less than $max.');
-        }
-
         // Generate random int
         try {
-            $int = random_int($min, $max);
+            return random_int($min, $max);
         } catch (\Random\RandomException $e) {
             throw new \Random\RandomException(
-                'Utility was unable to generate random int: ' . $e->getMessage(), $e->getCode(), $e->getPrevious()
+                'Unable to generate random int: ' . $e->getMessage(), $e->getCode(), $e->getPrevious()
             );
         }
-        return $int;
     }
 
     /**
@@ -648,10 +619,10 @@ class Utility
      *
      * @todo A better implementation. Could be done better.
      *
-     * @param   int     $length  Length the random string should be.
+     * @param   int<min, max>  $length  Length the random string should be.
      * @return  string
      *
-     * @throws \Random\RandomException
+     * @throws \Random\RandomException | \ValueError
      */
     public static function randomString(int $length = 8): string
     {
@@ -670,6 +641,7 @@ class Utility
         } catch (\Random\RandomException $e) {
             throw new \Random\RandomException($e->getMessage(), 0, $e);
         }
+        // Convert bytes to hexadecimal and truncate to the desired length
         return static::substr(bin2hex($bytes), 0, $length);
     }
 
@@ -694,7 +666,7 @@ class Utility
      *
      * @throws  InvalidArgumentException
      */
-    public static function lineCounter(string $directory, array $ignore = [], array $extensions = [], bool $skipEmpty = true, bool $onlyLineCount = false): array
+    public static function lineCounter(string $directory, array $ignore = [], array $extensions = [], bool $skipEmpty = false, bool $onlyLineCount = false): array
     {
         // Sanity check
         if (!is_dir($directory) || !is_readable($directory)) {
@@ -704,17 +676,8 @@ class Utility
         // Initialize
         $lines = [];
 
-        // Flags passed to \file().
-        $flags = FILE_IGNORE_NEW_LINES;
-
-        if ($skipEmpty) {
-            $flags |= FILE_SKIP_EMPTY_LINES;
-        }
-
         // Directory names we wish to ignore
-        if (count($ignore) > 0) {
-            $ignore = preg_quote(implode('|', $ignore), '#');
-        }
+        $ignore = (count($ignore) > 0) ? preg_quote(implode('|', $ignore), '#') : '';
 
         // Traverse the directory
         $iterator = new RecursiveIteratorIterator(
@@ -727,30 +690,32 @@ class Utility
         // Build the actual contents of the directory
         /** @var RecursiveDirectoryIterator $val **/
         foreach ($iterator as $key => $val) {
-            if ($val->isFile()) {
-                if (
-                    (is_string($ignore) && preg_match("#($ignore)#i", $val->getPath()) === 1)
-                    || (count($extensions) > 0 && !in_array($val->getExtension(), $extensions, true))
-                ) {
-                    continue;
-                }
-
-                $content = file($val->getPath() . DIRECTORY_SEPARATOR . $val->getFilename(), $flags);
-
-                if ($content === false) {
-                    continue;
-                }
-                /** @var int<0, max> $content **/
-                $content = count(/** @scrutinizer ignore-type */$content);
-
-                $lines[$val->getPath()][$val->getFilename()] = $content;
+            if (!$val->isFile()) {
+                continue;
             }
+
+            if ($ignore !== '' && preg_match("#($ignore)#i", $val->getPath()) === 1) {
+                continue;
+            }
+
+            if (count($extensions) > 0 && !in_array($val->getExtension(), $extensions, true)) {
+                continue;
+            }
+
+            $content = file($val->getPath() . DIRECTORY_SEPARATOR . $val->getFilename(), FILE_IGNORE_NEW_LINES | ($skipEmpty ? FILE_SKIP_EMPTY_LINES : 0));
+
+            if ($content === false) {
+                continue;
+            }
+            /** @var int<0, max> $content **/
+            $content = count(/** @scrutinizer ignore-type */$content);
+
+            $lines[$val->getPath()][$val->getFilename()] = $content;
         }
         unset($iterator);
 
         return ($onlyLineCount ? static::arrayFlatten($lines) : $lines);
     }
-
     /**
      * directorySize()
      *
@@ -912,18 +877,15 @@ class Utility
         $tmpFile = rtrim($file, '\\/') . DIRECTORY_SEPARATOR . hash('md5', static::randomString()) . '.txt';
         $tmpData = 'tmpData';
 
+        // Attempt to write to the file or directory
         $directoryOrFile = (is_dir($file));
+        $data = $directoryOrFile ? file_put_contents($tmpFile, $tmpData, FILE_APPEND) : file_get_contents($file);
 
-        if ($directoryOrFile) {
-            $data = file_put_contents($tmpFile, $tmpData, FILE_APPEND);
-        } else {
-            $data = file_get_contents($file);
-        }
-
+        // Clean up temporary file if created
         if (file_exists($tmpFile)) {
             unlink($tmpFile);
         }
-        return ($data !== false ? true : false);
+        return ($data !== false);
     }
 
     /**
@@ -1207,6 +1169,11 @@ class Utility
     {
         $data = trim($data);
 
+        // PHP >= 8.3?
+        if (function_exists('\\json_validate')) {
+            return \json_validate($data);
+        }
+
         json_decode($data);
 
         return json_last_error() === JSON_ERROR_NONE;
@@ -1278,39 +1245,32 @@ class Utility
         }
 
         // Check to see if it is a valid timezone
-        $timezone = ($timezone === '' ? 'UTC' : $timezone);
+        $timezone = $timezone ?: 'UTC';
 
         if (!in_array($timezone, $validTimezones, true)) {
             throw new InvalidArgumentException('$timezone appears to be invalid.');
         }
 
-        // Cannot be zero
-        if ($timestampTo <= 0) {
-            $timestampTo = time();
-        }
+        // Normalize timestamps
+        $timestampTo = ($timestampTo <= 0) ? time() : $timestampTo;
 
         if ($timestampFrom <= 0) {
             throw new InvalidArgumentException('$timestampFrom must be greater than 0.');
         }
 
-        // Create \DateTime objects and set timezone
-        $timestampFrom = new DateTime(date('Y-m-d H:i:s', $timestampFrom));
-        $timestampFrom->setTimezone(new DateTimeZone($timezone));
-
-        $timestampTo = new DateTime(date('Y-m-d H:i:s', $timestampTo));
-        $timestampTo->setTimezone(new DateTimeZone($timezone));
+        // Create DateTime objects and set timezone
+        $timestampFrom = (new DateTime('@' . $timestampFrom))->setTimezone(new DateTimeZone($timezone));
+        $timestampTo = (new DateTime('@' . $timestampTo))->setTimezone(new DateTimeZone($timezone));
 
         // Calculate difference
         $difference = $timestampFrom->diff($timestampTo);
 
+        // Format the difference
         $string = match (true) {
             $difference->y > 0 => $difference->y . ' year(s)',
             $difference->m > 0 => $difference->m . ' month(s)',
-            $difference->d > 0 => (
-            $difference->d >= 7
-                ? ceil($difference->d / 7) . ' week(s)'
-                : $difference->d . ' day(s)'
-            ),
+            $difference->d >= 7 => ceil($difference->d / 7) . ' week(s)',
+            $difference->d > 0 => $difference->d . ' day(s)',
             $difference->h > 0 => $difference->h . ' hour(s)',
             $difference->i > 0 => $difference->i . ' minute(s)',
             $difference->s > 0 => $difference->s . ' second(s)',
@@ -1442,7 +1402,7 @@ class Utility
         // Split and process
         $email = array_map(function($char) {
             return '&#' . ord($char) . ';';
-        }, str_split($email));
+        }, /** @scrutinizer ignore-type */ str_split($email));
 
         return implode('', $email);
     }
@@ -1484,34 +1444,14 @@ class Utility
      *
      * Builds an array of headers based on HTTP_* keys within $_SERVER.
      *
+     * @deprecated Since 2.0.0, now defaults to getallheaders()
+     *
      * @param   bool  $asLowerCase
      * @return  array<mixed>
      */
     public static function serverHttpVars(bool $asLowerCase = false): array
     {
-        $headers = [];
-
-        if (static::doesNotContain(PHP_SAPI, 'cli')) {
-            /** @var array<mixed> $keys **/
-            $keys = static::arrayMapDeep(array_keys($_SERVER), [static::class, 'lower']);
-            $keys = array_filter($keys, function($key) {
-                /** @var string $key **/
-                return (static::beginsWith($key, 'http_'));
-            });
-
-            if (count($keys) > 0) {
-                foreach ($keys as $key) {
-                    /** @var string $key **/
-                    $headers[strtr(
-                        ucwords(strtr(static::substr($key, 5), '_', ' ')),
-                        ' ',
-                        '-'
-                    )] = &$_SERVER[($asLowerCase ? $key : static::upper($key))];
-                }
-            }
-            unset($keys);
-        }
-        return $headers;
+        return \getallheaders();
     }
 
     /**
@@ -1523,29 +1463,24 @@ class Utility
      */
     public static function isHttps(): bool
     {
-        $headers = static::serverHttpVars(true);
+        $headers = \getallheaders();
 
-        // Generally, as long as HTTPS is not set or is any empty value, it is considered to be "off"
-        if (
-            (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== '' && $_SERVER['HTTPS'] !== 'off')
-            || (isset($headers['X-Forwarded-Proto']) && $headers['X-Forwarded-Proto'] === 'https')
-            || (isset($headers['Front-End-Https']) && $headers['Front-End-Https'] !== 'off')
-        ) {
-            return true;
-        }
-        return false;
+        // Check if any of the HTTPS indicators are present
+        return (
+            (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== '' && $_SERVER['HTTPS'] !== 'off') ||
+            (isset($headers['X-Forwarded-Proto']) && $headers['X-Forwarded-Proto'] === 'https') ||
+            (isset($headers['Front-End-Https']) && $headers['Front-End-Https'] !== 'off')
+        );
     }
-
 
     /**
      * currentUrl()
      *
      * Retrieve the current URL.
      *
-     * @param   bool   $parse  True to return the url as an array, false otherwise.
-     * @return  mixed
+     * @return  string
      */
-    public static function currentUrl(bool $parse = false): mixed
+    public static function currentUrl(): string
     {
         // Scheme
         $scheme = (static::isHttps()) ? 'https://' : 'http://';
@@ -1564,7 +1499,7 @@ class Utility
 
         /** @var int $port **/
         $port = $_SERVER['SERVER_PORT'] ?? 0;
-        $port = ($port === (static::isHttps() ? 443 : 80)) ? 0 : $port;
+        $port = ($port === (static::isHttps() ? 443 : 80) || $port === 0) ? '' : ":$port";
 
         // Path
         /** @var string $self **/
@@ -1578,10 +1513,9 @@ class Utility
 
         // Put it all together
         /** @var string $url **/
-        $url = sprintf('%s%s%s%s%s', $scheme, $auth, $host, ($port > 0 ? ":$port" : ''), $path);
+        $url = sprintf('%s%s%s%s%s', $scheme, $auth, $host, $port, $path);
 
-        // If $parse is true, parse into array
-        return ($parse ? parse_url($url) : $url);
+        return $url;
     }
 
     /**
@@ -1598,108 +1532,14 @@ class Utility
     {
         static $suffixes = ['th', 'st', 'nd', 'rd'];
 
-        if (abs($number) % 100 > 10 && abs($number) % 100 < 20) {
+        $absNumber = abs($number);
+
+        if ($absNumber % 100 >= 11 && $absNumber % 100 <= 13) {
             $suffix = $suffixes[0];
-        } elseif (abs($number) % 10 < 4) {
-            $suffix = $suffixes[(abs($number) % 10)];
         } else {
-            $suffix = $suffixes[0];
+            $suffix = $suffixes[$absNumber % 10] ?? $suffixes[0];
         }
         return $number . $suffix;
-    }
-
-    /**
-     * statusHeader()
-     *
-     * Send an HTTP status header.
-     *
-     * @param  int     $code     The status code.
-     * @param  string  $message  Custom status message.
-     * @param  bool    $replace  True if the header should replace a previous similar header.
-     *                           False to add a second header of the same type
-     *
-     * @throws Exception|InvalidArgumentException|RuntimeException
-     *
-     * @deprecated 1.2.0         Use \http_response_code() instead
-     */
-    public static function statusHeader(int $code = 200, string $message = '', bool $replace = true): void
-    {
-        static $statusCodes;
-
-        @trigger_error('Utility function "statusHeader()" is deprecated since version 1.2.0. Use \http_response_code() instead', \E_USER_DEPRECATED);
-
-        if (!$statusCodes) {
-            $statusCodes = [
-                100    => 'Continue',
-                101    => 'Switching Protocols',
-                200    => 'OK',
-                201    => 'Created',
-                202    => 'Accepted',
-                203    => 'Non-Authoritative Information',
-                204    => 'No Content',
-                205    => 'Reset Content',
-                206    => 'Partial Content',
-                300    => 'Multiple Choices',
-                301    => 'Moved Permanently',
-                302    => 'Found',
-                303    => 'See Other',
-                304    => 'Not Modified',
-                305    => 'Use Proxy',
-                307    => 'Temporary Redirect',
-                400    => 'Bad Request',
-                401    => 'Unauthorized',
-                402    => 'Payment Required',
-                403    => 'Forbidden',
-                404    => 'Not Found',
-                405    => 'Method Not Allowed',
-                406    => 'Not Acceptable',
-                407    => 'Proxy Authentication Required',
-                408    => 'Request Timeout',
-                409    => 'Conflict',
-                410    => 'Gone',
-                411    => 'Length Required',
-                412    => 'Precondition Failed',
-                413    => 'Request Entity Too Large',
-                414    => 'Request-URI Too Long',
-                415    => 'Unsupported Media Type',
-                416    => 'Requested Range Not Satisfiable',
-                417    => 'Expectation Failed',
-                422    => 'Unprocessable Entity',
-                500    => 'Internal Server Error',
-                501    => 'Not Implemented',
-                502    => 'Bad Gateway',
-                503    => 'Service Unavailable',
-                504    => 'Gateway Timeout',
-                505    => 'HTTP Version Not Supported'
-            ];
-        }
-
-        // Sanity check
-        if ($code < 0 || $code > 505) {
-            throw new InvalidArgumentException('$code is invalid.');
-        }
-
-        if ($message === '') {
-            if (!isset($statusCodes[$code])) {
-                throw new Exception('No status message available. Please double check your $code or provide a custom $message.');
-            }
-            $message = $statusCodes[$code];
-        }
-
-        if (headers_sent($line, $file)) {
-            throw new RuntimeException(sprintf('Failed to send header. Headers have already been sent by "%s" at line %d.', $file, $line));
-        }
-
-        // Properly format and send header, based on server API
-        if (static::doesContain(PHP_SAPI, 'cgi')) {
-            header("Status: $code $message", $replace);
-        } else {
-            header(
-                ($_SERVER['SERVER_PROTOCOL'] ?? 'HTTP/1.1') . " $code $message",
-                $replace,
-                $code
-            );
-        }
     }
 
     /**
@@ -1754,8 +1594,8 @@ class Utility
             $validTimezones = DateTimeZone::listIdentifiers();
         }
 
-        // Check to see if it is a valid timezone
-        $timezone = ($timezone === '' ? 'UTC' : $timezone);
+        // Check if it is a valid timezone
+        $timezone = $timezone ?: 'UTC';
 
         if (!in_array($timezone, $validTimezones, true)) {
             throw new InvalidArgumentException('$timezone appears to be invalid.');
@@ -1769,23 +1609,13 @@ class Utility
 
         $location = $tz->getLocation();
 
-        if ($location === false) {
-            $location = [
-                'country_code' => 'N/A',
-                'latitude'     => 'N/A',
-                'longitude'    => 'N/A'
-            ];
-        }
-
         $info = [
             'offset'    => $tz->getOffset(new DateTime('now', new DateTimeZone('GMT'))) / 3600,
-            'country'   => $location['country_code'],
-            'latitude'  => $location['latitude'],
-            'longitude' => $location['longitude'],
-            'dst'       => $tz->getTransitions($now = time(), $now)[0]['isdst']
+            'country'   => $location['country_code'] ?? 'N/A',
+            'latitude'  => $location['latitude'] ?? 'N/A',
+            'longitude' => $location['longitude'] ?? 'N/A',
+            'dst'       => $tz->getTransitions(time(), time())[0]['isdst'] ?? null,
         ];
-        unset($tz);
-
         return $info;
     }
 
@@ -1802,7 +1632,7 @@ class Utility
      */
     public static function iniGet(string $option, bool $standardize = false): string | false
     {
-        if (!function_exists('\\ini_get')) {
+        if (!function_exists('ini_get')) {
             // disabled_functions?
             throw new RuntimeException('Native ini_get function not available.');
         }
@@ -1820,7 +1650,7 @@ class Utility
         $value = trim($value);
 
         if ($standardize) {
-            $value = match (static::lower($option)) {
+            $value = match (static::lower($value)) {
                 'yes', 'on', 'true', '1' => '1',
                 'no', 'off', 'false', '0' => '0',
                 default => $value
@@ -1842,7 +1672,7 @@ class Utility
      */
     public static function iniSet(string $option, string $value): string | false
     {
-        if (!function_exists('\\ini_set')) {
+        if (!function_exists('ini_set')) {
             // disabled_functions?
             throw new RuntimeException('Native ini_set function not available.');
         }

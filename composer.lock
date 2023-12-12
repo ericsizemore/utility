@@ -4,8 +4,54 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "01b3cfef63eef43fc7e862e71de18891",
-    "packages": [],
+    "content-hash": "946686ddb4fd2fae550ff8f843e2e772",
+    "packages": [
+        {
+            "name": "ralouphie/getallheaders",
+            "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ralouphie/getallheaders.git",
+                "reference": "120b605dfeb996808c31b6477290a714d356e822"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ralouphie/getallheaders/zipball/120b605dfeb996808c31b6477290a714d356e822",
+                "reference": "120b605dfeb996808c31b6477290a714d356e822",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.6"
+            },
+            "require-dev": {
+                "php-coveralls/php-coveralls": "^2.1",
+                "phpunit/phpunit": "^5 || ^6.5"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/getallheaders.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ralph Khattar",
+                    "email": "ralph.khattar@gmail.com"
+                }
+            ],
+            "description": "A polyfill for getallheaders.",
+            "support": {
+                "issues": "https://github.com/ralouphie/getallheaders/issues",
+                "source": "https://github.com/ralouphie/getallheaders/tree/3.0.3"
+            },
+            "time": "2019-03-08T08:55:37+00:00"
+        }
+    ],
     "packages-dev": [
         {
             "name": "myclabs/deep-copy",
@@ -74,12 +120,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nikic/PHP-Parser.git",
-                "reference": "2a5e81f7caae572f096f5cc83d0ef75687127e1c"
+                "reference": "1bcbb2179f97633e98bbbc87044ee2611c7d7999"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/2a5e81f7caae572f096f5cc83d0ef75687127e1c",
-                "reference": "2a5e81f7caae572f096f5cc83d0ef75687127e1c",
+                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/1bcbb2179f97633e98bbbc87044ee2611c7d7999",
+                "reference": "1bcbb2179f97633e98bbbc87044ee2611c7d7999",
                 "shasum": ""
             },
             "require": {
@@ -122,7 +168,7 @@
                 "issues": "https://github.com/nikic/PHP-Parser/issues",
                 "source": "https://github.com/nikic/PHP-Parser/tree/4.x"
             },
-            "time": "2023-11-28T19:10:38+00:00"
+            "time": "2023-12-10T21:03:43+00:00"
         },
         {
             "name": "phar-io/manifest",
@@ -249,12 +295,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "00241c0d943d00763057087e836a1ba4b402fbcb"
+                "reference": "eb2d15e5d9c0a766e116dd1ce407ee062ee05506"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/00241c0d943d00763057087e836a1ba4b402fbcb",
-                "reference": "00241c0d943d00763057087e836a1ba4b402fbcb",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/eb2d15e5d9c0a766e116dd1ce407ee062ee05506",
+                "reference": "eb2d15e5d9c0a766e116dd1ce407ee062ee05506",
                 "shasum": ""
             },
             "require": {
@@ -304,7 +350,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-12-09T14:21:55+00:00"
+            "time": "2023-12-11T20:46:02+00:00"
         },
         {
             "name": "phpstan/phpstan-phpunit",
@@ -365,12 +411,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "f430918b3b35cd04a28ce1445d5701e152b3f9a8"
+                "reference": "599109c8ca6bae97b23482d557d2874c25a65e59"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/f430918b3b35cd04a28ce1445d5701e152b3f9a8",
-                "reference": "f430918b3b35cd04a28ce1445d5701e152b3f9a8",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/599109c8ca6bae97b23482d557d2874c25a65e59",
+                "reference": "599109c8ca6bae97b23482d557d2874c25a65e59",
                 "shasum": ""
             },
             "require": {
@@ -428,7 +474,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/php-code-coverage/issues",
                 "security": "https://github.com/sebastianbergmann/php-code-coverage/security/policy",
-                "source": "https://github.com/sebastianbergmann/php-code-coverage/tree/main"
+                "source": "https://github.com/sebastianbergmann/php-code-coverage/tree/10.1.10"
             },
             "funding": [
                 {
@@ -436,7 +482,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-12-09T13:10:27+00:00"
+            "time": "2023-12-11T06:28:43+00:00"
         },
         {
             "name": "phpunit/php-file-iterator",
@@ -692,12 +738,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "af7fc81d5ab91ea5b7d1ce39338d573c5d569c3a"
+                "reference": "4272cbdfbaa246744835c7b5985b28bbc50a9feb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/af7fc81d5ab91ea5b7d1ce39338d573c5d569c3a",
-                "reference": "af7fc81d5ab91ea5b7d1ce39338d573c5d569c3a",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/4272cbdfbaa246744835c7b5985b28bbc50a9feb",
+                "reference": "4272cbdfbaa246744835c7b5985b28bbc50a9feb",
                 "shasum": ""
             },
             "require": {
@@ -785,7 +831,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-12-07T14:35:55+00:00"
+            "time": "2023-12-11T16:52:48+00:00"
         },
         {
             "name": "sebastian/cli-parser",

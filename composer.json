@@ -13,7 +13,8 @@
     "require": {
         "php": ">=8.2.0",
         "ext-mbstring": "*",
-        "ext-json": "*"
+        "ext-json": "*",
+        "ralouphie/getallheaders": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "^10.2",

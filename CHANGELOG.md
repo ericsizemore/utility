@@ -2,11 +2,18 @@
 A not so exhaustive list of changes for each release.
 
 For a more detailed listing of changes between each version, 
-you can use the following url: https://github.com/ericsizemore/utility/compare/v1.1.1...v1.1.2. 
+you can use the following url: https://github.com/ericsizemore/utility/compare/v1.2.0...v1.3.0. 
 
 Simply replace the version numbers depending on which set of changes you wish to see.
 
-### 1.2.1-dev
+### 1.3.0 (2023-12-11)
+  * currentUrl() no longer has any parameters, and just returns the URL string.
+    * currentUrl(bool $parse = false) is now just currentUrl()
+    * Just run parse_url(Utility::currentUrl()) if that functionality is needed.
+  * serverHttpVars() deprecated, just use getallheaders() instead.
+    * Added ralouphie/getallheaders as a polyfill, for situations where the SAPI is not Apache
+    * serverHttpVars() will just return the getallheaders() output
+  * Removed deprecated statusHeader()
   * Code cleanup per PHPCS and PHPScrutinizer
     * Small refactoring of some functions, such as currentUrl and isReallyWritable
   * Attempt at increasing test coverage.
