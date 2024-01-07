@@ -158,7 +158,7 @@ final class Image
         [$mime, ] = explode('; ', $result);
 
         if (Strings::beginsWith($mime, 'image/')) {
-            return $result;
+            return $mime;
         }
         return false;
         //@codeCoverageIgnoreEnd

@@ -229,30 +229,24 @@ final class Filesystem
 
         // Clean up the path a bit first
         $path = rtrim(str_replace(['/', '\\'], $separator, $path), $separator);
-        $realPath = realpath($path);
 
-        // Did realpath fail?
-        if ($realPath === false) {
-            // Filter through and reduce as needed
-            $filtered = array_filter(
-                explode($separator, $path),
-                static fn (string $string, bool $binarySafe = false): int => Strings::length($string, $binarySafe)
-            );
+        // Filter through and reduce as needed
+        $filtered = array_filter(
+            explode($separator, $path),
+            static fn (string $string, bool $binarySafe = false): int => Strings::length($string, $binarySafe)
+        );
 
-            $filtered = array_reduce($filtered, static function (array $tmp, string $item): array {
-                if ($item === '..') {
-                    array_pop($tmp);
-                } elseif ($item !== '.') {
-                    $tmp[] = $item;
-                }
-                return $tmp;
-            }, []);
+        $filtered = array_reduce($filtered, static function (array $tmp, string $item): array {
+            if ($item === '..') {
+                array_pop($tmp);
+            } elseif ($item !== '.') {
+                $tmp[] = $item;
+            }
+            return $tmp;
+        }, []);
 
-            // Put it all together.
-            return implode($separator, $filtered);
-        }
-        // realpath did not fail
-        return $realPath;
+        // Put it all together.
+        return implode($separator, $filtered);
     }
 
     /**
