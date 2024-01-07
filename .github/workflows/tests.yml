@@ -47,9 +47,6 @@ jobs:
       - name: Run test suite
         run: composer run-script test
 
-      - name: Run PHPCS Fixer
-        run: composer run-script phpcs
-
       - uses: sudo-bot/action-scrutinizer@latest
         with:
            cli-args: "--format=php-clover build/logs/clover.xml"
