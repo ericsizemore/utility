@@ -126,16 +126,19 @@ class FilesystemTest extends TestCase
         self::assertSame(0, array_sum(Filesystem::lineCounter(directory: self::$testDir, ignore: ['dir1'], onlyLineCount: true)));
         self::assertSame(0, array_sum(Filesystem::lineCounter(self::$testDir, extensions: ['.txt'], onlyLineCount: true)));
 
-        $expected = Filesystem::lineCounter(directory: self::$testDir);
+        $result = Filesystem::lineCounter(directory: self::$testDir);
+        \arsort($result);
+
+        $expected = [
+            'file1' => 5,
+            'file2' => 0,
+            'file3.txt' => 0,
+        ];
         \arsort($expected);
 
         self::assertSame([
-            self::$testDir => [
-                'file1' => 5,
-                'file2' => 0,
-                'file3.txt' => 0,
-            ],
-        ], $expected);
+            self::$testDir => $expected,
+        ], $result);
 
         self::assertSame([], Filesystem::lineCounter(directory: self::$testDir, ignore: ['dir1']));
         self::assertSame([], Filesystem::lineCounter(self::$testDir, extensions: ['.txt']));
