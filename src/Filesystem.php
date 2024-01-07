@@ -246,7 +246,7 @@ final class Filesystem
         }, []);
 
         // Put it all together.
-        return implode($separator, $filtered);
+        return ($separator !== '\\' ? $separator : '') . implode($separator, $filtered);
     }
 
     /**
