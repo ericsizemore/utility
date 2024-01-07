@@ -17,7 +17,7 @@
 * [haversineDistance](#haversinedistance)(int|float $startingLatitude, int|float $startingLongitude, int|float $endingLatitude, int|float $endingLongitude, int $precision = 0): array
 
 
-## Alnum
+## 
 
 
 

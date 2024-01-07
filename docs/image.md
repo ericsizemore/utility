@@ -2,15 +2,15 @@
 
 `Esi\Utility\Image`
 
-* [isGdAvailable](#getencoding)(): bool
-* [isGmagickAvailable](#setencoding)(): bool
-isImagickAvailable(): bool
-isExifAvailable(): bool
-guessImageType(string $imagePath): string | false
-isJpg(string $imagePath): bool
-isGif(string $imagePath): bool
-isPng(string $imagePath): bool
-isWebp(string $imagePath): bool
+* [isGdAvailable](#isgdavailable)(): bool
+* [isGmagickAvailable](#isgmagickavailable)(): bool
+* [isImagickAvailable](#isimagickavailable)(): bool
+* [isExifAvailable](#isexifavailable)(): bool
+* [guessImageType](#guessimagetype)(string $imagePath): string | false
+* [isJpg](#isjpg)(string $imagePath): bool
+* [isGif](#isgif)(string $imagePath): bool
+* [isPng](#ispng)(string $imagePath): bool
+* [isWebp](#iswebp)(string $imagePath): bool
 
 #### @access private
 ```php
@@ -21,7 +21,7 @@ guessImageTypeGetImageSize(string $imagePath): string | false
 ```
 
 
-## Alnum
+## 
 
 
 

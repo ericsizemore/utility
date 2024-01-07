@@ -15,7 +15,7 @@
 * [iniSet](#iniset)(string $option, string $value): string | false
 
 
-## Alnum
+## 
 
 
 

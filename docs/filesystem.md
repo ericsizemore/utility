@@ -22,7 +22,7 @@ checkExtensions(string $extension, array $extensions): bool
 ```
 
 
-## Alnum
+## 
 
 
 
