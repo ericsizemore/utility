@@ -1,6 +1,11 @@
 # Set the default behavior, in case people don't have core.autocrlf set.
 * text eol=lf
 
+*.gif binary
+*.jpg binary
+*.png binary
+*.webp binary
+
 # Ignore all test and documentation with "export-ignore".
 /.github                  export-ignore
 /.gitattributes           export-ignore
