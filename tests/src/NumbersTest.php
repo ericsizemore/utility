@@ -92,8 +92,8 @@ class NumbersTest extends TestCase
     public function testRandomInt(): void
     {
         $int = Numbers::random(100, 250);
-        self::assertGreaterThan(100, $int);
-        self::assertLessThan(250, $int);
+        self::assertGreaterThanOrEqual(100, $int);
+        self::assertLessThanOrEqual(250, $int);
 
         self::expectException(ValueError::class);
         $int = Numbers::random((int) (PHP_INT_MIN - 1), PHP_INT_MAX);
