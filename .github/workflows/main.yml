@@ -44,3 +44,4 @@ jobs:
 
       - name: Run PHPStan
         run: composer run-script phpstan
+

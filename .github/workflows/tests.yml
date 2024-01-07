@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php: [ '8.2', '8.3' ]
+        php: [ '8.2', '8.3', '8.4' ]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -47,6 +47,9 @@ jobs:
       - name: Run test suite
         run: composer run-script test
 
+      - name: Run PHPCS Fixer
+        run: composer run-script phpcs
+
       - uses: sudo-bot/action-scrutinizer@latest
         with:
-           cli-args: "--format=php-clover build/logs/coverage.clover"
+           cli-args: "--format=php-clover build/logs/clover.xml"

@@ -1,0 +1,21 @@
+site_name: Esi\Utility
+site_description: 'Documentation for Utility - A Collection of various PHP utility functions.'
+site_author: 'Eric Sizemore'
+copyright: 'Copyright (C) 2017 - 2024 Eric Sizemore'
+site_url: https://www.secondversion.com/docs/utility
+docs_dir: docs/
+repo_name: 'ericsizemore/utility'
+repo_url: 'https://github.com/ericsizemore/utility'
+theme: readthedocs
+nav:
+  - Home: index.md
+  - Installing: installation.md
+  - Basic Usage: basic-usage.md
+  - Array Utilities: arrays.md
+  - Conversion Utilities: conversion.md
+  - Date Utilities: dates.md
+  - Environment Utilities: environment.md
+  - Filesystem Utilities: filesystem.md
+  - Image Utilities: image.md
+  - Number Utilities: numbers.md
+  - String Utilities: strings.md

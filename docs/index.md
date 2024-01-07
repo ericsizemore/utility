@@ -36,14 +36,15 @@ require 'vendor/autoload.php';
 ## Basic Usage
 
 Utility is a set of classes that are broken down into several "components":
-  * [Arrays](docs/arrays.md)
-  * [Conversion](docs/conversion.md)
-  * [Dates](docs/dates.md)
-  * [Environment](docs/environment.md)
-  * [Filesystem](docs/filesystem.md)
-  * [Image](docs/image.md)
-  * [Numbers](docs/numbers.md)
-  * [Strings](docs/strings.md)
+
+* [\Esi\Utility\Arrays](arrays.md)
+* [\Esi\Utility\Conversion](conversion.md)
+* [\Esi\Utility\Dates](dates.md)
+* [\Esi\Utility\Environment](environment.md)
+* [\Esi\Utility\Filesystem](filesystem.md)
+* [\Esi\Utility\Image](image.md)
+* [\Esi\Utility\Numbers](numbers.md)
+* [\Esi\Utility\Strings](strings.md)
 
 As an example, let's say you want to convert a string to title case. To do so:
 ```php
@@ -84,7 +85,7 @@ Array
 ```
 
 ## Documentation
-Please see [docs](/docs) or view [online](https://www.secondversion.com/docs/utility/).
+Please see [docs](https://github.com/ericsizemore/utility/docs) or view [online](https://www.secondversion.com/utility/).
 
 ## About
 

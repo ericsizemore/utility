@@ -2,9 +2,38 @@
 A not so exhaustive list of changes for each release.
 
 For a more detailed listing of changes between each version, 
-you can use the following url: https://github.com/ericsizemore/utility/compare/v1.2.0...v1.3.0. 
+you can use the following url: https://github.com/ericsizemore/utility/compare/v1.3.0...v2.0.0. 
 
 Simply replace the version numbers depending on which set of changes you wish to see.
+
+### 2.0.0 ()
+  * Utility has undergone a complete restructuring.
+  * src/Utility/Utility.php no longer exists. The class has been broken down into smaller classes or "components":
+    * src/Utility/Arrays.php
+    * src/Utility/Conversion.php
+    * src/Utility/Dates.php
+    * src/Utility/Environment.php
+    * src/Utility/Filesystem.php
+    * src/Utility/Image.php
+    * src/Utility/Numbers.php
+    * src/Utility/Strings.php
+  * Made a great improvement in code coverage/testing
+  * Effort to improve documentation, which can be found in `docs/` or online [here](https://www.secondversion.com/docs/utility)
+  * Filesystem::lineCounter() (Utility::lineCounter() in Utility < 2.0) no longer has a `$skipEmpty` parameter. It will now always skip empty lines.
+    * Replaced the use of `file()` with `SplFileObject` and flags `SplFileObject::READ_AHEAD | SplFileObject::SKIP_EMPTY | SplFileObject::DROP_NEW_LINE`
+      * Should be more efficient, especially for larger files.
+  * Numbers::sizeFormat() (Utility::sizeFormat() in Utility < 2.0) has a new option:
+    * Numbers::sizeFormat(int $bytes, int $precision = 0, string $system = 'binary'): string
+    * System can be one of 'binary' or 'metric' and it determines the base/mod for the formatting.
+  * Updated tests to use PHPUnit's CoversClass and DataProvider attributes.
+    * Changed `$this` to `self::` in tests when calling PHPUnit methods
+  * Updated composer.json to support PHP 8.2 - 8.4
+    * Added PHPStan strict rules to dev dependencies
+    * Updated workflows to introduce testing on PHP 8.4
+    * Added RectorPHP and PHP-CS-Fixer to dev dependencies
+  * Bump copyright year.
+
+## Branch [1.3.x](https://github.com/ericsizemore/utility/tree/1.3.x) Changelog
 
 ### 1.3.0 (2023-12-11)
   * currentUrl() no longer has any parameters, and just returns the URL string.

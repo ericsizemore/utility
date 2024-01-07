@@ -1,8 +1,8 @@
 {
     "name": "esi/utility",
     "description": "Utility - Collection of various PHP utility functions.",
-    "type": "library",
     "license": "MIT",
+    "type": "library",
     "authors": [
         {
             "name": "Eric Sizemore",
@@ -10,39 +10,50 @@
             "homepage": "https://www.secondversion.com/"
         }
     ],
+    "support": {
+        "issues": "https://github.com/ericsizemore/utility/issues",
+        "forum": "https://github.com/ericsizemore/utility/discussions",
+        "source": "https://github.com/ericsizemore/utility/tree/master",
+        "security": "https://github.com/ericsizemore/utility/security/policy"
+    },
     "require": {
-        "php": ">=8.2.0",
-        "ext-mbstring": "*",
+        "php": "^8.2 <8.5",
         "ext-json": "*",
+        "ext-mbstring": "*",
         "ralouphie/getallheaders": "^3.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^10.2",
-        "phpstan/phpstan": "^1.10",
-        "phpstan/phpstan-phpunit": "^1.3"
+        "friendsofphp/php-cs-fixer": ">=3.45",
+        "phpstan/phpstan": ">=1.11",
+        "phpstan/phpstan-phpunit": ">=1.4",
+        "phpstan/phpstan-strict-rules": ">=1.6",
+        "phpunit/phpunit": ">10.5 <12",
+        "rector/rector": "dev-main"
     },
+    "suggest": {
+        "ext-exif": "To be able to use Exif for guessing image types with Utility\\Image",
+        "ext-fileinfo": "To be able to use finfo/fileinfo for guessing image types with Utility\\Image"
+    },
+    "minimum-stability": "dev",
     "autoload": {
-        "psr-4": { "Esi\\Utility\\": "src/Utility" }
+        "psr-4": {
+            "Esi\\Utility\\": "src/"
+        }
     },
     "autoload-dev": {
         "psr-4": {
             "Esi\\Utility\\Tests\\": "tests/src/"
         }
     },
-	"support": {
-		"issues": "https://github.com/ericsizemore/utility/issues",
-		"forum": "https://github.com/ericsizemore/utility/discussions",
-		"source": "https://github.com/ericsizemore/utility/tree/master",
-		"security": "https://github.com/ericsizemore/utility/security/policy"
-	},
-    "scripts": {
-        "test": "phpunit --coverage-clover=build/logs/coverage.clover --display-deprecations --display-warnings --globals-backup",
-        "phpstan": "vendor/bin/phpstan analyse -c phpstan.neon"
-    },
-    "minimum-stability": "dev",
     "extra": {
         "branch-alias": {
             "dev-master": "2.0-dev"
         }
+    },
+    "scripts": {
+        "phpcs-fix": "vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php",
+        "phpcs-nofix": "vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php --dry-run --diff",
+        "phpstan": "vendor/bin/phpstan analyse -c phpstan.neon",
+        "test": "phpunit --coverage-clover=build/logs/clover.xml --coverage-html=build/logs/coverage --display-notices --display-deprecations --display-warnings --globals-backup"
     }
 }
