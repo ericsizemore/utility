@@ -37,6 +37,8 @@ require 'vendor/autoload.php';
 
 Utility is a set of classes that are broken down into several "components":
 
+#### `Utilities`
+
 * [\Esi\Utility\Arrays](arrays.md)
 * [\Esi\Utility\Conversion](conversion.md)
 * [\Esi\Utility\Dates](dates.md)
@@ -45,6 +47,15 @@ Utility is a set of classes that are broken down into several "components":
 * [\Esi\Utility\Image](image.md)
 * [\Esi\Utility\Numbers](numbers.md)
 * [\Esi\Utility\Strings](strings.md)
+
+
+There are also useful `Enum`'s provided, with the following currently available:
+
+#### `Http`
+
+* [Methods](enums/http/methods.md)
+* [StatusCodes](enums/http/status-codes.md)
+* [StatusCodeCategories](enums/http/status-code-categories.md)
 
 As an example, let's say you want to convert a string to title case. To do so:
 ```php

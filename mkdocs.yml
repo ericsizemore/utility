@@ -11,11 +11,17 @@ nav:
   - Home: index.md
   - Installing: installation.md
   - Basic Usage: basic-usage.md
-  - Array Utilities: arrays.md
-  - Conversion Utilities: conversion.md
-  - Date Utilities: dates.md
-  - Environment Utilities: environment.md
-  - Filesystem Utilities: filesystem.md
-  - Image Utilities: image.md
-  - Number Utilities: numbers.md
-  - String Utilities: strings.md
+  - Utilities:
+    - Array: arrays.md
+    - Conversion: conversion.md
+    - Date: dates.md
+    - Environment: environment.md
+    - Filesystem: filesystem.md
+    - Image: image.md
+    - Number: numbers.md
+    - String: strings.md
+  - Enums:
+    - Http:
+      - Methods: enums/http/methods.md
+      - Status Codes: enums/http/status-codes.md
+      - Status Code Categories: enums/http/status-code-categories.md
