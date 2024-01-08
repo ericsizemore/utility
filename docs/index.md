@@ -56,6 +56,7 @@ There are also useful `Enum`'s provided, with the following currently available:
 * [Methods](enums/http/methods.md)
 * [StatusCodes](enums/http/status-codes.md)
 * [StatusCodeCategories](enums/http/status-code-categories.md)
+* [StatusCodeDescriptions](enums/http/status-code-descriptions.md)
 
 As an example, let's say you want to convert a string to title case. To do so:
 ```php

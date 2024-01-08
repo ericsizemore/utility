@@ -39,6 +39,8 @@ use PHPUnit\Framework\Attributes\CoversClass;
 
 /**
  * Methods enum tests.
+ *
+ * @todo The tests need some work, more detailed testing.
  */
 #[CoversClass(Methods::class)]
 class MethodsTest extends TestCase

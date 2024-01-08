@@ -62,6 +62,8 @@ Simply replace the version numbers depending on which set of changes you wish to
       * Added getValue(), getName()
     * Method => Methods
       * Added getValue(), getName()
+    * Added StatusCodeDescriptions
+      * Can give a description of a particular status code, per the MDN (Mozilla Developer Network) definitions.
     * Small bug fixes, coding standards updates, etc.
     * Added unit tests
 

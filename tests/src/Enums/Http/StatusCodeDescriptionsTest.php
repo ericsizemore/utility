@@ -33,32 +33,32 @@ declare(strict_types=1);
 
 namespace Esi\Utility\Tests\Enums\Http;
 
-use Esi\Utility\Enums\Http\StatusCodeCategories;
+use Esi\Utility\Enums\Http\StatusCodeDescriptions;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 /**
- * StatusCodeCategories enum tests.
+ * StatusCodeDescriptions enum tests.
  *
  * @todo The tests need some work, more detailed testing.
  */
-#[CoversClass(StatusCodeCategories::class)]
-class StatusCodeCategoriesTest extends TestCase
+#[CoversClass(StatusCodeDescriptions::class)]
+class StatusCodeDescriptionsTest extends TestCase
 {
     /**
-     * Holds all cases of the StatusCodeCategories enum.
+     * Holds all cases of the StatusCodeDescriptions enum.
      *
-     * @var array<int, StatusCodeCategories>
+     * @var array<int, StatusCodeDescriptions>
      */
-    protected array $categories;
+    protected array $descriptions;
 
     /**
-     * Build the $categories array.
+     * Build the $descriptions array.
      */
     #[\Override]
     public function setUp(): void
     {
-        $this->categories = StatusCodeCategories::cases();
+        $this->descriptions = StatusCodeDescriptions::cases();
     }
 
     /**
@@ -66,10 +66,10 @@ class StatusCodeCategoriesTest extends TestCase
      */
     public function testNoneEmpty(): void
     {
-        self::assertNotEmpty($this->categories);
+        self::assertNotEmpty($this->descriptions);
 
-        foreach ($this->categories as $category) {
-            self::assertNotEmpty($category->getValue());
+        foreach ($this->descriptions as $description) {
+            self::assertNotEmpty($description->getValue());
         }
     }
 
@@ -78,10 +78,10 @@ class StatusCodeCategoriesTest extends TestCase
      */
     public function testGetName(): void
     {
-        self::assertNotEmpty($this->categories);
+        self::assertNotEmpty($this->descriptions);
 
-        foreach ($this->categories as $category) {
-            self::assertSame($category->getName(), $category->name);
+        foreach ($this->descriptions as $description) {
+            self::assertSame($description->getName(), $description->name);
         }
     }
 }

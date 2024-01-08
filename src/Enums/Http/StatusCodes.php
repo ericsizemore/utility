@@ -42,6 +42,7 @@ declare(strict_types=1);
 namespace Esi\Utility\Enums\Http;
 
 use Esi\Utility\Enums\Http\StatusCodeCategories;
+use Esi\Utility\Enums\Http\StatusCodeDescriptions;
 
 use function str_replace;
 use function floor;
@@ -237,6 +238,80 @@ enum StatusCodes: int
             4.0 => StatusCodeCategories::ClientError,
             5.0 => StatusCodeCategories::ServerError,
             default => StatusCodeCategories::Unknown,
+        };
+    }
+
+    /**
+     * Returns the description of this status code.
+     *
+     * @return StatusCodeDescriptions
+     */
+    public function getDescription(): StatusCodeDescriptions
+    {
+        return match($this) {
+            self::Continue => StatusCodeDescriptions::Continue,
+            self::Switching_Protocols => StatusCodeDescriptions::Switching_Protocols,
+            self::Processing => StatusCodeDescriptions::Processing,
+            self::Early_Hints => StatusCodeDescriptions::Early_Hints,
+            self::OK => StatusCodeDescriptions::OK,
+            self::Created => StatusCodeDescriptions::Created,
+            self::Accepted => StatusCodeDescriptions::Accepted,
+            self::Non_Authoritative_Information => StatusCodeDescriptions::Non_Authoritative_Information,
+            self::No_Content => StatusCodeDescriptions::No_Content,
+            self::Reset_Content => StatusCodeDescriptions::Reset_Content,
+            self::Partial_Content => StatusCodeDescriptions::Partial_Content,
+            self::Multi_Status => StatusCodeDescriptions::Multi_Status,
+            self::Already_Reported => StatusCodeDescriptions::Already_Reported,
+            self::IM_Used => StatusCodeDescriptions::IM_Used,
+            self::Multiple_Choices => StatusCodeDescriptions::Multiple_Choices,
+            self::Moved_Permanently => StatusCodeDescriptions::Moved_Permanently,
+            self::Found => StatusCodeDescriptions::Found,
+            self::See_Other => StatusCodeDescriptions::See_Other,
+            self::Not_Modified => StatusCodeDescriptions::Not_Modified,
+            self::Use_Proxy => StatusCodeDescriptions::Use_Proxy,
+            self::Explicitly_Unused => StatusCodeDescriptions::Explicitly_Unused,
+            self::Temporary_Redirect => StatusCodeDescriptions::Temporary_Redirect,
+            self::Permanent_Redirect => StatusCodeDescriptions::Permanent_Redirect,
+            self::Bad_Request => StatusCodeDescriptions::Bad_Request,
+            self::Unauthorized => StatusCodeDescriptions::Unauthorized,
+            self::Payment_Required => StatusCodeDescriptions::Payment_Required,
+            self::Forbidden => StatusCodeDescriptions::Forbidden,
+            self::Not_Found => StatusCodeDescriptions::Not_Found,
+            self::Method_Not_Allowed => StatusCodeDescriptions::Method_Not_Allowed,
+            self::Not_Acceptable => StatusCodeDescriptions::Not_Acceptable,
+            self::Proxy_Authentication_Required => StatusCodeDescriptions::Proxy_Authentication_Required,
+            self::Request_Timeout => StatusCodeDescriptions::Request_Timeout,
+            self::Conflict => StatusCodeDescriptions::Conflict,
+            self::Gone => StatusCodeDescriptions::Gone,
+            self::Length_Required => StatusCodeDescriptions::Length_Required,
+            self::Precondition_Failed => StatusCodeDescriptions::Precondition_Failed,
+            self::Payload_Too_Large => StatusCodeDescriptions::Payload_Too_Large,
+            self::Request_URI_Too_Long => StatusCodeDescriptions::Request_URI_Too_Long,
+            self::Unsupported_Media_Type => StatusCodeDescriptions::Unsupported_Media_Type,
+            self::Requested_Range_Not_Satisfiable => StatusCodeDescriptions::Requested_Range_Not_Satisfiable,
+            self::Expectation_Failed => StatusCodeDescriptions::Expectation_Failed,
+            self::Im_A_Teapot => StatusCodeDescriptions::Im_A_Teapot,
+            self::Misdirected_Request => StatusCodeDescriptions::Misdirected_Request,
+            self::Unprocessable_Entity => StatusCodeDescriptions::Unprocessable_Entity,
+            self::Locked => StatusCodeDescriptions::Locked,
+            self::Failed_Dependency => StatusCodeDescriptions::Failed_Dependency,
+            self::Too_Early => StatusCodeDescriptions::Too_Early,
+            self::Upgrade_Required => StatusCodeDescriptions::Upgrade_Required,
+            self::Precondition_Required => StatusCodeDescriptions::Precondition_Required,
+            self::Too_Many_Requests => StatusCodeDescriptions::Too_Many_Requests,
+            self::Request_Header_Fields_Too_Large => StatusCodeDescriptions::Request_Header_Fields_Too_Large,
+            self::Unavailable_For_Legal_Reasons => StatusCodeDescriptions::Unavailable_For_Legal_Reasons,
+            self::Internal_Server_Error => StatusCodeDescriptions::Internal_Server_Error,
+            self::Not_Implemented => StatusCodeDescriptions::Not_Implemented,
+            self::Bad_Gateway => StatusCodeDescriptions::Bad_Gateway,
+            self::Service_Unavailable => StatusCodeDescriptions::Service_Unavailable,
+            self::Gateway_Timeout => StatusCodeDescriptions::Gateway_Timeout,
+            self::HTTP_Version_Not_Supported => StatusCodeDescriptions::HTTP_Version_Not_Supported,
+            self::Variant_Also_Negotiates => StatusCodeDescriptions::Variant_Also_Negotiates,
+            self::Insufficient_Storage => StatusCodeDescriptions::Insufficient_Storage,
+            self::Loop_Detected => StatusCodeDescriptions::Loop_Detected,
+            self::Not_Extended => StatusCodeDescriptions::Not_Extended,
+            self::Network_Authentication_Required => StatusCodeDescriptions::Network_Authentication_Required
         };
     }
 }

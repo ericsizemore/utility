@@ -39,6 +39,8 @@ use PHPUnit\Framework\Attributes\CoversClass;
 
 /**
  * StatusCodes enum tests.
+ *
+ * @todo The tests need some work, more detailed testing.
  */
 #[CoversClass(StatusCodes::class)]
 class StatusCodesTest extends TestCase
@@ -114,6 +116,18 @@ class StatusCodesTest extends TestCase
 
         foreach ($this->codes as $code) {
             self::assertSame(str_replace(' ', '', $code->getCategory()->getValue()), $code->getCategory()->getName());
+        }
+    }
+
+    /**
+     * Test the getDescription() method.
+     */
+    public function testGetDescription(): void
+    {
+        self::assertNotEmpty($this->codes);
+
+        foreach ($this->codes as $code) {
+            self::assertSame($code->getDescription()->getName(), $code->getName());
         }
     }
 }
