@@ -7,6 +7,52 @@ you can use the following url: https://github.com/ericsizemore/utility/compare/v
 Simply replace the version numbers depending on which set of changes you wish to see.
 
 ### 2.0.0 ()
+
+#### -dev 2024-01-08
+  * Updated Environment, added new constants, and updated the functions/tests using them:
+```php
+    /**
+     * Default https/http port numbers.
+     *
+     * @var int
+     */
+    public const PORT_SECURE = 443;
+    public const PORT_UNSECURE = 80;
+
+    /**
+     * Regex used by Environment::host() to validate a hostname.
+     *
+     * @var string
+     */
+    public const VALIDATE_HOST_REGEX = '#^\[?(?:[a-z0-9-:\]_]+\.?)+$#';
+
+    /**
+     * Maps values to their boolean equivalent for Environment::iniGet(standardize: true)
+     *
+     * @var array<string>
+     */
+    public const BOOLEAN_MAPPINGS = [
+        'yes'   => '1',
+        'on'    => '1',
+        'true'  => '1',
+        '1'     => '1',
+        'no'    => '0',
+        'off'   => '0',
+        'false' => '0',
+        '0'     => '0',
+    ];
+```
+  * Updated Numbers, added new constants:
+```php
+    /**
+     * Constants for Numbers::sizeFormat(). Sets bases and modifier for the conversion.
+     */
+    public const BINARY_STANDARD_BASE = 1024;
+    public const METRIC_STANDARD_BASE = 1000;
+    public const CONVERSION_MODIFIER = 0.9;
+```
+
+#### -dev 2024-01-07
   * Utility has undergone a complete restructuring.
   * src/Utility/Utility.php no longer exists. The class has been broken down into smaller classes or "components":
     * src/Utility/Arrays.php

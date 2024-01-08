@@ -558,7 +558,8 @@ final class Strings
         // Split and process
         $email = array_map(
             static fn (string $char): string => '&#' . ord($char) . ';',
-            /** @scrutinizer ignore-type */ str_split($email)
+            /** @scrutinizer ignore-type */
+            str_split($email)
         );
 
         return implode('', $email);

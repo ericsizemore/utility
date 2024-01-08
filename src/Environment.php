@@ -64,6 +64,37 @@ use const FILTER_FLAG_NO_RES_RANGE;
 final class Environment
 {
     /**
+     * Default https/http port numbers.
+     *
+     * @var int
+     */
+    public const PORT_SECURE = 443;
+    public const PORT_UNSECURE = 80;
+
+    /**
+     * Regex used by Environment::host() to validate a hostname.
+     *
+     * @var string
+     */
+    public const VALIDATE_HOST_REGEX = '#^\[?(?:[a-z0-9-:\]_]+\.?)+$#';
+
+    /**
+     * Maps values to their boolean equivalent for Environment::iniGet(standardize: true)
+     *
+     * @var array<string>
+     */
+    public const BOOLEAN_MAPPINGS = [
+        'yes'   => '1',
+        'on'    => '1',
+        'true'  => '1',
+        '1'     => '1',
+        'no'    => '0',
+        'off'   => '0',
+        'false' => '0',
+        '0'     => '0',
+    ];
+
+    /**
      * requestMethod()
      *
      * Gets the request method.
@@ -106,13 +137,15 @@ final class Environment
      */
     public static function ipAddress(bool $trustProxy = false): string
     {
-        // Pretty self-explanatory. Try to get an 'accurate' IP
+        // If behind cloudflare, attempt to grab the IP forwarded from the service.
         $cloudflare = Environment::var('HTTP_CF_CONNECTING_IP');
 
+        // cloudflare connecting ip found, update REMOTE_ADDR
         if ($cloudflare !== '') {
             Arrays::set($_SERVER, 'REMOTE_ADDR', $cloudflare);
         }
 
+        // If we are not trusting HTTP_CLIENT_IP and HTTP_X_FORWARDED_FOR, we return REMOTE_ADDR.
         if (!$trustProxy) {
             /** @var string */
             return Environment::var('REMOTE_ADDR');
@@ -136,19 +169,22 @@ final class Environment
 
         /** @var list<string> $ips */
         $ips = Arrays::mapDeep($ips, 'trim');
+        // Filter out any potentially empty entries
+        $ips = array_filter(
+            $ips,
+            static fn (string $string): int => Strings::length($string)
+        );
 
-        if (count($ips) > 0) {
-            foreach ($ips as $val) {
-                // @phpstan-ignore-next-line
-                if (inet_ntop(inet_pton($val)) === $val && Environment::isPublicIp($val)) {
-                    /** @var string $ip */
-                    $ip = $val;
-                    break;
-                }
+        // Traverses the $ips array. Set $ip to current value if it's a public IP.
+        array_walk($ips, static function (string $value, int $key) use (&$ip): string {
+            if (Environment::isPublicIp($value)) {
+                $ip = $value;
             }
-        }
+            return $ip;
+        });
         unset($ips);
 
+        // If at this point $ip is empty, then we are not dealing with proxy ip's
         if ($ip === '') {
             /** @var string $ip */
             $ip = Environment::var('HTTP_CLIENT_IP', Environment::var('REMOTE_ADDR'));
@@ -218,10 +254,14 @@ final class Environment
         $forwarded = Environment::var('HTTP_X_FORWARDED_HOST');
 
         /** @var string $host */
-        $host = (($acceptForwarded && ($forwarded !== '')) ? $forwarded : (Environment::var('HTTP_HOST', Environment::var('SERVER_NAME'))));
+        $host = (
+            ($acceptForwarded && ($forwarded !== ''))
+            ? $forwarded
+            : (Environment::var('HTTP_HOST', Environment::var('SERVER_NAME')))
+        );
         $host = trim($host);
 
-        if ($host === '' || preg_match('#^\[?(?:[a-z0-9-:\]_]+\.?)+$#', $host) === 0) {
+        if ($host === '' || preg_match(Environment::VALIDATE_HOST_REGEX, $host) === 0) {
             $host = 'localhost';
         }
 
@@ -277,7 +317,7 @@ final class Environment
 
         /** @var int $port */
         $port = Environment::var('SERVER_PORT', 0);
-        $port = ($port === (Environment::isHttps() ? 443 : 80) || $port === 0) ? '' : ":$port";
+        $port = ($port === (Environment::isHttps() ? Environment::PORT_SECURE : Environment::PORT_UNSECURE) || $port === 0) ? '' : ":$port";
 
         // Path
         /** @var string $self */
@@ -309,12 +349,17 @@ final class Environment
      */
     public static function iniGet(string $option, bool $standardize = false): string
     {
-        // @codeCoverageIgnoreStart
-        if (!function_exists('ini_get')) {
+        static $iniGetAvailable;
+
+        $iniGetAvailable ??= function_exists('ini_get');
+
+        if (!$iniGetAvailable) {
             // disabled_functions?
+            // @codeCoverageIgnoreStart
             throw new RuntimeException('Native ini_get function not available.');
+            // @codeCoverageIgnoreEnd
         }
-        // @codeCoverageIgnoreEnd
+
         $value = ini_get($option);
 
         if ($value === false) {
@@ -324,11 +369,7 @@ final class Environment
         $value = trim($value);
 
         if ($standardize) {
-            return match (Strings::lower($value)) {
-                'yes', 'on', 'true', '1' => '1',
-                'no', 'off', 'false', '0' => '0',
-                default => $value
-            };
+            return Environment::BOOLEAN_MAPPINGS[Strings::lower($value)] ?? $value;
         }
         return $value;
     }
@@ -346,12 +387,16 @@ final class Environment
      */
     public static function iniSet(string $option, string|int|float|bool|null $value): string | false
     {
-        // @codeCoverageIgnoreStart
-        if (!function_exists('ini_set')) {
+        static $iniSetAvailable;
+
+        $iniSetAvailable ??= function_exists('ini_set');
+
+        if (!$iniSetAvailable) {
             // disabled_functions?
+            // @codeCoverageIgnoreStart
             throw new RuntimeException('Native ini_set function not available.');
+            // @codeCoverageIgnoreEnd
         }
-        // @codeCoverageIgnoreEnd
         return ini_set($option, $value);
     }
 }

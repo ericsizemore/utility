@@ -51,6 +51,13 @@ use function count;
 final class Numbers
 {
     /**
+     * Constants for Numbers::sizeFormat(). Sets bases and modifier for the conversion.
+     */
+    public const BINARY_STANDARD_BASE = 1024;
+    public const METRIC_STANDARD_BASE = 1000;
+    public const CONVERSION_MODIFIER = 0.9;
+
+    /**
      * inside()
      *
      * Determines if a number is inside the min and max.
@@ -131,8 +138,8 @@ final class Numbers
     {
         // The units/labels for each 'system'
         static $standards = [
-            'binary' => ['base' => 1024, 'units' => ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB']],
-            'metric' => ['base' => 1000, 'units' => ['B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']],
+            'binary' => ['base' => Numbers::BINARY_STANDARD_BASE, 'units' => ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB']],
+            'metric' => ['base' => Numbers::METRIC_STANDARD_BASE, 'units' => ['B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']],
         ];
 
         // Just a sanity check
@@ -150,7 +157,7 @@ final class Numbers
         }
 
         // Perform the conversion
-        for ($i = 0; ($bytes / $base) > 0.9 && ($i < count($units) - 1); $i++) {
+        for ($i = 0; ($bytes / $base) > Numbers::CONVERSION_MODIFIER && ($i < count($units) - 1); $i++) {
             $bytes /= $base;
         }
         // @phpstan-ignore-next-line

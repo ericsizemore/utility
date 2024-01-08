@@ -19,11 +19,9 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->phpVersion(PhpVersion::PHP_83);
     //$rectorConfig->importNames();
 
-    // here we can define, what sets of rules will be applied
-    // tip: use "SetList" class to autocomplete sets with your IDE
     $rectorConfig->sets([
         SetList::CODE_QUALITY,
-        LevelSetList::UP_TO_PHP_83,
+        LevelSetList::UP_TO_PHP_82,
         PHPUnitSetList::PHPUNIT_100,
     ]);
     $rectorConfig->skip([LocallyCalledStaticMethodToNonStaticRector::class]);

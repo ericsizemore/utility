@@ -42,6 +42,8 @@ use InvalidArgumentException;
 use ArgumentCountError;
 use RuntimeException;
 
+use function sprintf;
+
 /**
  * Environment utility tests.
  */
@@ -184,8 +186,8 @@ class EnvironmentTest extends TestCase
     {
         $expected = 'http://test.dev/test.php?foo=bar';
         $expectedAuth = 'http://admin:123@test.dev/test.php?foo=bar';
-        $expectedPort = 'http://test.dev:443/test.php?foo=bar';
-        $expectedPort2 = 'https://test.dev:80/test.php?foo=bar';
+        $expectedPort = sprintf('http://test.dev:%d/test.php?foo=bar', Environment::PORT_SECURE);
+        $expectedPort2 = sprintf('https://test.dev:%d/test.php?foo=bar', Environment::PORT_UNSECURE);
         $expectedSSL = 'https://test.dev/test.php?foo=bar';
 
         Arrays::set($_SERVER, 'HTTP_HOST', 'test.dev');
@@ -205,14 +207,14 @@ class EnvironmentTest extends TestCase
         Arrays::set($_SERVER, 'PHP_AUTH_PW', null);
 
         // Test port.
-        Arrays::set($_SERVER, 'SERVER_PORT', 443);
+        Arrays::set($_SERVER, 'SERVER_PORT', Environment::PORT_SECURE);
         self::assertSame($expectedPort, Environment::url());
 
         // Test SSL.
         Arrays::set($_SERVER, 'HTTPS', 'on');
         self::assertSame($expectedSSL, Environment::url());
 
-        Arrays::set($_SERVER, 'SERVER_PORT', 80);
+        Arrays::set($_SERVER, 'SERVER_PORT', Environment::PORT_UNSECURE);
         self::assertSame($expectedPort2, Environment::url());
 
         Arrays::set($_SERVER, 'HTTPS', null);
