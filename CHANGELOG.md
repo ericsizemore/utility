@@ -51,21 +51,6 @@ Simply replace the version numbers depending on which set of changes you wish to
     public const METRIC_STANDARD_BASE = 1000;
     public const CONVERSION_MODIFIER = 0.9;
 ```
-  * Forked [Crell\EnumTools](https://github.com/Crell/EnumTools)
-    * Updated namespaces, file names, locations
-    * Crell\EnumTools\Http => Esi\Utility\Enums\Http
-    * Status => StatusCodes
-      * message() => getMessage()
-      * category() => getCategory()
-      * Added getValue(), getName()
-    * StatusCategory => StatusCodeCategories
-      * Added getValue(), getName()
-    * Method => Methods
-      * Added getValue(), getName()
-    * Added StatusCodeDescriptions
-      * Can give a description of a particular status code, per the MDN (Mozilla Developer Network) definitions.
-    * Small bug fixes, coding standards updates, etc.
-    * Added unit tests
 
 #### -dev 2024-01-07
   * Utility has undergone a complete restructuring.

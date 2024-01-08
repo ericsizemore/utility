@@ -48,15 +48,6 @@ Utility is a set of classes that are broken down into several "components":
   * [Numbers](docs/numbers.md)
   * [Strings](docs/strings.md)
 
-There are also useful `Enum`'s provided, with the following currently available:
-
-#### `Http`
-
-  * [Methods](docs/enums/http/methods.md)
-  * [StatusCodes](docs/enums/http/status-codes.md)
-  * [StatusCodeCategories](docs/enums/http/status-code-categories.md)
-  * [StatusCodeDescriptions](docs/enums/http/status-code-descriptions.md)
-
 As an example, let's say you want to convert a string to title case. To do so:
 ```php
 <?php

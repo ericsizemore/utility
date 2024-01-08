@@ -20,9 +20,3 @@ nav:
     - Image: image.md
     - Number: numbers.md
     - String: strings.md
-  - Enums:
-    - Http:
-      - Methods: enums/http/methods.md
-      - Status Codes: enums/http/status-codes.md
-      - Status Code Categories: enums/http/status-code-categories.md
-      - Status Code Descriptions: enums/http/status-code-descriptions.md
