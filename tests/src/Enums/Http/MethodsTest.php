@@ -76,7 +76,7 @@ class MethodsTest extends TestCase
      */
     public function testIsSafe(): void
     {
-        static $safe = [
+        $safe = [
             Methods::GET->getValue(),
             Methods::HEAD->getValue(),
             Methods::OPTIONS->getValue(),
@@ -101,7 +101,7 @@ class MethodsTest extends TestCase
      */
     public function testIsIdempotent(): void
     {
-        static $notIdempotent = [
+        $notIdempotent = [
             Methods::CONNECT->getValue(),
             Methods::LOCK->getValue(),
             Methods::PATCH->getValue(),
