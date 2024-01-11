@@ -174,11 +174,11 @@ class ArraysTest extends TestCase
 
         self::assertEquals($expect, $input);
 
-        // With no arguments
-        self::assertFalse(Arrays::interlace());
-
         // With one argument
         self::assertEquals([1, 2, 3], Arrays::interlace([1, 2, 3]));
+
+        // With no arguments
+        self::assertFalse(Arrays::interlace());
     }
 
     /**

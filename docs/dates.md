@@ -2,10 +2,10 @@
 
 `Esi\Utility\Dates`
 
-* [timeDifference](#timedifference)(int $timestampFrom, int $timestampTo = 0, string $timezone = 'UTC', string $append = ' old'): string
-* [timezoneInfo](#timezoneinfo)(string $timezone = 'UTC'): array
-* [validTimezone](#validtimezone)(string $timezone): bool
-* [validateTimestamp](#validatetimestamp)(int $timestamp): bool
+* [timeDifference](#timedifference)(int $timestampFrom, int $timestampTo = 0, string $timezone = 'UTC', string $append = ' old'): string;
+* [timezoneInfo](#timezoneinfo)(string $timezone = 'UTC'): array;
+* [validTimezone](#validtimezone)(string $timezone): bool;
+* [validateTimestamp](#validatetimestamp)(int $timestamp): bool;
 
 
 ## timeDifference

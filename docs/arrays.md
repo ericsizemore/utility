@@ -2,14 +2,14 @@
 
 `Esi\Utility\Arrays`
 
-* [isAssociative](#isassociative)(array $array): bool
-* [get](#get)(array | ArrayAccess $array, string | int $key, mixed $default = null): mixed
-* [set](#set)(array | ArrayAccess &$array, string | int | null $key, mixed $value): mixed
-* [exists](#exists)(array | ArrayAccess $array, string | int $key): bool
-* [flatten](#flatten)(array $array, string $separator = '.', string $prepend = ''): array
-* [mapDeep](#mapdeep)(mixed $array, callable $callback): mixed
-* [interlace](#interlace)(array ...$args): array | false
-* [groupBy](#groupby)(array $array, string $key): array
+* [isAssociative](#isassociative)(array $array): bool;
+* [get](#get)(array | ArrayAccess $array, string | int $key, mixed $default = null): mixed;
+* [set](#set)(array | ArrayAccess &$array, string | int | null $key, mixed $value): mixed;
+* [exists](#exists)(array | ArrayAccess $array, string | int $key): bool;
+* [flatten](#flatten)(array $array, string $separator = '.', string $prepend = ''): array;
+* [mapDeep](#mapdeep)(mixed $array, callable $callback): mixed;
+* [interlace](#interlace)(array ...$args): array | false;
+* [groupBy](#groupby)(array $array, string $key): array;
 
 
 ## isAssociative

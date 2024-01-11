@@ -8,6 +8,13 @@ Simply replace the version numbers depending on which set of changes you wish to
 
 ### 2.0.0 ()
 
+#### -dev 2024-01-11
+  * Updated `Strings::ascii()`, `Strings::slugify()`.
+    * Added `voku/portable-ascii` as a dependency.
+    * These functions now accept a new parameter: `$language`. If a language specific set of characters exists, it will use those within `slugify` and `ascii`.
+  * Due to using `voku/portable-ascii` as a dependency, `Strings::charMap()` was removed.
+  * Updated `StringsTest` with these changes.
+
 #### -dev 2024-01-08
   * Updated Environment, added new constants, and updated the functions/tests using them:
 ```php

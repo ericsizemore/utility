@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8cea8515bf38c72388f8aca22bc5a43e",
+    "content-hash": "c4d6fab28e6769bb930155a5dff445af",
     "packages": [
         {
             "name": "ralouphie/getallheaders",
@@ -49,6 +49,80 @@
                 "source": "https://github.com/ralouphie/getallheaders/tree/develop"
             },
             "time": "2019-03-08T08:55:37+00:00"
+        },
+        {
+            "name": "voku/portable-ascii",
+            "version": "2.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/voku/portable-ascii.git",
+                "reference": "b56450eed252f6801410d810c8e1727224ae0743"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/voku/portable-ascii/zipball/b56450eed252f6801410d810c8e1727224ae0743",
+                "reference": "b56450eed252f6801410d810c8e1727224ae0743",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.0.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~6.0 || ~7.0 || ~9.0"
+            },
+            "suggest": {
+                "ext-intl": "Use Intl for transliterator_transliterate() support"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "voku\\": "src/voku/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Lars Moelleken",
+                    "homepage": "http://www.moelleken.org/"
+                }
+            ],
+            "description": "Portable ASCII library - performance optimized (ascii) string functions for php.",
+            "homepage": "https://github.com/voku/portable-ascii",
+            "keywords": [
+                "ascii",
+                "clean",
+                "php"
+            ],
+            "support": {
+                "issues": "https://github.com/voku/portable-ascii/issues",
+                "source": "https://github.com/voku/portable-ascii/tree/2.0.1"
+            },
+            "funding": [
+                {
+                    "url": "https://www.paypal.me/moelleken",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/voku",
+                    "type": "github"
+                },
+                {
+                    "url": "https://opencollective.com/portable-ascii",
+                    "type": "open_collective"
+                },
+                {
+                    "url": "https://www.patreon.com/voku",
+                    "type": "patreon"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/voku/portable-ascii",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2022-03-08T17:03:00+00:00"
         }
     ],
     "packages-dev": [
@@ -278,12 +352,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer.git",
-                "reference": "3566e7c926ada331cd07cf6436947d0d89a1d216"
+                "reference": "860da6f34e2f9965aa922d5e0572b3aab4c0baa9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHP-CS-Fixer/PHP-CS-Fixer/zipball/3566e7c926ada331cd07cf6436947d0d89a1d216",
-                "reference": "3566e7c926ada331cd07cf6436947d0d89a1d216",
+                "url": "https://api.github.com/repos/PHP-CS-Fixer/PHP-CS-Fixer/zipball/860da6f34e2f9965aa922d5e0572b3aab4c0baa9",
+                "reference": "860da6f34e2f9965aa922d5e0572b3aab4c0baa9",
                 "shasum": ""
             },
             "require": {
@@ -362,7 +436,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-01-07T17:06:10+00:00"
+            "time": "2024-01-10T20:48:21+00:00"
         },
         {
             "name": "myclabs/deep-copy",
@@ -431,12 +505,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nikic/PHP-Parser.git",
-                "reference": "eb036d5a09f782286820729b64b238db76917958"
+                "reference": "ff095c3c65c144f32a811685a81195c4df53fb99"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/eb036d5a09f782286820729b64b238db76917958",
-                "reference": "eb036d5a09f782286820729b64b238db76917958",
+                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/ff095c3c65c144f32a811685a81195c4df53fb99",
+                "reference": "ff095c3c65c144f32a811685a81195c4df53fb99",
                 "shasum": ""
             },
             "require": {
@@ -482,7 +556,7 @@
                 "issues": "https://github.com/nikic/PHP-Parser/issues",
                 "source": "https://github.com/nikic/PHP-Parser/tree/master"
             },
-            "time": "2024-01-07T17:54:10+00:00"
+            "time": "2024-01-10T19:34:09+00:00"
         },
         {
             "name": "phar-io/manifest",
@@ -609,12 +683,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "8bdb96fc6c1e67fee97e7b30a718c68fc1b5fa5a"
+                "reference": "b53fc48af085ea3162304bb61e41d0ec9c0d3005"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/8bdb96fc6c1e67fee97e7b30a718c68fc1b5fa5a",
-                "reference": "8bdb96fc6c1e67fee97e7b30a718c68fc1b5fa5a",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/b53fc48af085ea3162304bb61e41d0ec9c0d3005",
+                "reference": "b53fc48af085ea3162304bb61e41d0ec9c0d3005",
                 "shasum": ""
             },
             "require": {
@@ -664,7 +738,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-01-07T13:20:56+00:00"
+            "time": "2024-01-10T21:53:46+00:00"
         },
         {
             "name": "phpstan/phpstan-phpunit",
@@ -1357,12 +1431,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/rectorphp/rector.git",
-                "reference": "bddc91bccd8c17c3c1ac03b1f0ba844768c8e3bb"
+                "reference": "2b3879001d53966f87685f13c25972a2bdc6323f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rectorphp/rector/zipball/bddc91bccd8c17c3c1ac03b1f0ba844768c8e3bb",
-                "reference": "bddc91bccd8c17c3c1ac03b1f0ba844768c8e3bb",
+                "url": "https://api.github.com/repos/rectorphp/rector/zipball/2b3879001d53966f87685f13c25972a2bdc6323f",
+                "reference": "2b3879001d53966f87685f13c25972a2bdc6323f",
                 "shasum": ""
             },
             "require": {
@@ -1406,7 +1480,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-01-07T16:56:38+00:00"
+            "time": "2024-01-10T22:12:13+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -2498,12 +2572,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/event-dispatcher.git",
-                "reference": "5cc5396c4b84aec3162167d032b9c08ed6d8f854"
+                "reference": "9f85f14f70beb56bc09d3a87b220886c5ae725f4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/event-dispatcher/zipball/5cc5396c4b84aec3162167d032b9c08ed6d8f854",
-                "reference": "5cc5396c4b84aec3162167d032b9c08ed6d8f854",
+                "url": "https://api.github.com/repos/symfony/event-dispatcher/zipball/9f85f14f70beb56bc09d3a87b220886c5ae725f4",
+                "reference": "9f85f14f70beb56bc09d3a87b220886c5ae725f4",
                 "shasum": ""
             },
             "require": {
@@ -2570,7 +2644,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-01-02T10:02:38+00:00"
+            "time": "2024-01-08T12:57:37+00:00"
         },
         {
             "name": "symfony/event-dispatcher-contracts",

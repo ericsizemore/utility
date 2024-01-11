@@ -78,8 +78,8 @@ class StringsTest extends TestCase
     }
 
     /**
-     * Test Strings::title().
-     */
+ * Test Strings::title().
+ */
     public function testTitle(): void
     {
         $title = Strings::title('Mary had A little lamb and She Loved it so');
@@ -266,6 +266,14 @@ class StringsTest extends TestCase
     }
 
     /**
+     * Test Strings::ascii().
+     */
+    public function testAsciiWithLanguage(): void
+    {
+        self::assertSame('aaistAAIST', Strings::ascii('ăâîșțĂÂÎȘȚ', 'ro'));
+    }
+
+    /**
      * Test Strings::slugify().
      */
     public function testSlugify(): void
@@ -280,6 +288,8 @@ class StringsTest extends TestCase
 
         self::assertSame('a-simple-title', Strings::slugify('a-simple-title'));
         self::assertSame('', Strings::slugify(' '));
+
+        self::assertSame('this-is-a-simple-title', Strings::slugify('Țhîș îș ă șîmple țîțle', '-', 'ro'));
     }
 
     /**
