@@ -54,6 +54,18 @@ use function in_array;
 final class Image
 {
     /**
+     * Image type/mime strings to determine image type.
+     *
+     * @var array<string, array<string>> IMAGE_TYPES
+     */
+    public const array IMAGE_TYPES = [
+        'jpg'  => ['image/jpg', 'image/jpeg'],
+        'gif'  => ['image/gif'],
+        'png'  => ['image/png'],
+        'webp' => ['image/webp'],
+    ];
+
+    /**
      * Check if the GD library is available on the server.
      *
      * @return bool
@@ -236,7 +248,7 @@ final class Image
         if ($imageType === false) {
             throw new RuntimeException('Unable to determine the image type. Is it a valid image file?');
         }
-        return in_array($imageType, ['image/jpg', 'image/jpeg'], true);
+        return in_array($imageType, self::IMAGE_TYPES['jpg'], true);
     }
 
     /**
@@ -259,7 +271,7 @@ final class Image
         if ($imageType === false) {
             throw new RuntimeException('Unable to determine the image type. Is it a valid image file?');
         }
-        return ($imageType === 'image/gif');
+        return in_array($imageType, self::IMAGE_TYPES['gif'], true);
     }
 
     /**
@@ -282,7 +294,7 @@ final class Image
         if ($imageType === false) {
             throw new RuntimeException('Unable to determine the image type. Is it a valid image file?');
         }
-        return ($imageType === 'image/png');
+        return in_array($imageType, self::IMAGE_TYPES['png'], true);
     }
 
     /**
@@ -305,6 +317,6 @@ final class Image
         if ($imageType === false) {
             throw new RuntimeException('Unable to determine the image type. Is it a valid image file?');
         }
-        return ($imageType === 'image/webp');
+        return in_array($imageType, self::IMAGE_TYPES['webp'], true);
     }
 }

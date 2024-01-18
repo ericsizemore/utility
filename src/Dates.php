@@ -52,6 +52,13 @@ use function time;
 final class Dates
 {
     /**
+     * Regex used to validate a given timestamp.
+     *
+     * @var string VALIDATE_TIMESTAMP_REGEX
+     */
+    public const string VALIDATE_TIMESTAMP_REGEX = '/^\d{8,11}$/';
+
+    /**
      * timeDifference()
      *
      * Formats the difference between two timestamps to be human-readable.
@@ -173,6 +180,6 @@ final class Dates
         if ($timestamp === 0 || $timestamp < 0) {
             return false;
         }
-        return (preg_match('/^\d{8,11}$/', (string) $timestamp) === 1);
+        return (preg_match(self::VALIDATE_TIMESTAMP_REGEX, (string) $timestamp) === 1);
     }
 }

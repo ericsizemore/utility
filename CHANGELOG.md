@@ -6,60 +6,8 @@ you can use the following url: https://github.com/ericsizemore/utility/compare/v
 
 Simply replace the version numbers depending on which set of changes you wish to see.
 
-### 2.0.0 ()
+### 2.0.0-dev (Work in Progress)
 
-#### -dev 2024-01-11
-  * Updated `Strings::ascii()`, `Strings::slugify()`.
-    * Added `voku/portable-ascii` as a dependency.
-    * These functions now accept a new parameter: `$language`. If a language specific set of characters exists, it will use those within `slugify` and `ascii`.
-  * Due to using `voku/portable-ascii` as a dependency, `Strings::charMap()` was removed.
-  * Updated `StringsTest` with these changes.
-
-#### -dev 2024-01-08
-  * Updated Environment, added new constants, and updated the functions/tests using them:
-```php
-    /**
-     * Default https/http port numbers.
-     *
-     * @var int
-     */
-    public const PORT_SECURE = 443;
-    public const PORT_UNSECURE = 80;
-
-    /**
-     * Regex used by Environment::host() to validate a hostname.
-     *
-     * @var string
-     */
-    public const VALIDATE_HOST_REGEX = '#^\[?(?:[a-z0-9-:\]_]+\.?)+$#';
-
-    /**
-     * Maps values to their boolean equivalent for Environment::iniGet(standardize: true)
-     *
-     * @var array<string>
-     */
-    public const BOOLEAN_MAPPINGS = [
-        'yes'   => '1',
-        'on'    => '1',
-        'true'  => '1',
-        '1'     => '1',
-        'no'    => '0',
-        'off'   => '0',
-        'false' => '0',
-        '0'     => '0',
-    ];
-```
-  * Updated Numbers, added new constants:
-```php
-    /**
-     * Constants for Numbers::sizeFormat(). Sets bases and modifier for the conversion.
-     */
-    public const BINARY_STANDARD_BASE = 1024;
-    public const METRIC_STANDARD_BASE = 1000;
-    public const CONVERSION_MODIFIER = 0.9;
-```
-
-#### -dev 2024-01-07
   * Utility has undergone a complete restructuring.
   * src/Utility/Utility.php no longer exists. The class has been broken down into smaller classes or "components":
     * src/Utility/Arrays.php
@@ -85,6 +33,180 @@ Simply replace the version numbers depending on which set of changes you wish to
     * Updated workflows to introduce testing on PHP 8.4
     * Added RectorPHP and PHP-CS-Fixer to dev dependencies
   * Bump copyright year.
+  * New constants added to the `Conversion` class:
+```php
+    /**
+     * @var int EARTH_RADIUS          Earth's radius, in meters.
+     * @var int METERS_TO_KILOMETERS  Used in the conversion of meters to kilometers.
+     * @var int METERS_TO_MILES       Used in the conversion of meters to miles.
+     */
+    public const int EARTH_RADIUS = 6_370_986;
+    public const int METERS_TO_KILOMTERS = 1000;
+    public const float METERS_TO_MILES = 1609.344;
+```
+  * These are mainly used in the `Conversion::haversineDistance()` function at the moment.
+
+  * New constant added to the `Dates` class:
+```php
+    /**
+     * Regex used to validate a given timestamp.
+     *
+     * @var string VALIDATE_TIMESTAMP_REGEX
+     */
+    public const string VALIDATE_TIMESTAMP_REGEX = '/^\d{8,11}$/';
+```
+  * Added new constants to the `Environment` class:
+```php
+    /**
+     * The default list of headers that Environment::getIpAddress() checks for.
+     *
+     * @var array<string> IP_ADDRESS_HEADERS
+     */
+    public const array IP_ADDRESS_HEADERS = [
+        'cloudflare' => 'HTTP_CF_CONNECTING_IP',
+        'forwarded'  => 'HTTP_X_FORWARDED_FOR',
+        'realip'     => 'HTTP_X_REAL_IP',
+        'client'     => 'HTTP_CLIENT_IP',
+        'default'    => 'REMOTE_ADDR'
+    ];
+
+    /**
+     * A list of headers that Environment::host() checks to determine hostname, with a default of 'localhost'
+     * if it cannot make a determination.
+     *
+     * @var array<string> HOST_HEADERS
+     */
+    public const array HOST_HEADERS = [
+        'forwarded' => 'HTTP_X_FORWARDED_HOST',
+        'server'    => 'SERVER_NAME',
+        'host'      => 'HTTP_HOST',
+        'default'   => 'localhost'
+    ];
+
+    /**
+     * A list of headers that Environment::url() checks for and uses to build a URL.
+     *
+     * @var array<string> URL_HEADERS
+     */
+    public const array URL_HEADERS = [
+        'authuser' => 'PHP_AUTH_USER',
+        'authpw'   => 'PHP_AUTH_PW',
+        'port'     => 'SERVER_PORT',
+        'self'     => 'PHP_SELF',
+        'query'    => 'QUERY_STRING',
+        'request'  => 'REQUEST_URI'
+    ];
+
+    /**
+     * A list of headers that Environment::isHttps() checks for to determine if current
+     * environment is under SSL.
+     *
+     * @var array<string> HTTPS_HEADERS
+     */
+    public const array HTTPS_HEADERS = [
+        'default'   => 'HTTPS',
+        'forwarded' => 'X-Forwarded-Proto',
+        'frontend'  => 'Front-End-Https'
+    ];
+
+    /**
+     * A list of options/headers used by Environment::requestMethod() to determine
+     * current request method.
+     *
+     * @var array<string> REQUEST_HEADERS
+     */
+    public const array REQUEST_HEADERS = [
+        'override' => 'HTTP_X_HTTP_METHOD_OVERRIDE',
+        'method'   => 'REQUEST_METHOD',
+        'default'  => 'GET'
+    ];
+```
+  * Added a new constant to the `Image` class:
+```php
+    /**
+     * Image type/mime strings to determine image type.
+     *
+     * @var array<string, array<string>> IMAGE_TYPES
+     */
+    public const array IMAGE_TYPES = [
+        'jpg'  => ['image/jpg', 'image/jpeg'],
+        'gif'  => ['image/gif'],
+        'png'  => ['image/png'],
+        'webp' => ['image/webp'],
+    ];
+```
+  * Added new constants to the `Numbers` class:
+```php
+    /**
+     * Ordinal suffixes.
+     *
+     * @var array<string> SUFFIXES
+     */
+    public const array SUFFIXES = ['th', 'st', 'nd', 'rd'];
+
+    /**
+     * Standards units.
+     *
+     * @var array<string, array<string>> SIZE_FORMAT_UNITS
+     */
+    public const array SIZE_FORMAT_UNITS = [
+        'binary' => ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'],
+        'metric' => ['B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'],
+    ];
+```
+  * Updated `Strings::ascii()`, `Strings::slugify()`.
+    * Added `voku/portable-ascii` as a dependency.
+    * These functions now accept a new parameter: `$language`. If a language specific set of characters exists, it will use those within `slugify` and `ascii`.
+  * Due to using `voku/portable-ascii` as a dependency, `Strings::charMap()` was removed.
+  * Updated `StringsTest` with these changes.
+  * Updated Environment, added new constants, and updated the functions/tests using them:
+```php
+    /**
+     * Default https/http port numbers.
+     *
+     * @var int PORT_SECURE
+     * @var int PORT_UNSECURE
+     */
+    public const PORT_SECURE = 443;
+    public const PORT_UNSECURE = 80;
+
+    /**
+     * Regex used by Environment::host() to validate a hostname.
+     *
+     * @var string VALIDATE_HOST_REGEX
+     */
+    public const VALIDATE_HOST_REGEX = '#^\[?(?:[a-z0-9-:\]_]+\.?)+$#';
+
+    /**
+     * Maps values to their boolean equivalent for Environment::iniGet(standardize: true)
+     *
+     * @var array<string> BOOLEAN_MAPPINGS
+     */
+    public const BOOLEAN_MAPPINGS = [
+        'yes'   => '1',
+        'on'    => '1',
+        'true'  => '1',
+        '1'     => '1',
+        'no'    => '0',
+        'off'   => '0',
+        'false' => '0',
+        '0'     => '0',
+    ];
+```
+  * Updated Numbers, added new constants:
+```php
+    /**
+     * Constants for Numbers::sizeFormat(). Sets bases and modifier for the conversion.
+     *
+     * @var int   BINARY_STANDARD_BASE
+     * @var int   METRIC_STANDARD_BASE
+     * @var float CONVERSION_MODIFIER
+     */
+    public const BINARY_STANDARD_BASE = 1024;
+    public const METRIC_STANDARD_BASE = 1000;
+    public const CONVERSION_MODIFIER = 0.9;
+```
+  * Updated `composer.json` for the `test` script, and moved all of the phpunit command line options to the relevant options in the `phpunit.xml` xml config.
 
 ## Branch [1.3.x](https://github.com/ericsizemore/utility/tree/1.3.x) Changelog
 

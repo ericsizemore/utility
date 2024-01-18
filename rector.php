@@ -7,6 +7,8 @@ use Rector\Set\ValueObject\SetList;
 use Rector\Set\ValueObject\LevelSetList;
 use Rector\PHPUnit\Set\PHPUnitSetList;
 use Rector\CodeQuality\Rector\ClassMethod\LocallyCalledStaticMethodToNonStaticRector;
+use Rector\Php80\Rector\Class_\ClassPropertyAssignToConstructorPromotionRector;
+
 use Rector\Core\ValueObject\PhpVersion;
 
 return static function (RectorConfig $rectorConfig): void {
@@ -18,6 +20,7 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->phpVersion(PhpVersion::PHP_82);
     $rectorConfig->phpVersion(PhpVersion::PHP_83);
     //$rectorConfig->importNames();
+    $rectorConfig->rule(ClassPropertyAssignToConstructorPromotionRector::class);
 
     $rectorConfig->sets([
         SetList::CODE_QUALITY,

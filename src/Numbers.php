@@ -52,10 +52,31 @@ final class Numbers
 {
     /**
      * Constants for Numbers::sizeFormat(). Sets bases and modifier for the conversion.
+     *
+     * @var int   BINARY_STANDARD_BASE
+     * @var int   METRIC_STANDARD_BASE
+     * @var float CONVERSION_MODIFIER
      */
     public const BINARY_STANDARD_BASE = 1024;
     public const METRIC_STANDARD_BASE = 1000;
     public const CONVERSION_MODIFIER = 0.9;
+
+    /**
+     * Ordinal suffixes.
+     *
+     * @var array<string> SUFFIXES
+     */
+    public const array SUFFIXES = ['th', 'st', 'nd', 'rd'];
+
+    /**
+     * Standards units.
+     *
+     * @var array<string, array<string>> SIZE_FORMAT_UNITS
+     */
+    public const array SIZE_FORMAT_UNITS = [
+        'binary' => ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'],
+        'metric' => ['B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'],
+    ];
 
     /**
      * inside()
@@ -116,7 +137,7 @@ final class Numbers
      */
     public static function ordinal(int $number): string
     {
-        static $suffixes = ['th', 'st', 'nd', 'rd'];
+        static $suffixes = self::SUFFIXES;
 
         $absNumber = abs($number);
 
@@ -138,8 +159,8 @@ final class Numbers
     {
         // The units/labels for each 'system'
         static $standards = [
-            'binary' => ['base' => Numbers::BINARY_STANDARD_BASE, 'units' => ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB']],
-            'metric' => ['base' => Numbers::METRIC_STANDARD_BASE, 'units' => ['B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']],
+            'binary' => ['base' => Numbers::BINARY_STANDARD_BASE, 'units' => self::SIZE_FORMAT_UNITS['binary']],
+            'metric' => ['base' => Numbers::METRIC_STANDARD_BASE, 'units' => self::SIZE_FORMAT_UNITS['metric']],
         ];
 
         // Just a sanity check

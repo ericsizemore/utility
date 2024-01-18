@@ -66,7 +66,8 @@ final class Environment
     /**
      * Default https/http port numbers.
      *
-     * @var int
+     * @var int PORT_SECURE
+     * @var int PORT_UNSECURE
      */
     public const PORT_SECURE = 443;
     public const PORT_UNSECURE = 80;
@@ -74,14 +75,14 @@ final class Environment
     /**
      * Regex used by Environment::host() to validate a hostname.
      *
-     * @var string
+     * @var string VALIDATE_HOST_REGEX
      */
     public const VALIDATE_HOST_REGEX = '#^\[?(?:[a-z0-9-:\]_]+\.?)+$#';
 
     /**
      * Maps values to their boolean equivalent for Environment::iniGet(standardize: true)
      *
-     * @var array<string>
+     * @var array<string> BOOLEAN_MAPPINGS
      */
     public const BOOLEAN_MAPPINGS = [
         'yes'   => '1',
@@ -95,6 +96,70 @@ final class Environment
     ];
 
     /**
+     * The default list of headers that Environment::getIpAddress() checks for.
+     *
+     * @var array<string> IP_ADDRESS_HEADERS
+     */
+    public const array IP_ADDRESS_HEADERS = [
+        'cloudflare' => 'HTTP_CF_CONNECTING_IP',
+        'forwarded'  => 'HTTP_X_FORWARDED_FOR',
+        'realip'     => 'HTTP_X_REAL_IP',
+        'client'     => 'HTTP_CLIENT_IP',
+        'default'    => 'REMOTE_ADDR',
+    ];
+
+    /**
+     * A list of headers that Environment::host() checks to determine hostname, with a default of 'localhost'
+     * if it cannot make a determination.
+     *
+     * @var array<string> HOST_HEADERS
+     */
+    public const array HOST_HEADERS = [
+        'forwarded' => 'HTTP_X_FORWARDED_HOST',
+        'server'    => 'SERVER_NAME',
+        'host'      => 'HTTP_HOST',
+        'default'   => 'localhost',
+    ];
+
+    /**
+     * A list of headers that Environment::url() checks for and uses to build a URL.
+     *
+     * @var array<string> URL_HEADERS
+     */
+    public const array URL_HEADERS = [
+        'authuser' => 'PHP_AUTH_USER',
+        'authpw'   => 'PHP_AUTH_PW',
+        'port'     => 'SERVER_PORT',
+        'self'     => 'PHP_SELF',
+        'query'    => 'QUERY_STRING',
+        'request'  => 'REQUEST_URI',
+    ];
+
+    /**
+     * A list of headers that Environment::isHttps() checks for to determine if current
+     * environment is under SSL.
+     *
+     * @var array<string> HTTPS_HEADERS
+     */
+    public const array HTTPS_HEADERS = [
+        'default'   => 'HTTPS',
+        'forwarded' => 'X-Forwarded-Proto',
+        'frontend'  => 'Front-End-Https',
+    ];
+
+    /**
+     * A list of options/headers used by Environment::requestMethod() to determine
+     * current request method.
+     *
+     * @var array<string> REQUEST_HEADERS
+     */
+    public const array REQUEST_HEADERS = [
+        'override' => 'HTTP_X_HTTP_METHOD_OVERRIDE',
+        'method'   => 'REQUEST_METHOD',
+        'default'  => 'GET',
+    ];
+
+    /**
      * requestMethod()
      *
      * Gets the request method.
@@ -105,7 +170,13 @@ final class Environment
     {
         /** @var string $method */
         $method = (
-            Environment::var('HTTP_X_HTTP_METHOD_OVERRIDE', Environment::var('REQUEST_METHOD', 'GET'))
+            Environment::var(
+                self::REQUEST_HEADERS['override'],
+                Environment::var(
+                    self::REQUEST_HEADERS['method'],
+                    self::REQUEST_HEADERS['default']
+                )
+            )
         );
         return Strings::upper($method);
     }
@@ -138,26 +209,26 @@ final class Environment
     public static function ipAddress(bool $trustProxy = false): string
     {
         // If behind cloudflare, attempt to grab the IP forwarded from the service.
-        $cloudflare = Environment::var('HTTP_CF_CONNECTING_IP');
+        $cloudflare = Environment::var(self::IP_ADDRESS_HEADERS['cloudflare']);
 
         // cloudflare connecting ip found, update REMOTE_ADDR
         if ($cloudflare !== '') {
-            Arrays::set($_SERVER, 'REMOTE_ADDR', $cloudflare);
+            Arrays::set($_SERVER, self::IP_ADDRESS_HEADERS['default'], $cloudflare);
         }
 
         // If we are not trusting HTTP_CLIENT_IP and HTTP_X_FORWARDED_FOR, we return REMOTE_ADDR.
         if (!$trustProxy) {
             /** @var string */
-            return Environment::var('REMOTE_ADDR');
+            return Environment::var(self::IP_ADDRESS_HEADERS['default']);
         }
 
         $ip = '';
         $ips = [];
 
         /** @var string $forwarded */
-        $forwarded = Environment::var('HTTP_X_FORWARDED_FOR');
+        $forwarded = Environment::var(self::IP_ADDRESS_HEADERS['forwarded']);
         /** @var string $realip */
-        $realip = Environment::var('HTTP_X_REAL_IP');
+        $realip = Environment::var(self::IP_ADDRESS_HEADERS['realip']);
 
         if ($forwarded !== '') {
             /** @var list<string> $ips */
@@ -187,7 +258,10 @@ final class Environment
         // If at this point $ip is empty, then we are not dealing with proxy ip's
         if ($ip === '') {
             /** @var string $ip */
-            $ip = Environment::var('HTTP_CLIENT_IP', Environment::var('REMOTE_ADDR'));
+            $ip = Environment::var(
+                self::IP_ADDRESS_HEADERS['client'],
+                Environment::var(self::IP_ADDRESS_HEADERS['default'])
+            );
         }
         return $ip;
     }
@@ -251,18 +325,18 @@ final class Environment
     public static function host(bool $stripWww = false, bool $acceptForwarded = false): string
     {
         /** @var string $forwarded */
-        $forwarded = Environment::var('HTTP_X_FORWARDED_HOST');
+        $forwarded = Environment::var(self::HOST_HEADERS['forwarded']);
 
         /** @var string $host */
         $host = (
             ($acceptForwarded && ($forwarded !== ''))
             ? $forwarded
-            : (Environment::var('HTTP_HOST', Environment::var('SERVER_NAME')))
+            : (Environment::var(self::HOST_HEADERS['host'], Environment::var(self::HOST_HEADERS['server'])))
         );
         $host = trim($host);
 
         if ($host === '' || preg_match(Environment::VALIDATE_HOST_REGEX, $host) === 0) {
-            $host = 'localhost';
+            $host = self::HOST_HEADERS['default'];
         }
 
         $host = Strings::lower($host);
@@ -285,9 +359,9 @@ final class Environment
     {
         $headers = \getallheaders();
 
-        $server = Environment::var('HTTPS');
-        $frontEnd = Arrays::get($headers, 'X-Forwarded-Proto', '');
-        $forwarded = Arrays::get($headers, 'Front-End-Https', '');
+        $server = Environment::var(self::HTTPS_HEADERS['default']);
+        $frontEnd = Arrays::get($headers, self::HTTPS_HEADERS['forwarded'], '');
+        $forwarded = Arrays::get($headers, self::HTTPS_HEADERS['frontend'], '');
 
         if ($server !== 'off' && $server !== '') {
             return true;
@@ -308,24 +382,24 @@ final class Environment
         $scheme = (Environment::isHttps()) ? 'https://' : 'http://';
 
         // Auth
-        $authUser = Environment::var('PHP_AUTH_USER');
-        $authPwd = Environment::var('PHP_AUTH_PW');
+        $authUser = Environment::var(self::URL_HEADERS['authuser']);
+        $authPwd = Environment::var(self::URL_HEADERS['authpw']);
         $auth = ($authUser !== '' ? $authUser . ($authPwd !== '' ? ":$authPwd" : '') . '@' : '');
 
         // Host and port
         $host = Environment::host();
 
         /** @var int $port */
-        $port = Environment::var('SERVER_PORT', 0);
+        $port = Environment::var(self::URL_HEADERS['port'], 0);
         $port = ($port === (Environment::isHttps() ? Environment::PORT_SECURE : Environment::PORT_UNSECURE) || $port === 0) ? '' : ":$port";
 
         // Path
         /** @var string $self */
-        $self = Environment::var('PHP_SELF');
+        $self = Environment::var(self::URL_HEADERS['self']);
         /** @var string $query */
-        $query = Environment::var('QUERY_STRING');
+        $query = Environment::var(self::URL_HEADERS['query']);
         /** @var string $request */
-        $request = Environment::var('REQUEST_URI');
+        $request = Environment::var(self::URL_HEADERS['request']);
         /** @var string $path */
         $path = ($request === '' ? $self . ($query !== '' ? '?' . $query : '') : $request);
 
@@ -385,7 +459,7 @@ final class Environment
      *
      * @throws RuntimeException|ArgumentCountError
      */
-    public static function iniSet(string $option, string|int|float|bool|null $value): string | false
+    public static function iniSet(string $option, string | int | float | bool | null $value): string | false
     {
         static $iniSetAvailable;
 

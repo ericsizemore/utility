@@ -243,8 +243,8 @@ final class Arrays
      *
      * @since 2.0.0
      *
-     * @param array<mixed, array<mixed>>  $array
-     * @param string                      $key
+     * @param array<mixed, array<mixed>>  $array  Input array.
+     * @param string                      $key    Key to use for grouping.
      * @return array<mixed, array<mixed>>
      */
     public static function groupBy(array $array, string $key): array

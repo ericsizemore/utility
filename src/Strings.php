@@ -81,13 +81,14 @@ final class Strings
     /**
      * Encoding to use for multibyte-based functions.
      *
-     * @var  string  Encoding
+     * @var string $encoding Encoding
      */
     private static string $encoding = 'UTF-8';
 
     /**
      * Returns current encoding.
      *
+     * @return string Current encoding.
      */
     public static function getEncoding(): string
     {
@@ -118,7 +119,7 @@ final class Strings
      * Convert the given string to title case.
      *
      * @param   string  $value  Value to convert.
-     * @return  string
+     * @return  string          Value converted to titlecase.
      */
     public static function title(string $value): string
     {
@@ -131,7 +132,7 @@ final class Strings
      * Convert the given string to lower case.
      *
      * @param   string  $value  Value to convert.
-     * @return  string
+     * @return  string          Value converted to lowercase.
      */
     public static function lower(string $value): string
     {
@@ -144,7 +145,7 @@ final class Strings
      * Convert the given string to upper case.
      *
      * @param   string  $value  Value to convert.
-     * @return  string
+     * @return  string          Value converted to uppercase.
      */
     public static function upper(string $value): string
     {
@@ -174,7 +175,7 @@ final class Strings
      * @since   1.0.1
      *
      * @param   string  $string  The input string.
-     * @return  string
+     * @return  string           String with the first letter lowercase'd.
      */
     public static function lcfirst(string $string): string
     {
@@ -189,7 +190,7 @@ final class Strings
      * @since   1.0.1
      *
      * @param   string  $string  The input string.
-     * @return  string
+     * @return  string           String with the first letter uppercase'd.
      */
     public static function ucfirst(string $string): string
     {
@@ -220,7 +221,7 @@ final class Strings
      * @param   string  $needle       String to check for.
      * @param   bool    $insensitive  True to do a case-insensitive search.
      * @param   bool    $multibyte    True to perform checks via mbstring, false otherwise.
-     * @return  bool
+     * @return  bool                  True if the string begins with $needle, false otherwise.
      */
     public static function beginsWith(string $haystack, string $needle, bool $insensitive = false, bool $multibyte = false): bool
     {
@@ -244,7 +245,7 @@ final class Strings
      * @param   string  $needle       String to check for.
      * @param   bool    $insensitive  True to do a case-insensitive search.
      * @param   bool    $multibyte    True to perform checks via mbstring, false otherwise.
-     * @return  bool
+     * @return  bool                  True if the string ends with $needle, false otherwise.
      */
     public static function endsWith(string $haystack, string $needle, bool $insensitive = false, bool $multibyte = false): bool
     {
@@ -268,7 +269,7 @@ final class Strings
      * @param   string  $needle       String to check for.
      * @param   bool    $insensitive  True to do a case-insensitive search.
      * @param   bool    $multibyte    True to perform checks via mbstring, false otherwise.
-     * @return  bool
+     * @return  bool                  True if the string contains $needle, false otherwise.
      */
     public static function doesContain(string $haystack, string $needle, bool $insensitive = false, bool $multibyte = false): bool
     {
@@ -292,7 +293,7 @@ final class Strings
      * @param   string  $needle       String to check for.
      * @param   bool    $insensitive  True to do a case-insensitive search.
      * @param   bool    $multibyte    True to perform checks via mbstring, false otherwise.
-     * @return  bool
+     * @return  bool                  True if the string does not contain $needle, false otherwise.
      */
     public static function doesNotContain(string $haystack, string $needle, bool $insensitive = false, bool $multibyte = false): bool
     {
@@ -306,7 +307,7 @@ final class Strings
      *
      * @param   string  $string      The string being checked for length.
      * @param   bool    $binarySafe  Forces '8bit' encoding so that the length check is binary safe.
-     * @return  int
+     * @return  int                  The length of the given string.
      */
     public static function length(string $string, bool $binarySafe = false): int
     {
@@ -353,7 +354,7 @@ final class Strings
      *
      * @param   string  $value     Value to transliterate.
      * @param   string  $language  Language code (2 characters, eg: en). {@see ASCII}
-     * @return  string
+     * @return  string             Value as ASCII.
      */
     public static function ascii(string $value, string $language = 'en'): string
     {
@@ -374,7 +375,7 @@ final class Strings
      * @param   string   $title      String to convert.
      * @param   string   $separator  Separator used to separate words in $title.
      * @param   ?string  $language   Language code (2 characters, eg: en). {@see ASCII}
-     * @return  string
+     * @return  string               Transformed string.
      */
     public static function slugify(string $title, string $separator = '-', ?string $language = 'en'): string
     {
@@ -401,7 +402,7 @@ final class Strings
      * Generate cryptographically secure pseudo-random bytes.
      *
      * @param   int<1, max>  $length  Length of the random string that should be returned in bytes.
-     * @return  string
+     * @return  string                Random bytes of $length length.
      *
      * @throws RandomException
      * @throws ValueError
@@ -409,7 +410,8 @@ final class Strings
     public static function randomBytes(int $length): string
     {
         // Sanity check
-        if ($length < 1) { // @phpstan-ignore-line
+        // @phpstan-ignore-next-line
+        if ($length < 1) {
             throw new RandomException('$length must be greater than 1.');
         }
 
@@ -423,7 +425,7 @@ final class Strings
      * Generates a secure random string, based on {@see static::randomBytes()}.
      *
      * @param   int<min, max>  $length  Length the random string should be.
-     * @return  string
+     * @return  string                  Random string of $length length.
      *
      * @throws RandomException | ValueError
      */
@@ -443,7 +445,7 @@ final class Strings
      * Validate an email address using PHP's built-in filter.
      *
      * @param   string  $email Value to check.
-     * @return  bool
+     * @return  bool           True if the email is valid, false otherwise.
      */
     public static function validEmail(string $email): bool
     {
@@ -457,8 +459,8 @@ final class Strings
      *
      * @deprecated as of 2.0.0
      *
-     * @param   string  $data   The string to validate as JSON.
-     * @return  bool
+     * @param   string  $data  The string to validate as JSON.
+     * @return  bool           True if the json appears to be valid, false otherwise.
      */
     public static function validJson(string $data): bool
     {
@@ -500,7 +502,7 @@ final class Strings
      *
      * Generate a Globally/Universally Unique Identifier (version 4).
      *
-     * @return  string
+     * @return  string  Random GUID.
      *
      * @throws RandomException
      */

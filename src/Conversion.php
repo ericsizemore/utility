@@ -57,6 +57,15 @@ use const NAN;
 final class Conversion
 {
     /**
+     * @var int EARTH_RADIUS          Earth's radius, in meters.
+     * @var int METERS_TO_KILOMETERS  Used in the conversion of meters to kilometers.
+     * @var int METERS_TO_MILES       Used in the conversion of meters to miles.
+     */
+    public const int EARTH_RADIUS = 6_370_986;
+    public const int METERS_TO_KILOMTERS = 1000;
+    public const float METERS_TO_MILES = 1609.344;
+
+    /**
      * Convert Fahrenheit (Fº) To Celsius (Cº)
      *
      * @since  1.2.0
@@ -280,10 +289,10 @@ final class Conversion
      * @return  array<string, int|float|string>
      */
     public static function haversineDistance(
-        int|float $startingLatitude,
-        int|float $startingLongitude,
-        int|float $endingLatitude,
-        int|float $endingLongitude,
+        int | float $startingLatitude,
+        int | float $startingLongitude,
+        int | float $endingLatitude,
+        int | float $endingLongitude,
         int $precision = 0
     ): array {
         // Radians
@@ -307,16 +316,13 @@ final class Conversion
         // Central angle
         $centralAngle = 2 * atan2(sqrt($square), sqrt(1 - $square));
 
-        // Earth's radius in meters
-        $radius = 6_370_986;
-
         // great-circle distance between the two points on the surface of the sphere (Earth)
-        $distance = $radius * $centralAngle;
+        $distance = self::EARTH_RADIUS * $centralAngle;
 
         return [
             'meters'     => number_format($distance, $precision),
-            'kilometers' => number_format($distance / 1000, $precision),
-            'miles'      => number_format($distance / 1609.344, $precision),
+            'kilometers' => number_format($distance / self::METERS_TO_KILOMTERS, $precision),
+            'miles'      => number_format($distance / self::METERS_TO_MILES, $precision),
         ];
     }
 }

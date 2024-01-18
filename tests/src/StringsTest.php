@@ -78,8 +78,8 @@ class StringsTest extends TestCase
     }
 
     /**
- * Test Strings::title().
- */
+     * Test Strings::title().
+     */
     public function testTitle(): void
     {
         $title = Strings::title('Mary had A little lamb and She Loved it so');
