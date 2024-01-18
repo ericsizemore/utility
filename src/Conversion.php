@@ -61,9 +61,9 @@ final class Conversion
      * @var int METERS_TO_KILOMETERS  Used in the conversion of meters to kilometers.
      * @var int METERS_TO_MILES       Used in the conversion of meters to miles.
      */
-    public const int EARTH_RADIUS = 6_370_986;
-    public const int METERS_TO_KILOMTERS = 1000;
-    public const float METERS_TO_MILES = 1609.344;
+    public const EARTH_RADIUS = 6_370_986;
+    public const METERS_TO_KILOMTERS = 1000;
+    public const METERS_TO_MILES = 1609.344;
 
     /**
      * Convert Fahrenheit (Fº) To Celsius (Cº)

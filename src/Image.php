@@ -58,7 +58,7 @@ final class Image
      *
      * @var array<string, array<string>> IMAGE_TYPES
      */
-    public const array IMAGE_TYPES = [
+    public const IMAGE_TYPES = [
         'jpg'  => ['image/jpg', 'image/jpeg'],
         'gif'  => ['image/gif'],
         'png'  => ['image/png'],

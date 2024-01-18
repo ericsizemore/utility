@@ -56,7 +56,7 @@ final class Dates
      *
      * @var string VALIDATE_TIMESTAMP_REGEX
      */
-    public const string VALIDATE_TIMESTAMP_REGEX = '/^\d{8,11}$/';
+    public const VALIDATE_TIMESTAMP_REGEX = '/^\d{8,11}$/';
 
     /**
      * timeDifference()

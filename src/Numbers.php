@@ -66,14 +66,14 @@ final class Numbers
      *
      * @var array<string> SUFFIXES
      */
-    public const array SUFFIXES = ['th', 'st', 'nd', 'rd'];
+    public const SUFFIXES = ['th', 'st', 'nd', 'rd'];
 
     /**
      * Standards units.
      *
      * @var array<string, array<string>> SIZE_FORMAT_UNITS
      */
-    public const array SIZE_FORMAT_UNITS = [
+    public const SIZE_FORMAT_UNITS = [
         'binary' => ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'],
         'metric' => ['B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'],
     ];

@@ -100,7 +100,7 @@ final class Environment
      *
      * @var array<string> IP_ADDRESS_HEADERS
      */
-    public const array IP_ADDRESS_HEADERS = [
+    public const IP_ADDRESS_HEADERS = [
         'cloudflare' => 'HTTP_CF_CONNECTING_IP',
         'forwarded'  => 'HTTP_X_FORWARDED_FOR',
         'realip'     => 'HTTP_X_REAL_IP',
@@ -114,7 +114,7 @@ final class Environment
      *
      * @var array<string> HOST_HEADERS
      */
-    public const array HOST_HEADERS = [
+    public const HOST_HEADERS = [
         'forwarded' => 'HTTP_X_FORWARDED_HOST',
         'server'    => 'SERVER_NAME',
         'host'      => 'HTTP_HOST',
@@ -126,7 +126,7 @@ final class Environment
      *
      * @var array<string> URL_HEADERS
      */
-    public const array URL_HEADERS = [
+    public const URL_HEADERS = [
         'authuser' => 'PHP_AUTH_USER',
         'authpw'   => 'PHP_AUTH_PW',
         'port'     => 'SERVER_PORT',
@@ -141,7 +141,7 @@ final class Environment
      *
      * @var array<string> HTTPS_HEADERS
      */
-    public const array HTTPS_HEADERS = [
+    public const HTTPS_HEADERS = [
         'default'   => 'HTTPS',
         'forwarded' => 'X-Forwarded-Proto',
         'frontend'  => 'Front-End-Https',
@@ -153,7 +153,7 @@ final class Environment
      *
      * @var array<string> REQUEST_HEADERS
      */
-    public const array REQUEST_HEADERS = [
+    public const REQUEST_HEADERS = [
         'override' => 'HTTP_X_HTTP_METHOD_OVERRIDE',
         'method'   => 'REQUEST_METHOD',
         'default'  => 'GET',
