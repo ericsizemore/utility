@@ -301,7 +301,7 @@ class StringsTest extends TestCase
         self::assertNotEmpty($bytes);
 
         self::expectException(RandomException::class);
-        $str = Strings::randomBytes(-10); // @phpstan-ignore-line
+        Strings::randomBytes(-10); // @phpstan-ignore-line
     }
 
     /**
@@ -313,7 +313,7 @@ class StringsTest extends TestCase
         self::assertTrue(Strings::length($str) === 16);
 
         self::expectException(RandomException::class);
-        $str = Strings::randomString(-10);
+        Strings::randomString(-10);
     }
 
     /**
@@ -347,7 +347,7 @@ class StringsTest extends TestCase
         );
 
         self::expectException(InvalidArgumentException::class);
-        $email = Strings::obscureEmail('thisisnotvalid&!--');
+        Strings::obscureEmail('thisisnotvalid&!--');
     }
 
     /**

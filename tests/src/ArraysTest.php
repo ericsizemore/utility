@@ -53,7 +53,7 @@ class ArraysTest extends TestCase
      */
     public function testIsAssociative(): void
     {
-        $array = [0, 1, 2, 3, 4];
+        $array    = [0, 1, 2, 3, 4];
         $arrayTwo = ['test' => 'testing', 'testing' => 'what'];
 
         self::assertFalse(Arrays::isAssociative($array));
@@ -77,7 +77,7 @@ class ArraysTest extends TestCase
      */
     public function testSet(): void
     {
-        $array = ['this' => 1, 'is' => 2, 'a' => 3, 'test' => 4];
+        $array    = ['this' => 1, 'is' => 2, 'a' => 3, 'test' => 4];
         $newArray = ['that' => 4, 'was' => 3, 'a' => 2, 'test' => 1];
 
         Arrays::set($array, 'test', 5);
@@ -94,7 +94,7 @@ class ArraysTest extends TestCase
     {
         $array = ['test' => 1];
 
-        $arrayAccess = new TestArrayAccess();
+        $arrayAccess         = new TestArrayAccess();
         $arrayAccess['test'] = 1;
 
         self::assertTrue(Arrays::exists($array, 'test'));
@@ -110,10 +110,10 @@ class ArraysTest extends TestCase
     public function testFlatten(): void
     {
         self::assertEquals([
-            0 => 'a',
-            1 => 'b',
-            2 => 'c',
-            3 => 'd',
+            0           => 'a',
+            1           => 'b',
+            2           => 'c',
+            3           => 'd',
             '4.first'   => 'e',
             '4.0'       => 'f',
             '4.second'  => 'g',
@@ -153,11 +153,11 @@ class ArraysTest extends TestCase
             ['&', 'test', '123'],
         ], 'htmlentities'));
 
-        $var = new stdClass();
+        $var       = new stdClass();
         $var->test = ['test' => '>'];
         $var->what = '<';
 
-        $var2 = new stdClass();
+        $var2       = new stdClass();
         $var2->test = ['test' => '&gt;'];
         $var2->what = '&lt;';
 
@@ -169,7 +169,7 @@ class ArraysTest extends TestCase
      */
     public function testInterlace(): void
     {
-        $input = Arrays::interlace([1, 2, 3], ['a', 'b', 'c']);
+        $input  = Arrays::interlace([1, 2, 3], ['a', 'b', 'c']);
         $expect = [1, 'a', 2, 'b', 3, 'c'];
 
         self::assertEquals($expect, $input);
@@ -256,7 +256,6 @@ class TestArrayAccess implements ArrayAccess
     /**
      * Whether an offset exists.
      *
-     * @return bool
      */
     #[\Override]
     public function offsetExists(mixed $offset): bool
@@ -277,7 +276,6 @@ class TestArrayAccess implements ArrayAccess
     /**
      * Retrieve an offset exists.
      *
-     * @return mixed
      */
     #[\Override]
     public function offsetGet(mixed $offset): mixed

@@ -68,7 +68,6 @@ final class Dates
      * @param   string  $timezone       The timezone to use. Must be a valid timezone:
      *                                  {@see http://www.php.net/manual/en/timezones.php}
      * @param   string  $append         The string to append to the difference.
-     * @return  string
      *
      * @throws  InvalidArgumentException|RuntimeException|Exception
      */
@@ -83,7 +82,7 @@ final class Dates
         }
 
         // Normalize timestamps
-        $timestampTo = (Dates::validateTimestamp($timestampTo)) ? $timestampTo : time();
+        $timestampTo   = (Dates::validateTimestamp($timestampTo)) ? $timestampTo : time();
         $timestampFrom = (Dates::validateTimestamp($timestampFrom)) ? $timestampFrom : time();
 
         // This will generally only happen if the $timestampFrom was 0, or if it's invalid, as it is set to time();
@@ -94,21 +93,21 @@ final class Dates
 
         // Create DateTime objects and set timezone
         $timestampFrom = (new DateTime('@' . $timestampFrom))->setTimezone(new DateTimeZone($timezone));
-        $timestampTo = (new DateTime('@' . $timestampTo))->setTimezone(new DateTimeZone($timezone));
+        $timestampTo   = (new DateTime('@' . $timestampTo))->setTimezone(new DateTimeZone($timezone));
 
         // Calculate difference
         $difference = $timestampFrom->diff($timestampTo);
 
         // Format the difference
         $string = match (true) {
-            $difference->y > 0 => $difference->y . ' year(s)',
-            $difference->m > 0 => $difference->m . ' month(s)',
+            $difference->y > 0  => $difference->y . ' year(s)',
+            $difference->m > 0  => $difference->m . ' month(s)',
             $difference->d >= 7 => ceil($difference->d / 7) . ' week(s)',
-            $difference->d > 0 => $difference->d . ' day(s)',
-            $difference->h > 0 => $difference->h . ' hour(s)',
-            $difference->i > 0 => $difference->i . ' minute(s)',
-            $difference->s > 0 => $difference->s . ' second(s)',
-            default => ''
+            $difference->d > 0  => $difference->d . ' day(s)',
+            $difference->h > 0  => $difference->h . ' hour(s)',
+            $difference->i > 0  => $difference->i . ' minute(s)',
+            $difference->s > 0  => $difference->s . ' second(s)',
+            default             => ''
         };
 
         return $string . $append;
@@ -143,7 +142,7 @@ final class Dates
         $location = $dateTimeZone->getLocation();
 
         return [
-            'offset'    => $dateTimeZone->getOffset(new DateTime('now', new DateTimeZone('GMT'))) / 3600,
+            'offset'    => $dateTimeZone->getOffset(new DateTime('now', new DateTimeZone('GMT'))) / 3_600,
             'country'   => $location['country_code'] ?? 'N/A',
             'latitude'  => $location['latitude'] ?? 'N/A',
             'longitude' => $location['longitude'] ?? 'N/A',
@@ -156,7 +155,6 @@ final class Dates
      * {@link http://www.php.net/manual/en/timezones.php}.
      *
      * @param   string  $timezone  The timezone to validate.
-     * @return  bool
      */
     public static function validTimezone(string $timezone): bool
     {
@@ -173,7 +171,6 @@ final class Dates
      * Typically, a timestamp for PHP can be valid if it is either 0 or between 8 and 11 digits in length.
      *
      * @param   int   $timestamp  The timestamp to validate.
-     * @return  bool
      */
     public static function validateTimestamp(int $timestamp): bool
     {

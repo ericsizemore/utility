@@ -133,7 +133,7 @@ class EnvironmentTest extends TestCase
      */
     public function testHost(): void
     {
-        $origHost = Environment::var('HTTP_HOST');
+        $origHost    = Environment::var('HTTP_HOST');
         $origFwdHost = Environment::var('HTTP_X_FORWARDED_HOST');
         $origSrvName = Environment::var('SERVER_NAME');
 
@@ -184,11 +184,11 @@ class EnvironmentTest extends TestCase
      */
     public function testUrl(): void
     {
-        $expected = 'http://test.dev/test.php?foo=bar';
-        $expectedAuth = 'http://admin:123@test.dev/test.php?foo=bar';
-        $expectedPort = sprintf('http://test.dev:%d/test.php?foo=bar', Environment::PORT_SECURE);
+        $expected      = 'http://test.dev/test.php?foo=bar';
+        $expectedAuth  = 'http://admin:123@test.dev/test.php?foo=bar';
+        $expectedPort  = sprintf('http://test.dev:%d/test.php?foo=bar', Environment::PORT_SECURE);
         $expectedPort2 = sprintf('https://test.dev:%d/test.php?foo=bar', Environment::PORT_UNSECURE);
-        $expectedSSL = 'https://test.dev/test.php?foo=bar';
+        $expectedSSL   = 'https://test.dev/test.php?foo=bar';
 
         Arrays::set($_SERVER, 'HTTP_HOST', 'test.dev');
         Arrays::set($_SERVER, 'REQUEST_URI', '/test.php?foo=bar');

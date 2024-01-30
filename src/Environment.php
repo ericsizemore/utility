@@ -69,7 +69,7 @@ final class Environment
      * @var int PORT_SECURE
      * @var int PORT_UNSECURE
      */
-    public const PORT_SECURE = 443;
+    public const PORT_SECURE   = 443;
     public const PORT_UNSECURE = 80;
 
     /**
@@ -164,7 +164,6 @@ final class Environment
      *
      * Gets the request method.
      *
-     * @return  string
      */
     public static function requestMethod(): string
     {
@@ -188,7 +187,6 @@ final class Environment
      *
      * @param   string           $var      Variable name.
      * @param   string|int|null  $default  Default value to substitute.
-     * @return  string|int|null
      */
     public static function var(string $var, string | int | null $default = ''): string | int | null
     {
@@ -204,7 +202,6 @@ final class Environment
      * Return the visitor's IP address.
      *
      * @param   bool    $trustProxy  Whether to trust HTTP_CLIENT_IP and HTTP_X_FORWARDED_FOR.
-     * @return  string
      */
     public static function ipAddress(bool $trustProxy = false): string
     {
@@ -222,7 +219,7 @@ final class Environment
             return Environment::var(self::IP_ADDRESS_HEADERS['default']);
         }
 
-        $ip = '';
+        $ip  = '';
         $ips = [];
 
         /** @var string $forwarded */
@@ -241,10 +238,9 @@ final class Environment
         /** @var list<string> $ips */
         $ips = Arrays::mapDeep($ips, 'trim');
         // Filter out any potentially empty entries
-        $ips = array_filter(
-            $ips,
-            static fn (string $string): int => Strings::length($string)
-        );
+        $ips = array_filter($ips, static function (string $string): bool {
+            return Strings::length($string) > 0;
+        });
 
         // Traverses the $ips array. Set $ip to current value if it's a public IP.
         array_walk($ips, static function (string $value, int $key) use (&$ip): string {
@@ -272,7 +268,6 @@ final class Environment
      * Determines if an IP address is within the private range.
      *
      * @param   string  $ipaddress  IP address to check.
-     * @return  bool
      */
     public static function isPrivateIp(string $ipaddress): bool
     {
@@ -289,7 +284,6 @@ final class Environment
      * Determines if an IP address is within the reserved range.
      *
      * @param   string  $ipaddress  IP address to check.
-     * @return  bool
      */
     public static function isReservedIp(string $ipaddress): bool
     {
@@ -306,7 +300,6 @@ final class Environment
      * Determines if an IP address is not within the private or reserved ranges.
      *
      * @param   string  $ipaddress  IP address to check.
-     * @return  bool
      */
     public static function isPublicIp(string $ipaddress): bool
     {
@@ -320,7 +313,6 @@ final class Environment
      *
      * @param   bool    $stripWww         True to strip www. off the host, false to leave it be.
      * @param   bool    $acceptForwarded  True to accept, false otherwise.
-     * @return  string
      */
     public static function host(bool $stripWww = false, bool $acceptForwarded = false): string
     {
@@ -353,14 +345,13 @@ final class Environment
      *
      * Checks to see if SSL is in use.
      *
-     * @return  bool
      */
     public static function isHttps(): bool
     {
         $headers = \getallheaders();
 
-        $server = Environment::var(self::HTTPS_HEADERS['default']);
-        $frontEnd = Arrays::get($headers, self::HTTPS_HEADERS['forwarded'], '');
+        $server    = Environment::var(self::HTTPS_HEADERS['default']);
+        $frontEnd  = Arrays::get($headers, self::HTTPS_HEADERS['forwarded'], '');
         $forwarded = Arrays::get($headers, self::HTTPS_HEADERS['frontend'], '');
 
         if ($server !== 'off' && $server !== '') {
@@ -374,7 +365,6 @@ final class Environment
      *
      * Retrieve the current URL.
      *
-     * @return  string
      */
     public static function url(): string
     {
@@ -383,8 +373,8 @@ final class Environment
 
         // Auth
         $authUser = Environment::var(self::URL_HEADERS['authuser']);
-        $authPwd = Environment::var(self::URL_HEADERS['authpw']);
-        $auth = ($authUser !== '' ? $authUser . ($authPwd !== '' ? ":$authPwd" : '') . '@' : '');
+        $authPwd  = Environment::var(self::URL_HEADERS['authpw']);
+        $auth     = ($authUser !== '' ? $authUser . ($authPwd !== '' ? ":$authPwd" : '') . '@' : '');
 
         // Host and port
         $host = Environment::host();
@@ -417,7 +407,6 @@ final class Environment
      *
      * @param   string  $option       The configuration option name.
      * @param   bool    $standardize  Standardize returned values to 1 or 0?
-     * @return  string
      *
      * @throws  RuntimeException|ArgumentCountError
      */

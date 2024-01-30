@@ -8,3 +8,5 @@ parameters:
     paths:
         - ./src
         - ./tests
+    ignoreErrors:
+        - '#Call to function [a-zA-Z0-9\\_]+\(\) on a separate line has no effect\.#'

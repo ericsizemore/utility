@@ -43,9 +43,6 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(Image::class)]
 class ImageTest extends TestCase
 {
-    /**
-     * @var string
-     */
     protected string $resourceDir;
 
     /**
@@ -60,8 +57,8 @@ class ImageTest extends TestCase
 
         $this->resources = [
             'image/jpeg' => $this->resourceDir . 'testImage.jpg',
-            'image/png' => $this->resourceDir . 'testImage.png',
-            'image/gif' => $this->resourceDir . 'testImage.gif',
+            'image/png'  => $this->resourceDir . 'testImage.png',
+            'image/gif'  => $this->resourceDir . 'testImage.gif',
             'image/webp' => $this->resourceDir . 'testImage.webp',
         ];
     }

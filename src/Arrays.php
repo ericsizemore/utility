@@ -62,7 +62,6 @@ final class Arrays
      * Determines if the given array is an associative array.
      *
      * @param  array<mixed>  $array  Array to check
-     * @return bool
      */
     public static function isAssociative(array $array): bool
     {
@@ -77,7 +76,6 @@ final class Arrays
      * @param  array<mixed>|ArrayAccess<mixed, mixed>  $array    Array to retrieve value from.
      * @param  string|int    $key      Key to retrieve
      * @param  mixed         $default  A default value to return if $key does not exist
-     * @return mixed
      *
      * @throws RuntimeException  If $array is not accessible
      */
@@ -97,7 +95,6 @@ final class Arrays
      * @param  array<mixed>|ArrayAccess<mixed, mixed>     &$array  Array to add value to.
      * @param  string|int|null  $key     Key to add
      * @param  mixed            $value   Value to add
-     * @return mixed
      *
      * @throws RuntimeException  If $array is not accessible
      */
@@ -114,7 +111,6 @@ final class Arrays
      *
      * @param  array<mixed>|ArrayAccess<mixed, mixed>  $array  Array to check
      * @param  string|int                $key    Key to check
-     * @return bool
      */
     public static function exists(array | ArrayAccess $array, string | int $key): bool
     {
@@ -163,7 +159,6 @@ final class Arrays
      *
      * @param   mixed     $array     The array to apply $callback to.
      * @param   callable  $callback  The callback function to apply.
-     * @return  mixed
      */
     public static function mapDeep(mixed $array, callable $callback): mixed
     {
@@ -221,7 +216,7 @@ final class Arrays
             return $args[0];
         }
 
-        $newArray = [];
+        $newArray      = [];
         $totalElements = array_sum(array_map('count', $args));
 
         for ($i = 0; $i < $totalElements; $i++) {

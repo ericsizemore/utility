@@ -57,9 +57,9 @@ final class Numbers
      * @var int   METRIC_STANDARD_BASE
      * @var float CONVERSION_MODIFIER
      */
-    public const BINARY_STANDARD_BASE = 1024;
-    public const METRIC_STANDARD_BASE = 1000;
-    public const CONVERSION_MODIFIER = 0.9;
+    public const BINARY_STANDARD_BASE = 1_024;
+    public const METRIC_STANDARD_BASE = 1_000;
+    public const CONVERSION_MODIFIER  = 0.9;
 
     /**
      * Ordinal suffixes.
@@ -86,7 +86,6 @@ final class Numbers
      * @param   float|int  $number  The number to check.
      * @param   float|int  $min     The minimum.
      * @param   float|int  $max     The maximum.
-     * @return  bool
      */
     public static function inside(float | int $number, float | int $min, float | int $max): bool
     {
@@ -101,7 +100,6 @@ final class Numbers
      * @param   float|int  $number  The number to check.
      * @param   float|int  $min     The minimum.
      * @param   float|int  $max     The maximum.
-     * @return  bool
      */
     public static function outside(float | int $number, float | int $min, float | int $max): bool
     {
@@ -133,7 +131,6 @@ final class Numbers
      * Basically, it will append th, st, nd, or rd based on what the number ends with.
      *
      * @param   int     $number  The number to create an ordinal version of.
-     * @return  string
      */
     public static function ordinal(int $number): string
     {
@@ -153,7 +150,6 @@ final class Numbers
      * @param   int     $bytes      The number in bytes.
      * @param   int     $precision  Sets the number of decimal digits.
      * @param   string  $standard   Determines which mod ('base') to use in the conversion.
-     * @return  string
      */
     public static function sizeFormat(int $bytes, int $precision = 0, string $standard = 'binary'): string
     {
@@ -169,7 +165,7 @@ final class Numbers
         }
 
         // Metric or Binary?
-        $base = $standards[$standard]['base'];
+        $base  = $standards[$standard]['base'];
         $units = $standards[$standard]['units'];
 
         // If $bytes is less than our base, there is no need for any conversion

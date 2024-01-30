@@ -61,9 +61,9 @@ final class Conversion
      * @var int METERS_TO_KILOMETERS  Used in the conversion of meters to kilometers.
      * @var int METERS_TO_MILES       Used in the conversion of meters to miles.
      */
-    public const EARTH_RADIUS = 6_370_986;
-    public const METERS_TO_KILOMTERS = 1000;
-    public const METERS_TO_MILES = 1609.344;
+    public const EARTH_RADIUS        = 6_370_986;
+    public const METERS_TO_KILOMTERS = 1_000;
+    public const METERS_TO_MILES     = 1_609.344;
 
     /**
      * Convert Fahrenheit (Fº) To Celsius (Cº)
@@ -73,7 +73,6 @@ final class Conversion
      * @param   float  $fahrenheit  Value in Fahrenheit
      * @param   bool   $rounded     Whether to round the result.
      * @param   int    $precision   Precision to use if $rounded is true.
-     * @return  float
      */
     public static function fahrenheitToCelsius(float $fahrenheit, bool $rounded = true, int $precision = 2): float
     {
@@ -90,7 +89,6 @@ final class Conversion
      * @param   float  $celsius    Value in Celsius
      * @param   bool   $rounded    Whether to round the result.
      * @param   int    $precision  Precision to use if $rounded is true.
-     * @return  float
      */
     public static function celsiusToFahrenheit(float $celsius, bool $rounded = true, int $precision = 2): float
     {
@@ -107,7 +105,6 @@ final class Conversion
      * @param   float  $celsius    Value in Celsius
      * @param   bool   $rounded    Whether to round the result.
      * @param   int    $precision  Precision to use if $rounded is true.
-     * @return  float
      */
     public static function celsiusToKelvin(float $celsius, bool $rounded = true, int $precision = 2): float
     {
@@ -124,7 +121,6 @@ final class Conversion
      * @param   float  $kelvin     Value in Kelvin
      * @param   bool   $rounded    Whether to round the result.
      * @param   int    $precision  Precision to use if $rounded is true.
-     * @return  float
      */
     public static function kelvinToCelsius(float $kelvin, bool $rounded = true, int $precision = 2): float
     {
@@ -141,7 +137,6 @@ final class Conversion
      * @param   float  $fahrenheit  Value in Fahrenheit
      * @param   bool   $rounded     Whether to round the result.
      * @param   int    $precision   Precision to use if $rounded is true.
-     * @return  float
      */
     public static function fahrenheitToKelvin(float $fahrenheit, bool $rounded = true, int $precision = 2): float
     {
@@ -158,7 +153,6 @@ final class Conversion
      * @param   float  $kelvin     Value in Kelvin
      * @param   bool   $rounded    Whether to round the result.
      * @param   int    $precision  Precision to use if $rounded is true.
-     * @return  float
      */
     public static function kelvinToFahrenheit(float $kelvin, bool $rounded = true, int $precision = 2): float
     {
@@ -175,7 +169,6 @@ final class Conversion
      * @param   float  $fahrenheit  Value in Fahrenheit
      * @param   bool   $rounded     Whether to round the result.
      * @param   int    $precision   Precision to use if $rounded is true.
-     * @return  float
      */
     public static function fahrenheitToRankine(float $fahrenheit, bool $rounded = true, int $precision = 2): float
     {
@@ -192,7 +185,6 @@ final class Conversion
      * @param   float  $rankine    Value in Rankine
      * @param   bool   $rounded    Whether to round the result.
      * @param   int    $precision  Precision to use if $rounded is true.
-     * @return  float
      */
     public static function rankineToFahrenheit(float $rankine, bool $rounded = true, int $precision = 2): float
     {
@@ -209,7 +201,6 @@ final class Conversion
      * @param   float  $celsius    Value in Celsius
      * @param   bool   $rounded    Whether to round the result.
      * @param   int    $precision  Precision to use if $rounded is true.
-     * @return  float
      */
     public static function celsiusToRankine(float $celsius, bool $rounded = true, int $precision = 2): float
     {
@@ -226,7 +217,6 @@ final class Conversion
      * @param   float  $rankine    Value in Rankine
      * @param   bool   $rounded    Whether to round the result.
      * @param   int    $precision  Precision to use if $rounded is true.
-     * @return  float
      */
     public static function rankineToCelsius(float $rankine, bool $rounded = true, int $precision = 2): float
     {
@@ -243,7 +233,6 @@ final class Conversion
      * @param   float  $kelvin     Value in Kelvin
      * @param   bool   $rounded    Whether to round the result.
      * @param   int    $precision  Precision to use if $rounded is true.
-     * @return  float
      */
     public static function kelvinToRankine(float $kelvin, bool $rounded = true, int $precision = 2): float
     {
@@ -260,7 +249,6 @@ final class Conversion
      * @param   float  $rankine    Value in Rankine
      * @param   bool   $rounded    Whether to round the result.
      * @param   int    $precision  Precision to use if $rounded is true.
-     * @return  float
      */
     public static function rankineToKelvin(float $rankine, bool $rounded = true, int $precision = 2): float
     {
@@ -296,13 +284,13 @@ final class Conversion
         int $precision = 0
     ): array {
         // Radians
-        $startingLatitude = deg2rad($startingLatitude);
+        $startingLatitude  = deg2rad($startingLatitude);
         $startingLongitude = deg2rad($startingLongitude);
-        $endingLatitude = deg2rad($endingLatitude);
-        $endingLongitude = deg2rad($endingLongitude);
+        $endingLatitude    = deg2rad($endingLatitude);
+        $endingLongitude   = deg2rad($endingLongitude);
 
         // Determine distance
-        $latitudinalDistance = $endingLatitude - $startingLatitude;
+        $latitudinalDistance  = $endingLatitude - $startingLatitude;
         $longitudinalDistance = $endingLongitude - $startingLongitude;
 
         // Square of half the chord length between the two points on the surface of the sphere (Earth)

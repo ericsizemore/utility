@@ -510,14 +510,14 @@ final class Strings
     {
         return sprintf(
             '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-            Numbers::random(0, 0xffff),
-            Numbers::random(0, 0xffff),
-            Numbers::random(0, 0xffff),
-            Numbers::random(0, 0x0fff) | 0x4000,
-            Numbers::random(0, 0x3fff) | 0x8000,
-            Numbers::random(0, 0xffff),
-            Numbers::random(0, 0xffff),
-            Numbers::random(0, 0xffff)
+            Numbers::random(0, 0xff_ff),
+            Numbers::random(0, 0xff_ff),
+            Numbers::random(0, 0xff_ff),
+            Numbers::random(0, 0x0f_ff) | 0x40_00,
+            Numbers::random(0, 0x3f_ff) | 0x80_00,
+            Numbers::random(0, 0xff_ff),
+            Numbers::random(0, 0xff_ff),
+            Numbers::random(0, 0xff_ff)
         );
     }
 }

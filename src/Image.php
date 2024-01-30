@@ -68,7 +68,6 @@ final class Image
     /**
      * Check if the GD library is available on the server.
      *
-     * @return bool
      */
     public static function isGdAvailable(): bool
     {
@@ -84,7 +83,6 @@ final class Image
     /**
      * Check if the GraphicsMagick library is available on the server.
      *
-     * @return bool
      */
     public static function isGmagickAvailable(): bool
     {
@@ -100,7 +98,6 @@ final class Image
     /**
      * Check if the ImageMagick library is available on the server.
      *
-     * @return bool
      */
     public static function isImagickAvailable(): bool
     {
@@ -116,7 +113,6 @@ final class Image
     /**
      * Check if the Exif extension is available on the server.
      *
-     * @return bool
      */
     public static function isExifAvailable(): bool
     {
@@ -159,7 +155,7 @@ final class Image
     {
         //@codeCoverageIgnoreStart
         // Ignoring code coverage as if one method is available over another, the others won't be or need to be tested
-        $finfo = new \finfo(\FILEINFO_MIME);
+        $finfo  = new \finfo(\FILEINFO_MIME);
         $result = $finfo->file($imagePath);
 
         if ($result === false) {
@@ -232,7 +228,6 @@ final class Image
      * Checks if image has JPG format.
      *
      * @param   string  $imagePath  File path to the image.
-     * @return  bool
      *
      * @throws InvalidArgumentException If the image path provided is not valid.
      * @throws RuntimeException         If we are unable to determine the file type.
@@ -255,7 +250,6 @@ final class Image
      * Checks if image has GIF format.
      *
      * @param   string  $imagePath  File path to the image.
-     * @return  bool
      *
      * @throws InvalidArgumentException If the image path provided is not valid.
      * @throws RuntimeException         If we are unable to determine the file type.
@@ -278,7 +272,6 @@ final class Image
      * Checks if image has PNG format.
      *
      * @param   string  $imagePath  File path to the image.
-     * @return  bool
      *
      * @throws InvalidArgumentException If the image path provided is not valid.
      * @throws RuntimeException         If we are unable to determine the file type.
@@ -301,7 +294,6 @@ final class Image
      * Checks if image has WEBP format.
      *
      * @param   string  $imagePath  File path to the image.
-     * @return  bool
      *
      * @throws InvalidArgumentException If the image path provided is not valid.
      * @throws RuntimeException         If we are unable to determine the file type.

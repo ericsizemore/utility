@@ -66,9 +66,6 @@ use const DIRECTORY_SEPARATOR;
 #[CoversClass(Filesystem::class)]
 class FilesystemTest extends TestCase
 {
-    /**
-     * @var string
-     */
     protected static string $testDir;
 
     /**
@@ -79,7 +76,7 @@ class FilesystemTest extends TestCase
     #[\Override]
     public static function setUpBeforeClass(): void
     {
-        self::$testDir = __DIR__ . DIRECTORY_SEPARATOR . 'dir1';
+        self::$testDir   = __DIR__ . DIRECTORY_SEPARATOR . 'dir1';
         self::$testFiles = [
             'file1' => self::$testDir . DIRECTORY_SEPARATOR . 'file1',
             'file2' => self::$testDir . DIRECTORY_SEPARATOR . 'file2',
@@ -109,10 +106,10 @@ class FilesystemTest extends TestCase
         unlink(self::$testFiles['file1']);
         unlink(self::$testFiles['file2']);
         unlink(self::$testFiles['file3']);
-        usleep(90000);
+        usleep(90_000);
         rmdir(self::$testDir);
 
-        self::$testDir = '';
+        self::$testDir   = '';
         self::$testFiles = [];
     }
 
@@ -142,11 +139,16 @@ class FilesystemTest extends TestCase
         Filesystem::fileWrite(self::$testFiles['file1']);
 
         self::expectException(InvalidArgumentException::class);
-        $count = array_sum(Filesystem::lineCounter('/this/should/not/exist', onlyLineCount: true));
-        $count = count(Filesystem::lineCounter('/this/should/not/exist'));
+        array_sum(Filesystem::lineCounter('/this/should/not/exist', onlyLineCount: true));
 
-        $count = array_sum(Filesystem::lineCounter('/this/should/not/exist', ignore: ['dir1'], onlyLineCount: true));
-        $count = count(Filesystem::lineCounter('/this/should/not/exist', ignore: ['dir1']));
+        self::expectException(InvalidArgumentException::class);
+        count(Filesystem::lineCounter('/this/should/not/exist'));
+
+        self::expectException(InvalidArgumentException::class);
+        array_sum(Filesystem::lineCounter('/this/should/not/exist', ignore: ['dir1'], onlyLineCount: true));
+
+        self::expectException(InvalidArgumentException::class);
+        count(Filesystem::lineCounter('/this/should/not/exist', ignore: ['dir1']));
     }
 
     /**
@@ -164,7 +166,7 @@ class FilesystemTest extends TestCase
         Filesystem::fileWrite(self::$testFiles['file2']);
 
         self::expectException(InvalidArgumentException::class);
-        $count = Filesystem::directorySize('/this/should/not/exist');
+        Filesystem::directorySize('/this/should/not/exist');
     }
 
     /**
@@ -191,7 +193,7 @@ class FilesystemTest extends TestCase
         Filesystem::fileWrite(self::$testFiles['file2']);
 
         self::expectException(InvalidArgumentException::class);
-        $count = Filesystem::directoryList('/this/should/not/exist');
+        Filesystem::directoryList('/this/should/not/exist');
     }
 
     /**
@@ -233,7 +235,7 @@ class FilesystemTest extends TestCase
         Filesystem::fileWrite(self::$testFiles['file1']);
 
         self::expectException(InvalidArgumentException::class);
-        $read = Filesystem::fileRead(self::$testFiles['file1'] . '.php');
+        Filesystem::fileRead(self::$testFiles['file1'] . '.php');
     }
 
     /**
@@ -248,10 +250,10 @@ class FilesystemTest extends TestCase
         self::assertSame(15, Filesystem::fileWrite(self::$testFiles['file1'], "This is a test.", -1));
 
         self::expectException(InvalidArgumentException::class);
-        $read = Filesystem::fileWrite(self::$testFiles['file1'] . '.php');
+        Filesystem::fileWrite(self::$testFiles['file1'] . '.php');
 
         chmod(self::$testFiles['file1'], 0o644);
-        $read = Filesystem::fileWrite(self::$testFiles['file1']);
+        Filesystem::fileWrite(self::$testFiles['file1']);
     }
 
     /**

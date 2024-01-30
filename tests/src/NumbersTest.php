@@ -96,8 +96,8 @@ class NumbersTest extends TestCase
         self::assertLessThanOrEqual(250, $int);
 
         self::expectException(ValueError::class);
-        $int = Numbers::random((int) (PHP_INT_MIN - 1), PHP_INT_MAX);
-        $int = Numbers::random(PHP_INT_MAX, PHP_INT_MIN);
+        Numbers::random((int) (PHP_INT_MIN - 1), PHP_INT_MAX);
+        Numbers::random(PHP_INT_MAX, PHP_INT_MIN);
     }
 
     /**
@@ -121,14 +121,14 @@ class NumbersTest extends TestCase
         self::assertSame('102nd', Numbers::ordinal(102));
         self::assertSame('104th', Numbers::ordinal(104));
         self::assertSame('143rd', Numbers::ordinal(143));
-        self::assertSame('1001st', Numbers::ordinal(1001));
-        self::assertSame('1002nd', Numbers::ordinal(1002));
-        self::assertSame('1003rd', Numbers::ordinal(1003));
-        self::assertSame('1004th', Numbers::ordinal(1004));
-        self::assertSame('10001st', Numbers::ordinal(10001));
-        self::assertSame('10002nd', Numbers::ordinal(10002));
-        self::assertSame('10003rd', Numbers::ordinal(10003));
-        self::assertSame('10004th', Numbers::ordinal(10004));
+        self::assertSame('1001st', Numbers::ordinal(1_001));
+        self::assertSame('1002nd', Numbers::ordinal(1_002));
+        self::assertSame('1003rd', Numbers::ordinal(1_003));
+        self::assertSame('1004th', Numbers::ordinal(1_004));
+        self::assertSame('10001st', Numbers::ordinal(10_001));
+        self::assertSame('10002nd', Numbers::ordinal(10_002));
+        self::assertSame('10003rd', Numbers::ordinal(10_003));
+        self::assertSame('10004th', Numbers::ordinal(10_004));
     }
 
     /**
@@ -140,7 +140,7 @@ class NumbersTest extends TestCase
         $size = Numbers::sizeFormat(512);
         self::assertSame('512 B', $size);
 
-        $size = Numbers::sizeFormat(2048, 1);
+        $size = Numbers::sizeFormat(2_048, 1);
         self::assertSame('2.0 KiB', $size);
 
         $size = Numbers::sizeFormat(25_151_251, 2);
@@ -152,10 +152,10 @@ class NumbersTest extends TestCase
         $size = Numbers::sizeFormat(2_748_779_069_440, 1);
         self::assertSame('2.5 TiB', $size);
 
-        $size = Numbers::sizeFormat(2_748_779_069_440 * 1024, 1);
+        $size = Numbers::sizeFormat(2_748_779_069_440 * 1_024, 1);
         self::assertSame('2.5 PiB', $size);
 
-        $size = Numbers::sizeFormat(2_748_779_069_440 * (1024 * 1024), 1);
+        $size = Numbers::sizeFormat(2_748_779_069_440 * (1_024 * 1_024), 1);
         self::assertSame('2.5 EiB', $size);
     }
 
@@ -168,7 +168,7 @@ class NumbersTest extends TestCase
         $size = Numbers::sizeFormat(512, standard: 'metric');
         self::assertSame('512 B', $size);
 
-        $size = Numbers::sizeFormat(2000, 1, 'metric');
+        $size = Numbers::sizeFormat(2_000, 1, 'metric');
         self::assertSame('2.0 kB', $size);
 
         $size = Numbers::sizeFormat(25_151_251, 2, 'metric');
@@ -180,10 +180,10 @@ class NumbersTest extends TestCase
         $size = Numbers::sizeFormat(2_748_779_069_440, 1, 'metric');
         self::assertSame('2.7 TB', $size);
 
-        $size = Numbers::sizeFormat(2_748_779_069_440 * 1000, 1, 'metric');
+        $size = Numbers::sizeFormat(2_748_779_069_440 * 1_000, 1, 'metric');
         self::assertSame('2.7 PB', $size);
 
-        $size = Numbers::sizeFormat(2_748_779_069_440 * (1000 * 1000), 1, 'metric');
+        $size = Numbers::sizeFormat(2_748_779_069_440 * (1_000 * 1_000), 1, 'metric');
         self::assertSame('2.7 EB', $size);
     }
 
@@ -194,6 +194,6 @@ class NumbersTest extends TestCase
     {
         // Test if we provide an invalid $standard option (should throw an exception).
         self::expectException(\InvalidArgumentException::class);
-        $size = Numbers::sizeFormat(2048, 1, 'notanoption');
+        Numbers::sizeFormat(2_048, 1, 'notanoption');
     }
 }

@@ -40,9 +40,9 @@ Simply replace the version numbers depending on which set of changes you wish to
      * @var int METERS_TO_KILOMETERS  Used in the conversion of meters to kilometers.
      * @var int METERS_TO_MILES       Used in the conversion of meters to miles.
      */
-    public const int EARTH_RADIUS = 6_370_986;
-    public const int METERS_TO_KILOMTERS = 1000;
-    public const float METERS_TO_MILES = 1609.344;
+    public const EARTH_RADIUS = 6_370_986;
+    public const METERS_TO_KILOMTERS = 1000;
+    public const METERS_TO_MILES = 1609.344;
 ```
   * These are mainly used in the `Conversion::haversineDistance()` function at the moment.
 
@@ -53,7 +53,7 @@ Simply replace the version numbers depending on which set of changes you wish to
      *
      * @var string VALIDATE_TIMESTAMP_REGEX
      */
-    public const string VALIDATE_TIMESTAMP_REGEX = '/^\d{8,11}$/';
+    public const VALIDATE_TIMESTAMP_REGEX = '/^\d{8,11}$/';
 ```
   * Added new constants to the `Environment` class:
 ```php
@@ -62,7 +62,7 @@ Simply replace the version numbers depending on which set of changes you wish to
      *
      * @var array<string> IP_ADDRESS_HEADERS
      */
-    public const array IP_ADDRESS_HEADERS = [
+    public const IP_ADDRESS_HEADERS = [
         'cloudflare' => 'HTTP_CF_CONNECTING_IP',
         'forwarded'  => 'HTTP_X_FORWARDED_FOR',
         'realip'     => 'HTTP_X_REAL_IP',
@@ -76,7 +76,7 @@ Simply replace the version numbers depending on which set of changes you wish to
      *
      * @var array<string> HOST_HEADERS
      */
-    public const array HOST_HEADERS = [
+    public const HOST_HEADERS = [
         'forwarded' => 'HTTP_X_FORWARDED_HOST',
         'server'    => 'SERVER_NAME',
         'host'      => 'HTTP_HOST',
@@ -88,7 +88,7 @@ Simply replace the version numbers depending on which set of changes you wish to
      *
      * @var array<string> URL_HEADERS
      */
-    public const array URL_HEADERS = [
+    public const URL_HEADERS = [
         'authuser' => 'PHP_AUTH_USER',
         'authpw'   => 'PHP_AUTH_PW',
         'port'     => 'SERVER_PORT',
@@ -103,7 +103,7 @@ Simply replace the version numbers depending on which set of changes you wish to
      *
      * @var array<string> HTTPS_HEADERS
      */
-    public const array HTTPS_HEADERS = [
+    public const HTTPS_HEADERS = [
         'default'   => 'HTTPS',
         'forwarded' => 'X-Forwarded-Proto',
         'frontend'  => 'Front-End-Https'
@@ -115,7 +115,7 @@ Simply replace the version numbers depending on which set of changes you wish to
      *
      * @var array<string> REQUEST_HEADERS
      */
-    public const array REQUEST_HEADERS = [
+    public const REQUEST_HEADERS = [
         'override' => 'HTTP_X_HTTP_METHOD_OVERRIDE',
         'method'   => 'REQUEST_METHOD',
         'default'  => 'GET'
@@ -128,7 +128,7 @@ Simply replace the version numbers depending on which set of changes you wish to
      *
      * @var array<string, array<string>> IMAGE_TYPES
      */
-    public const array IMAGE_TYPES = [
+    public const IMAGE_TYPES = [
         'jpg'  => ['image/jpg', 'image/jpeg'],
         'gif'  => ['image/gif'],
         'png'  => ['image/png'],
@@ -142,14 +142,14 @@ Simply replace the version numbers depending on which set of changes you wish to
      *
      * @var array<string> SUFFIXES
      */
-    public const array SUFFIXES = ['th', 'st', 'nd', 'rd'];
+    public const SUFFIXES = ['th', 'st', 'nd', 'rd'];
 
     /**
      * Standards units.
      *
      * @var array<string, array<string>> SIZE_FORMAT_UNITS
      */
-    public const array SIZE_FORMAT_UNITS = [
+    public const SIZE_FORMAT_UNITS = [
         'binary' => ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'],
         'metric' => ['B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'],
     ];

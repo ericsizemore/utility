@@ -148,7 +148,6 @@ final class Filesystem
      *
      * @param   string          $directory  Directory to parse.
      * @param   array<string>   $ignore     Subdirectories of $directory you wish to not include.
-     * @return  int
      *
      * @throws  InvalidArgumentException
      */
@@ -231,10 +230,9 @@ final class Filesystem
         $path = rtrim(str_replace(['/', '\\'], $separator, $path), $separator);
 
         // Filter through and reduce as needed
-        $filtered = array_filter(
-            explode($separator, $path),
-            static fn (string $string, bool $binarySafe = false): int => Strings::length($string, $binarySafe)
-        );
+        $filtered = array_filter(explode($separator, $path), static function (string $string, bool $binarySafe = false): bool {
+            return Strings::length($string, $binarySafe) > 0;
+        });
 
         $filtered = array_reduce($filtered, static function (array $tmp, string $item): array {
             if ($item === '..') {
@@ -255,7 +253,6 @@ final class Filesystem
      * Checks to see if a file or directory is really writable.
      *
      * @param   string  $file  File or directory to check.
-     * @return  bool
      *
      * @throws RandomException  If unable to generate random string for the temp file.
      * @throws RuntimeException If the file or directory does not exist.
@@ -280,7 +277,7 @@ final class Filesystem
         // Attempt to write to the file or directory
         if (is_dir($file)) {
             $tmpFile = rtrim($file, '\\/') . DIRECTORY_SEPARATOR . Strings::randomString() . '.txt';
-            $data = file_put_contents($tmpFile, 'tmpData', FILE_APPEND);
+            $data    = file_put_contents($tmpFile, 'tmpData', FILE_APPEND);
 
             unlink($tmpFile);
         } else {
@@ -347,7 +344,6 @@ final class Filesystem
      * @since 2.0.0
      *
      * @param   string  $file  Directory to check.
-     * @return  bool
      */
     public static function isFile(string $file): bool
     {
@@ -362,7 +358,6 @@ final class Filesystem
      * @since 2.0.0
      *
      * @param   string  $directory  Directory to check.
-     * @return  bool
      */
     public static function isDirectory(string $directory): bool
     {
@@ -372,7 +367,6 @@ final class Filesystem
     /**
      * Builds the Iterator for lineCounter(), directorySize(), and directoryList().
      *
-     * @access protected
      * @since 2.0.0
      *
      * @param   string  $forDirectory  The directory to create an iterator for.
@@ -396,11 +390,9 @@ final class Filesystem
     /**
      * Builds the ignore list for lineCounter(), directorySize(), and directoryList().
      *
-     * @access protected
      * @since 2.0.0
      *
      * @param   array<string>  $ignore  Array of file/folder names to ignore.
-     * @return  string
      */
     private static function buildIgnore(array $ignore): string
     {
@@ -413,12 +405,10 @@ final class Filesystem
     /**
      * Checks the ignore list for lineCounter(), directorySize(), and directoryList().
      *
-     * @access protected
      * @since 2.0.0
      *
      * @param   string  $path    The file path to check against ignore list.
      * @param   string  $ignore  The ignore list pattern.
-     * @return  bool
      */
     private static function checkIgnore(string $path, string $ignore): bool
     {
@@ -428,12 +418,10 @@ final class Filesystem
     /**
      * Checks the extension ignore list for lineCounter(), directorySize(), and directoryList().
      *
-     * @access protected
      * @since 2.0.0
      *
      * @param   string         $extension   File extension to check.
      * @param   array<string>  $extensions  Array of file extensions to ignore.
-     * @return  bool
      */
     private static function checkExtensions(string $extension, array $extensions): bool
     {
