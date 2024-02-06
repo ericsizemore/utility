@@ -31,7 +31,6 @@ Simply replace the version numbers depending on which set of changes you wish to
   * Updated composer.json to support PHP 8.2 - 8.4
     * Added PHPStan strict rules to dev dependencies
     * Updated workflows to introduce testing on PHP 8.4
-    * Added RectorPHP and PHP-CS-Fixer to dev dependencies
   * Bump copyright year.
   * New constants added to the `Conversion` class:
 ```php
