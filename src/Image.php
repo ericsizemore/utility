@@ -38,18 +38,18 @@ use InvalidArgumentException;
 use RuntimeException;
 
 // Functions
-use function extension_loaded;
 use function class_exists;
-use function is_int;
-use function image_type_to_mime_type;
 use function explode;
+use function extension_loaded;
 use function getimagesize;
-use function in_array;
+use function image_type_to_mime_type;
+use function is_int;
 
 /**
  * Image utilities.
  *
  * @since 2.0.0
+ * @see \Esi\Utility\Tests\ImageTest
  */
 final class Image
 {
@@ -67,7 +67,6 @@ final class Image
 
     /**
      * Check if the GD library is available on the server.
-     *
      */
     public static function isGdAvailable(): bool
     {
@@ -82,7 +81,6 @@ final class Image
 
     /**
      * Check if the GraphicsMagick library is available on the server.
-     *
      */
     public static function isGmagickAvailable(): bool
     {
@@ -97,7 +95,6 @@ final class Image
 
     /**
      * Check if the ImageMagick library is available on the server.
-     *
      */
     public static function isImagickAvailable(): bool
     {
@@ -112,7 +109,6 @@ final class Image
 
     /**
      * Check if the Exif extension is available on the server.
-     *
      */
     public static function isExifAvailable(): bool
     {
@@ -227,7 +223,7 @@ final class Image
     /**
      * Checks if image has JPG format.
      *
-     * @param   string  $imagePath  File path to the image.
+     * @param  string  $imagePath  File path to the image.
      *
      * @throws InvalidArgumentException If the image path provided is not valid.
      * @throws RuntimeException         If we are unable to determine the file type.
@@ -243,13 +239,13 @@ final class Image
         if ($imageType === false) {
             throw new RuntimeException('Unable to determine the image type. Is it a valid image file?');
         }
-        return in_array($imageType, self::IMAGE_TYPES['jpg'], true);
+        return Arrays::valueExists(self::IMAGE_TYPES['jpg'], $imageType);
     }
 
     /**
      * Checks if image has GIF format.
      *
-     * @param   string  $imagePath  File path to the image.
+     * @param  string  $imagePath  File path to the image.
      *
      * @throws InvalidArgumentException If the image path provided is not valid.
      * @throws RuntimeException         If we are unable to determine the file type.
@@ -265,13 +261,13 @@ final class Image
         if ($imageType === false) {
             throw new RuntimeException('Unable to determine the image type. Is it a valid image file?');
         }
-        return in_array($imageType, self::IMAGE_TYPES['gif'], true);
+        return Arrays::valueExists(self::IMAGE_TYPES['gif'], $imageType);
     }
 
     /**
      * Checks if image has PNG format.
      *
-     * @param   string  $imagePath  File path to the image.
+     * @param  string  $imagePath  File path to the image.
      *
      * @throws InvalidArgumentException If the image path provided is not valid.
      * @throws RuntimeException         If we are unable to determine the file type.
@@ -287,13 +283,13 @@ final class Image
         if ($imageType === false) {
             throw new RuntimeException('Unable to determine the image type. Is it a valid image file?');
         }
-        return in_array($imageType, self::IMAGE_TYPES['png'], true);
+        return Arrays::valueExists(self::IMAGE_TYPES['png'], $imageType);
     }
 
     /**
      * Checks if image has WEBP format.
      *
-     * @param   string  $imagePath  File path to the image.
+     * @param  string  $imagePath  File path to the image.
      *
      * @throws InvalidArgumentException If the image path provided is not valid.
      * @throws RuntimeException         If we are unable to determine the file type.
@@ -309,6 +305,6 @@ final class Image
         if ($imageType === false) {
             throw new RuntimeException('Unable to determine the image type. Is it a valid image file?');
         }
-        return in_array($imageType, self::IMAGE_TYPES['webp'], true);
+        return Arrays::valueExists(self::IMAGE_TYPES['webp'], $imageType);
     }
 }

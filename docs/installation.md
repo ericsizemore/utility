@@ -18,6 +18,7 @@ use Esi\Utility\{
     Dates,
     Environment,
     Filesystem,
+    Image,
     Numbers,
     Strings
 };
@@ -26,8 +27,10 @@ use Esi\Utility\{
 For more information on each component:
 
 * [\Esi\Utility\Arrays](arrays.md)
+* [\Esi\Utility\Conversion](conversion.md)
 * [\Esi\Utility\Dates](dates.md)
 * [\Esi\Utility\Environment](environment.md)
 * [\Esi\Utility\Filesystem](filesystem.md)
+* [\Esi\Utility\Image](image.md)
 * [\Esi\Utility\Numbers](numbers.md)
 * [\Esi\Utility\Strings](strings.md)

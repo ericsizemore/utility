@@ -39,6 +39,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 
 /**
  * Image utility test.
+ * @internal
  */
 #[CoversClass(Image::class)]
 class ImageTest extends TestCase

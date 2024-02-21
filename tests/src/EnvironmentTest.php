@@ -46,6 +46,7 @@ use function sprintf;
 
 /**
  * Environment utility tests.
+ * @internal
  */
 #[CoversClass(Environment::class)]
 class EnvironmentTest extends TestCase

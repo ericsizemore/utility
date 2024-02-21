@@ -11,6 +11,7 @@ use Esi\Utility\{
     Dates,
     Environment,
     Filesystem,
+    Image,
     Numbers,
     Strings
 };
@@ -143,6 +144,8 @@ See more: [\Esi\Utility\Image](image.md)
 
 ```php
 use Esi\Utility\Image;
+
+var_dump(Image::isGdAvailable()); // bool(true)
 ```
 
 ## Numbers Example

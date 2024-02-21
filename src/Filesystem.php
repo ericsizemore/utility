@@ -39,41 +39,42 @@ use RuntimeException;
 use Random\RandomException;
 
 // Classes
-use RecursiveIteratorIterator;
-use RecursiveDirectoryIterator;
 use FilesystemIterator;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 use SplFileObject;
 
 // Functions
+use function array_filter;
+use function array_pop;
+use function array_reduce;
+use function clearstatcache;
+use function count;
+use function explode;
+use function file_exists;
+use function file_get_contents;
+use function file_put_contents;
+use function implode;
 use function is_dir;
 use function is_readable;
-use function preg_match;
-use function count;
-use function preg_quote;
-use function implode;
-use function natsort;
-use function rtrim;
-use function array_pop;
-use function explode;
-use function clearstatcache;
-use function file_exists;
 use function is_writable;
-use function file_put_contents;
-use function file_get_contents;
-use function unlink;
-use function sprintf;
 use function iterator_count;
-use function array_reduce;
-use function array_filter;
+use function natsort;
+use function preg_match;
+use function preg_quote;
 use function realpath;
+use function rtrim;
+use function sprintf;
+use function unlink;
 
 // Constants
 use const DIRECTORY_SEPARATOR;
-use const PHP_OS_FAMILY;
 use const FILE_APPEND;
+use const PHP_OS_FAMILY;
 
 /**
  * File system utilities.
+ * @see \Esi\Utility\Tests\FilesystemTest
  */
 final class Filesystem
 {
@@ -230,9 +231,10 @@ final class Filesystem
         $path = rtrim(str_replace(['/', '\\'], $separator, $path), $separator);
 
         // Filter through and reduce as needed
-        $filtered = array_filter(explode($separator, $path), static function (string $string, bool $binarySafe = false): bool {
-            return Strings::length($string, $binarySafe) > 0;
-        });
+        $filtered = array_filter(
+            explode($separator, $path),
+            static fn (string $string, bool $binarySafe = false): bool => Strings::length($string, $binarySafe) > 0
+        );
 
         $filtered = array_reduce($filtered, static function (array $tmp, string $item): array {
             if ($item === '..') {
@@ -252,7 +254,7 @@ final class Filesystem
      *
      * Checks to see if a file or directory is really writable.
      *
-     * @param   string  $file  File or directory to check.
+     * @param  string  $file  File or directory to check.
      *
      * @throws RandomException  If unable to generate random string for the temp file.
      * @throws RuntimeException If the file or directory does not exist.
@@ -292,7 +294,7 @@ final class Filesystem
      *
      * Perform a read operation on a pre-existing file.
      *
-     * @param   string       $file  Filename.
+     * @param   string        $file  Filename.
      * @return  string|false
      *
      * @throws  InvalidArgumentException
@@ -336,6 +338,7 @@ final class Filesystem
     }
 
     /** Helper functions for the directory related functions **/
+
     /**
      * isFile()
      *
@@ -343,7 +346,7 @@ final class Filesystem
      *
      * @since 2.0.0
      *
-     * @param   string  $file  Directory to check.
+     * @param  string  $file  Directory to check.
      */
     public static function isFile(string $file): bool
     {
@@ -357,7 +360,7 @@ final class Filesystem
      *
      * @since 2.0.0
      *
-     * @param   string  $directory  Directory to check.
+     * @param  string  $directory  Directory to check.
      */
     public static function isDirectory(string $directory): bool
     {
@@ -392,7 +395,7 @@ final class Filesystem
      *
      * @since 2.0.0
      *
-     * @param   array<string>  $ignore  Array of file/folder names to ignore.
+     * @param  array<string>  $ignore  Array of file/folder names to ignore.
      */
     private static function buildIgnore(array $ignore): string
     {
@@ -407,8 +410,8 @@ final class Filesystem
      *
      * @since 2.0.0
      *
-     * @param   string  $path    The file path to check against ignore list.
-     * @param   string  $ignore  The ignore list pattern.
+     * @param  string  $path    The file path to check against ignore list.
+     * @param  string  $ignore  The ignore list pattern.
      */
     private static function checkIgnore(string $path, string $ignore): bool
     {
@@ -420,11 +423,11 @@ final class Filesystem
      *
      * @since 2.0.0
      *
-     * @param   string         $extension   File extension to check.
-     * @param   array<string>  $extensions  Array of file extensions to ignore.
+     * @param  string         $extension   File extension to check.
+     * @param  array<string>  $extensions  Array of file extensions to ignore.
      */
     private static function checkExtensions(string $extension, array $extensions): bool
     {
-        return $extensions !== [] && !Arrays::exists($extensions, $extension);
+        return $extensions !== [] && !Arrays::valueExists($extensions, $extension);
     }
 }

@@ -5,7 +5,8 @@
 * [isAssociative](#isassociative)(array $array): bool;
 * [get](#get)(array | ArrayAccess $array, string | int $key, mixed $default = null): mixed;
 * [set](#set)(array | ArrayAccess &$array, string | int | null $key, mixed $value): mixed;
-* [exists](#exists)(array | ArrayAccess $array, string | int $key): bool;
+* [keyExists](#keyexists)(array | ArrayAccess $array, string | int $key): bool;
+* [valueExists](#valueexists)(array $array, string | int $value): bool;
 * [flatten](#flatten)(array $array, string $separator = '.', string $prepend = ''): array;
 * [mapDeep](#mapdeep)(mixed $array, callable $callback): mixed;
 * [interlace](#interlace)(array ...$args): array | false;
@@ -57,7 +58,7 @@ Arrays::set($array, null, $newArray);
 var_dump(Arrays::get($array, 'that')); // 4
 ```
 
-## exists
+## keyExists
 
 Check if a key exists in an array.
 
@@ -136,6 +137,20 @@ var_dump(Arrays::exists($array, 'this')); // bool(false)
 
 var_dump(Arrays::exists($arrayAccess, 'test')); // bool(true)
 var_dump(Arrays::exists($arrayAccess, 'this')); // bool(false)
+```
+
+## valueExists
+
+Checks if a value exists in an array.
+
+```php
+$array = ['test' => 1, 1 => 'foo', 'bar' => 2];
+
+var_dump(Arrays::valueExists($array, 1)); // bool(true)
+var_dump(Arrays::valueExists($array, 'test')); // bool(false)
+
+var_dump(Arrays::valueExists($array, 'foo')); // bool(true)
+var_dump(Arrays::valueExists($array, 'bar')); // bool(false)
 ```
 
 ## flatten

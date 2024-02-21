@@ -44,6 +44,7 @@ use function time;
 
 /**
  * Date utility tests.
+ * @internal
  */
 #[CoversClass(Dates::class)]
 class DatesTest extends TestCase

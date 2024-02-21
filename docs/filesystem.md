@@ -14,13 +14,77 @@
 
 #### @access private
 ```php
-// Mainly helper functions for lineCounter(), directorySize(), directoryList()
+// Helper functions for lineCounter(), directorySize(), directoryList()
 getIterator(string $forDirectory, bool $keyAsPath = false): RecursiveIteratorIterator
 buildIgnore(array $ignore): string
 checkIgnore(string $path, string $ignore): bool
 checkExtensions(string $extension, array $extensions): bool
 ```
 
+
+## 
+
+
+
+```php
+
+```
+
+## 
+
+
+
+```php
+
+```
+
+## 
+
+
+
+```php
+
+```
+
+## 
+
+
+
+```php
+
+```
+
+## 
+
+
+
+```php
+
+```
+
+## 
+
+
+
+```php
+
+```
+
+## 
+
+
+
+```php
+
+```
+
+## 
+
+
+
+```php
+
+```
 
 ## 
 

@@ -128,8 +128,9 @@ If you change anything that requires a change to documentation then you will nee
 ##### Documenting functions/variables (PHPDoc)
 
 Please ensure all new contributions adhere to:
-  * [PSR-5 PHPDoc](https://github.com/php-fig/fig-standards/blob/master/proposed/phpdoc.md)
-  * [PSR-19 PHPDoc Tags](https://github.com/php-fig/fig-standards/blob/master/proposed/phpdoc-tags.md)
+
+* [PSR-5 PHPDoc](https://github.com/php-fig/fig-standards/blob/master/proposed/phpdoc.md)
+* [PSR-19 PHPDoc Tags](https://github.com/php-fig/fig-standards/blob/master/proposed/phpdoc-tags.md)
 
 when documenting new functions, or changing existing documentation.
 

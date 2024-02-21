@@ -37,44 +37,44 @@ namespace Esi\Utility;
 use InvalidArgumentException;
 use Random\RandomException;
 use ValueError;
-
-// Functions
 use voku\helper\ASCII;
 
-use function mb_convert_case;
-use function mb_substr;
-use function strcmp;
-use function mb_strpos;
-use function str_starts_with;
-use function str_ends_with;
-use function str_contains;
-use function mb_strlen;
-use function str_replace;
-use function preg_replace;
-use function preg_quote;
-use function trim;
-use function random_bytes;
+// Functions
+use function array_map;
 use function bin2hex;
 use function filter_var;
+use function implode;
 use function json_decode;
 use function json_last_error;
-use function array_map;
-use function ord;
-use function implode;
-use function str_split;
-use function sprintf;
-use function preg_replace_callback;
 use function ltrim;
+use function mb_convert_case;
+use function mb_strlen;
+use function mb_strpos;
+use function mb_substr;
+use function ord;
+use function preg_quote;
+use function preg_replace;
+use function preg_replace_callback;
+use function random_bytes;
+use function sprintf;
+use function str_contains;
+use function str_ends_with;
+use function str_replace;
+use function str_split;
+use function str_starts_with;
+use function strcmp;
+use function trim;
 
 // Constants
+use const FILTER_VALIDATE_EMAIL;
+use const JSON_ERROR_NONE;
 use const MB_CASE_TITLE;
 use const MB_CASE_LOWER;
 use const MB_CASE_UPPER;
-use const FILTER_VALIDATE_EMAIL;
-use const JSON_ERROR_NONE;
 
 /**
  * String utilities.
+ * @see \Esi\Utility\Tests\StringsTest
  */
 final class Strings
 {
@@ -88,7 +88,7 @@ final class Strings
     /**
      * Returns current encoding.
      *
-     * @return string Current encoding.
+     * @return  string  Current encoding.
      */
     public static function getEncoding(): string
     {
@@ -202,10 +202,10 @@ final class Strings
      *
      * @since  1.0.1
      *
-     * @param  string  $str1  The first string.
-     * @param  string  $str2  The second string.
-     * @return int            Returns < 0 if $str1 is less than $str2; > 0 if $str1
-     *                        is greater than $str2, and 0 if they are equal.
+     * @param   string  $str1  The first string.
+     * @param   string  $str2  The second string.
+     * @return  int            Returns < 0 if $str1 is less than $str2; > 0 if $str1
+     *                         is greater than $str2, and 0 if they are equal.
      */
     public static function strcasecmp(string $str1, string $str2): int
     {
@@ -326,8 +326,8 @@ final class Strings
      *
      * @since 2.0.0
      *
-     * @param  string  $string  String to camelCase.
-     * @return string           camelCase'd string.
+     * @param   string  $string  String to camelCase.
+     * @return  string           camelCase'd string.
      */
     public static function camelCase(string $string): string
     {

@@ -48,6 +48,7 @@ use function time;
 
 /**
  * Date utilities.
+ * @see \Esi\Utility\Tests\DatesTest
  */
 final class Dates
 {
@@ -57,6 +58,11 @@ final class Dates
      * @var string VALIDATE_TIMESTAMP_REGEX
      */
     public const VALIDATE_TIMESTAMP_REGEX = '/^\d{8,11}$/';
+
+    /**
+     * Timezone default when one isn't provided.
+     */
+    public const DEFAULT_TIMEZONE = 'UTC';
 
     /**
      * timeDifference()
@@ -71,10 +77,10 @@ final class Dates
      *
      * @throws  InvalidArgumentException|RuntimeException|Exception
      */
-    public static function timeDifference(int $timestampFrom, int $timestampTo = 0, string $timezone = 'UTC', string $append = ' old'): string
+    public static function timeDifference(int $timestampFrom, int $timestampTo = 0, string $timezone = Dates::DEFAULT_TIMEZONE, string $append = ' old'): string
     {
         if ($timezone === '') {
-            $timezone = 'UTC';
+            $timezone = Dates::DEFAULT_TIMEZONE;
         }
 
         if (!Dates::validTimezone($timezone)) {
@@ -127,10 +133,10 @@ final class Dates
      *
      * @throws  InvalidArgumentException|RuntimeException|Exception
      */
-    public static function timezoneInfo(string $timezone = 'UTC'): array
+    public static function timezoneInfo(string $timezone = Dates::DEFAULT_TIMEZONE): array
     {
         if ($timezone === '') {
-            $timezone = 'UTC';
+            $timezone = Dates::DEFAULT_TIMEZONE;
         }
 
         if (!Dates::validTimezone($timezone)) {
@@ -154,14 +160,15 @@ final class Dates
      * Determines if a given timezone is valid, according to
      * {@link http://www.php.net/manual/en/timezones.php}.
      *
-     * @param   string  $timezone  The timezone to validate.
+     * @param  string  $timezone  The timezone to validate.
      */
     public static function validTimezone(string $timezone): bool
     {
         static $validTimezones;
 
         $validTimezones ??= DateTimeZone::listIdentifiers();
-        return Arrays::exists($validTimezones, $timezone);
+
+        return Arrays::valueExists($validTimezones, $timezone);
     }
 
     /**
@@ -170,7 +177,7 @@ final class Dates
      *
      * Typically, a timestamp for PHP can be valid if it is either 0 or between 8 and 11 digits in length.
      *
-     * @param   int   $timestamp  The timestamp to validate.
+     * @param  int  $timestamp  The timestamp to validate.
      */
     public static function validateTimestamp(int $timestamp): bool
     {

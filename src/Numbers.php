@@ -34,19 +34,20 @@ declare(strict_types=1);
 namespace Esi\Utility;
 
 // Exceptions
+use InvalidArgumentException;
 use Random\RandomException;
 use ValueError;
-use InvalidArgumentException;
 
 // Functions
-use function number_format;
 use function abs;
+use function count;
+use function number_format;
 use function random_int;
 use function sprintf;
-use function count;
 
 /**
  * Number utilities.
+ * @see \Esi\Utility\Tests\NumbersTest
  */
 final class Numbers
 {
@@ -83,9 +84,9 @@ final class Numbers
      *
      * Determines if a number is inside the min and max.
      *
-     * @param   float|int  $number  The number to check.
-     * @param   float|int  $min     The minimum.
-     * @param   float|int  $max     The maximum.
+     * @param  float|int  $number  The number to check.
+     * @param  float|int  $min     The minimum.
+     * @param  float|int  $max     The maximum.
      */
     public static function inside(float | int $number, float | int $min, float | int $max): bool
     {
@@ -97,9 +98,9 @@ final class Numbers
      *
      * Determines if a number is outside the min and max.
      *
-     * @param   float|int  $number  The number to check.
-     * @param   float|int  $min     The minimum.
-     * @param   float|int  $max     The maximum.
+     * @param  float|int  $number  The number to check.
+     * @param  float|int  $min     The minimum.
+     * @param  float|int  $max     The maximum.
      */
     public static function outside(float | int $number, float | int $min, float | int $max): bool
     {
@@ -130,7 +131,7 @@ final class Numbers
      *
      * Basically, it will append th, st, nd, or rd based on what the number ends with.
      *
-     * @param   int     $number  The number to create an ordinal version of.
+     * @param  int  $number  The number to create an ordinal version of.
      */
     public static function ordinal(int $number): string
     {
@@ -138,7 +139,10 @@ final class Numbers
 
         $absNumber = abs($number);
 
-        $suffix = $absNumber % 100 >= 11 && $absNumber % 100 <= 13 ? $suffixes[0] : $suffixes[$absNumber % 10] ?? $suffixes[0];
+        $suffix = ($absNumber % 100 >= 11 && $absNumber % 100 <= 13)
+                  ? $suffixes[0]
+                  : $suffixes[$absNumber % 10] ?? $suffixes[0];
+
         return $number . $suffix;
     }
 
@@ -147,9 +151,9 @@ final class Numbers
      *
      * Format bytes to a human-readable format.
      *
-     * @param   int     $bytes      The number in bytes.
-     * @param   int     $precision  Sets the number of decimal digits.
-     * @param   string  $standard   Determines which mod ('base') to use in the conversion.
+     * @param  int     $bytes      The number in bytes.
+     * @param  int     $precision  Sets the number of decimal digits.
+     * @param  string  $standard   Determines which mod ('base') to use in the conversion.
      */
     public static function sizeFormat(int $bytes, int $precision = 0, string $standard = 'binary'): string
     {

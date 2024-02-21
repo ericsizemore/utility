@@ -46,6 +46,7 @@ use const PHP_INT_MIN;
 
 /**
  * Number utility tests.
+ * @internal
  */
 #[CoversClass(Numbers::class)]
 class NumbersTest extends TestCase

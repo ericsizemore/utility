@@ -38,28 +38,30 @@ use RuntimeException;
 use ArgumentCountError;
 
 // Functions
-use function explode;
+
 use function count;
+use function explode;
+use function filter_var;
+use function function_exists;
 use function inet_ntop;
 use function inet_pton;
-use function filter_var;
-use function trim;
+use function ini_get;
+use function ini_set;
 use function preg_match;
 use function preg_replace;
 use function sprintf;
-use function ini_get;
-use function ini_set;
-use function function_exists;
+use function trim;
 
 // Constants
-use const FILTER_VALIDATE_IP;
 use const FILTER_FLAG_IPV4;
 use const FILTER_FLAG_IPV6;
 use const FILTER_FLAG_NO_PRIV_RANGE;
 use const FILTER_FLAG_NO_RES_RANGE;
+use const FILTER_VALIDATE_IP;
 
 /**
  * Environment utilities.
+ * @see \Esi\Utility\Tests\EnvironmentTest
  */
 final class Environment
 {
@@ -163,7 +165,6 @@ final class Environment
      * requestMethod()
      *
      * Gets the request method.
-     *
      */
     public static function requestMethod(): string
     {
@@ -185,8 +186,8 @@ final class Environment
      *
      * Gets a variable from $_SERVER using $default if not provided.
      *
-     * @param   string           $var      Variable name.
-     * @param   string|int|null  $default  Default value to substitute.
+     * @param  string           $var      Variable name.
+     * @param  string|int|null  $default  Default value to substitute.
      */
     public static function var(string $var, string | int | null $default = ''): string | int | null
     {
@@ -201,7 +202,7 @@ final class Environment
      *
      * Return the visitor's IP address.
      *
-     * @param   bool    $trustProxy  Whether to trust HTTP_CLIENT_IP and HTTP_X_FORWARDED_FOR.
+     * @param  bool  $trustProxy  Whether to trust HTTP_CLIENT_IP and HTTP_X_FORWARDED_FOR.
      */
     public static function ipAddress(bool $trustProxy = false): string
     {
@@ -224,6 +225,7 @@ final class Environment
 
         /** @var string $forwarded */
         $forwarded = Environment::var(self::IP_ADDRESS_HEADERS['forwarded']);
+
         /** @var string $realip */
         $realip = Environment::var(self::IP_ADDRESS_HEADERS['realip']);
 
@@ -237,10 +239,9 @@ final class Environment
 
         /** @var list<string> $ips */
         $ips = Arrays::mapDeep($ips, 'trim');
+
         // Filter out any potentially empty entries
-        $ips = array_filter($ips, static function (string $string): bool {
-            return Strings::length($string) > 0;
-        });
+        $ips = array_filter($ips, static fn (string $string): bool => Strings::length($string) > 0);
 
         // Traverses the $ips array. Set $ip to current value if it's a public IP.
         array_walk($ips, static function (string $value, int $key) use (&$ip): string {
@@ -267,7 +268,7 @@ final class Environment
      *
      * Determines if an IP address is within the private range.
      *
-     * @param   string  $ipaddress  IP address to check.
+     * @param  string  $ipaddress  IP address to check.
      */
     public static function isPrivateIp(string $ipaddress): bool
     {
@@ -283,7 +284,7 @@ final class Environment
      *
      * Determines if an IP address is within the reserved range.
      *
-     * @param   string  $ipaddress  IP address to check.
+     * @param  string  $ipaddress  IP address to check.
      */
     public static function isReservedIp(string $ipaddress): bool
     {
@@ -299,7 +300,7 @@ final class Environment
      *
      * Determines if an IP address is not within the private or reserved ranges.
      *
-     * @param   string  $ipaddress  IP address to check.
+     * @param  string  $ipaddress  IP address to check.
      */
     public static function isPublicIp(string $ipaddress): bool
     {
@@ -311,8 +312,8 @@ final class Environment
      *
      * Determines current hostname.
      *
-     * @param   bool    $stripWww         True to strip www. off the host, false to leave it be.
-     * @param   bool    $acceptForwarded  True to accept, false otherwise.
+     * @param  bool  $stripWww         True to strip www. off the host, false to leave it be.
+     * @param  bool  $acceptForwarded  True to accept, false otherwise.
      */
     public static function host(bool $stripWww = false, bool $acceptForwarded = false): string
     {
@@ -344,7 +345,6 @@ final class Environment
      * isHttps()
      *
      * Checks to see if SSL is in use.
-     *
      */
     public static function isHttps(): bool
     {
@@ -364,7 +364,6 @@ final class Environment
      * url()
      *
      * Retrieve the current URL.
-     *
      */
     public static function url(): string
     {
@@ -386,10 +385,13 @@ final class Environment
         // Path
         /** @var string $self */
         $self = Environment::var(self::URL_HEADERS['self']);
+
         /** @var string $query */
         $query = Environment::var(self::URL_HEADERS['query']);
+
         /** @var string $request */
         $request = Environment::var(self::URL_HEADERS['request']);
+
         /** @var string $path */
         $path = ($request === '' ? $self . ($query !== '' ? '?' . $query : '') : $request);
 

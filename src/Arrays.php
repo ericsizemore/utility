@@ -40,19 +40,24 @@ use RuntimeException;
 use ArrayAccess;
 
 // Functions
-use function is_array;
-use function is_null;
 use function array_key_exists;
+use function array_map;
 use function array_merge;
-use function is_object;
-use function get_object_vars;
+use function array_sum;
 use function call_user_func;
 use function count;
-use function array_sum;
-use function array_map;
+use function get_object_vars;
+use function is_array;
+use function is_null;
+use function is_object;
+use function sprintf;
+use function trigger_error;
+
+use const E_USER_DEPRECATED;
 
 /**
  * Array utilities.
+ * @see \Esi\Utility\Tests\ArraysTest
  */
 final class Arrays
 {
@@ -81,7 +86,7 @@ final class Arrays
      */
     public static function get(array | ArrayAccess $array, string | int $key, mixed $default = null): mixed
     {
-        if (Arrays::exists($array, $key)) {
+        if (Arrays::keyExists($array, $key)) {
             return $array[$key];
         }
         return $default;
@@ -109,15 +114,44 @@ final class Arrays
     /**
      * Checks if a key exists in an array.
      *
+     * @deprecated
      * @param  array<mixed>|ArrayAccess<mixed, mixed>  $array  Array to check
      * @param  string|int                $key    Key to check
      */
     public static function exists(array | ArrayAccess $array, string | int $key): bool
     {
+        trigger_error(sprintf(
+            '%s is deprecated and will be removed in v2.1.0, use %s instead.',
+            __METHOD__,
+            self::class . '::keyExists'
+        ), E_USER_DEPRECATED);
+
+        return Arrays::keyExists($array, $key);
+    }
+
+    /**
+     * Checks if a key exists in an array.
+     *
+     * @param  array<mixed>|ArrayAccess<mixed, mixed>  $array  Array to check
+     * @param  string|int                $key    Key to check
+     */
+    public static function keyExists(array | ArrayAccess $array, string | int $key): bool
+    {
         if ($array instanceof ArrayAccess) {
             return $array->offsetExists($key);
         }
-        return ((array_key_exists($key, $array)) || (in_array($key, $array, true)));
+        return array_key_exists($key, $array);
+    }
+
+    /**
+     * Checks if a value exists in an array.
+     *
+     * @param  array<mixed>  $array  Array to check
+     * @param  string|int    $value  Value to check
+     */
+    public static function valueExists(array $array, string | int $value): bool
+    {
+        return in_array($value, $array, true);
     }
 
     /**
@@ -157,8 +191,8 @@ final class Arrays
      * @since 1.2.0 - updated with inspiration from the WordPress map_deep() function.
      *      @see https://developer.wordpress.org/reference/functions/map_deep/
      *
-     * @param   mixed     $array     The array to apply $callback to.
-     * @param   callable  $callback  The callback function to apply.
+     * @param  mixed     $array     The array to apply $callback to.
+     * @param  callable  $callback  The callback function to apply.
      */
     public static function mapDeep(mixed $array, callable $callback): mixed
     {
@@ -201,8 +235,8 @@ final class Arrays
      *
      * @since 1.2.0
      *
-     * @param  array<mixed>        ...$args
-     * @return array<mixed>|false
+     * @param   array<mixed>        ...$args
+     * @return  array<mixed>|false
      */
     public static function interlace(array ...$args): array | false
     {
@@ -238,9 +272,9 @@ final class Arrays
      *
      * @since 2.0.0
      *
-     * @param array<mixed, array<mixed>>  $array  Input array.
-     * @param string                      $key    Key to use for grouping.
-     * @return array<mixed, array<mixed>>
+     * @param   array<mixed, array<mixed>>  $array  Input array.
+     * @param   string                      $key    Key to use for grouping.
+     * @return  array<mixed, array<mixed>>
      */
     public static function groupBy(array $array, string $key): array
     {

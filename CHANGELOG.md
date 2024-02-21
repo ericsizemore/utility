@@ -205,6 +205,8 @@ Simply replace the version numbers depending on which set of changes you wish to
     public const METRIC_STANDARD_BASE = 1000;
     public const CONVERSION_MODIFIER = 0.9;
 ```
+  * `Arrays::exists` is now `Arrays::keyExists`
+    * Added new function `Arrays:valueExists`
   * Updated `composer.json` for the `test` script, and moved all of the phpunit command line options to the relevant options in the `phpunit.xml` xml config.
 
 ## Branch [1.3.x](https://github.com/ericsizemore/utility/tree/1.3.x) Changelog

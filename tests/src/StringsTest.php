@@ -33,16 +33,18 @@ declare(strict_types=1);
 
 namespace Esi\Utility\Tests;
 
-use Esi\Utility\Strings;
 use Esi\Utility\Environment;
-use PHPUnit\Framework\TestCase;
+use Esi\Utility\Strings;
+use InvalidArgumentException;
+use Iterator;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\TestCase;
 use Random\RandomException;
-use InvalidArgumentException;
 
 /**
  * String utility tests.
+ * @internal
  */
 #[CoversClass(Strings::class)]
 class StringsTest extends TestCase
@@ -214,32 +216,28 @@ class StringsTest extends TestCase
      *
      * Shoutout to Daniel St. Jules (https://github.com/danielstjules/Stringy/) for
      * inspiration for this function. This function is based on Stringy/Test/camelizeProvider().
-     *
-     * @return array<int, array<int, string>>
      */
-    public static function camelCaseProvider(): array
+    public static function camelCaseProvider(): Iterator
     {
-        return [
-            ['camelCase', 'CamelCase'],
-            ['camelCase', 'Camel-Case'],
-            ['camelCase', 'camel case'],
-            ['camelCase', 'camel -case'],
-            ['camelCase', 'camel - case'],
-            ['camelCase', 'camel_case'],
-            ['camelCTest', 'camel c test'],
-            ['stringWith1Number', 'string_with1number'],
-            ['stringWith22Numbers', 'string-with-2-2 numbers'],
-            ['dataRate', 'data_rate'],
-            ['backgroundColor', 'background-color'],
-            ['yesWeCan', 'yes_we_can'],
-            ['mozSomething', '-moz-something'],
-            ['carSpeed', '_car_speed_'],
-            ['serveHTTP', 'ServeHTTP'],
-            ['1Camel2Case', '1camel2case'],
-            ['camelΣase', 'camel σase', 'UTF-8'],
-            ['στανιλCase', 'Στανιλ case', 'UTF-8'],
-            ['σamelCase', 'σamel  Case', 'UTF-8'],
-        ];
+        yield ['camelCase', 'CamelCase'];
+        yield ['camelCase', 'Camel-Case'];
+        yield ['camelCase', 'camel case'];
+        yield ['camelCase', 'camel -case'];
+        yield ['camelCase', 'camel - case'];
+        yield ['camelCase', 'camel_case'];
+        yield ['camelCTest', 'camel c test'];
+        yield ['stringWith1Number', 'string_with1number'];
+        yield ['stringWith22Numbers', 'string-with-2-2 numbers'];
+        yield ['dataRate', 'data_rate'];
+        yield ['backgroundColor', 'background-color'];
+        yield ['yesWeCan', 'yes_we_can'];
+        yield ['mozSomething', '-moz-something'];
+        yield ['carSpeed', '_car_speed_'];
+        yield ['serveHTTP', 'ServeHTTP'];
+        yield ['1Camel2Case', '1camel2case'];
+        yield ['camelΣase', 'camel σase', 'UTF-8'];
+        yield ['στανιλCase', 'Στανιλ case', 'UTF-8'];
+        yield ['σamelCase', 'σamel  Case', 'UTF-8'];
     }
 
     /**
@@ -310,7 +308,7 @@ class StringsTest extends TestCase
     public function testRandomString(): void
     {
         $str = Strings::randomString(16);
-        self::assertTrue(Strings::length($str) === 16);
+        self::assertSame(16, Strings::length($str));
 
         self::expectException(RandomException::class);
         Strings::randomString(-10);

@@ -39,6 +39,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 
 /**
  * Conversion utility tests.
+ * @internal
  */
 #[CoversClass(Conversion::class)]
 class ConversionTest extends TestCase
@@ -48,8 +49,8 @@ class ConversionTest extends TestCase
      */
     public function testFahrenheitToCelsius(): void
     {
-        self::assertEquals(23.33, Conversion::fahrenheitToCelsius(74));
-        self::assertEquals(23.333_333_333_333_332, Conversion::fahrenheitToCelsius(74, false));
+        self::assertSame(23.33, Conversion::fahrenheitToCelsius(74));
+        self::assertSame(23.333_333_333_333_332, Conversion::fahrenheitToCelsius(74, false));
     }
 
     /**
@@ -57,8 +58,8 @@ class ConversionTest extends TestCase
      */
     public function testCelsiusToFahrenheit(): void
     {
-        self::assertEquals(73.99, Conversion::celsiusToFahrenheit(23.33));
-        self::assertEquals(74, Conversion::celsiusToFahrenheit(23.333_333_333_333_332, false));
+        self::assertSame(73.99, Conversion::celsiusToFahrenheit(23.33));
+        self::assertSame(74.0, Conversion::celsiusToFahrenheit(23.333_333_333_333_332, false));
     }
 
     /**
@@ -66,8 +67,8 @@ class ConversionTest extends TestCase
      */
     public function testCelsiusToKelvin(): void
     {
-        self::assertEquals(296.48, Conversion::celsiusToKelvin(23.33));
-        self::assertEquals(296.483_333_333_333_3, Conversion::celsiusToKelvin(23.333_333_333_333_332, false));
+        self::assertSame(296.48, Conversion::celsiusToKelvin(23.33));
+        self::assertSame(296.483_333_333_333_3, Conversion::celsiusToKelvin(23.333_333_333_333_332, false));
     }
 
     /**
@@ -75,8 +76,8 @@ class ConversionTest extends TestCase
      */
     public function testKelvinToCelsius(): void
     {
-        self::assertEquals(23.33, Conversion::kelvinToCelsius(296.48));
-        self::assertEquals(23.333_333_333_333_314, Conversion::kelvinToCelsius(296.483_333_333_333_3, false));
+        self::assertSame(23.33, Conversion::kelvinToCelsius(296.48));
+        self::assertSame(23.333_333_333_333_314, Conversion::kelvinToCelsius(296.483_333_333_333_3, false));
     }
 
     /**
@@ -84,8 +85,8 @@ class ConversionTest extends TestCase
      */
     public function testFahrenheitToKelvin(): void
     {
-        self::assertEquals(296.48, Conversion::fahrenheitToKelvin(74));
-        self::assertEquals(296.483_333_333_333_3, Conversion::fahrenheitToKelvin(74, false));
+        self::assertSame(296.48, Conversion::fahrenheitToKelvin(74));
+        self::assertSame(296.483_333_333_333_3, Conversion::fahrenheitToKelvin(74, false));
     }
 
     /**
@@ -93,8 +94,8 @@ class ConversionTest extends TestCase
      */
     public function testKelvinToFahrenheit(): void
     {
-        self::assertEquals(73.99, Conversion::kelvinToFahrenheit(296.48));
-        self::assertEquals(73.999_999_999_999_97, Conversion::kelvinToFahrenheit(296.483_333_333_333_3, false));
+        self::assertSame(73.99, Conversion::kelvinToFahrenheit(296.48));
+        self::assertSame(73.999_999_999_999_97, Conversion::kelvinToFahrenheit(296.483_333_333_333_3, false));
     }
 
     /**
@@ -102,8 +103,8 @@ class ConversionTest extends TestCase
      */
     public function testFahrenheitToRankine(): void
     {
-        self::assertEquals(533.67, Conversion::fahrenheitToRankine(74));
-        self::assertEquals(533.670_000_000_000_1, Conversion::fahrenheitToRankine(74, false));
+        self::assertSame(533.67, Conversion::fahrenheitToRankine(74));
+        self::assertSame(533.670_000_000_000_1, Conversion::fahrenheitToRankine(74, false));
     }
 
     /**
@@ -111,8 +112,8 @@ class ConversionTest extends TestCase
      */
     public function testRankineToFahrenheit(): void
     {
-        self::assertEquals(74, Conversion::rankineToFahrenheit(533.67));
-        self::assertEquals(74.000_000_000_000_06, Conversion::rankineToFahrenheit(533.670_000_000_000_1, false));
+        self::assertSame(74.0, Conversion::rankineToFahrenheit(533.67));
+        self::assertSame(74.000_000_000_000_06, Conversion::rankineToFahrenheit(533.670_000_000_000_1, false));
     }
 
     /**
@@ -120,8 +121,8 @@ class ConversionTest extends TestCase
      */
     public function testCelsiusToRankine(): void
     {
-        self::assertEquals(545.67, Conversion::celsiusToRankine(30));
-        self::assertEquals(545.670_000_000_000_1, Conversion::celsiusToRankine(30, false));
+        self::assertSame(545.67, Conversion::celsiusToRankine(30));
+        self::assertSame(545.670_000_000_000_1, Conversion::celsiusToRankine(30, false));
     }
 
     /**
@@ -129,8 +130,8 @@ class ConversionTest extends TestCase
      */
     public function testRankineToCelsius(): void
     {
-        self::assertEquals(30, Conversion::rankineToCelsius(545.67));
-        self::assertEquals(29.999_999_999_999_968, Conversion::rankineToCelsius(545.67, false));
+        self::assertSame(30.0, Conversion::rankineToCelsius(545.67));
+        self::assertSame(29.999_999_999_999_968, Conversion::rankineToCelsius(545.67, false));
     }
 
     /**
@@ -138,8 +139,8 @@ class ConversionTest extends TestCase
      */
     public function testKelvinToRankine(): void
     {
-        self::assertEquals(234.0, Conversion::kelvinToRankine(130));
-        self::assertEquals(234.000_000_000_000_06, Conversion::kelvinToRankine(130, false));
+        self::assertSame(234.0, Conversion::kelvinToRankine(130));
+        self::assertSame(234.000_000_000_000_06, Conversion::kelvinToRankine(130, false));
     }
 
     /**
@@ -147,8 +148,8 @@ class ConversionTest extends TestCase
      */
     public function testRankineToKelvin(): void
     {
-        self::assertEquals(130, Conversion::rankineToKelvin(234.0));
-        self::assertEquals(129.999_999_999_999_97, Conversion::rankineToKelvin(234.0, false));
+        self::assertSame(130.0, Conversion::rankineToKelvin(234.0));
+        self::assertSame(129.999_999_999_999_97, Conversion::rankineToKelvin(234.0, false));
     }
 
     /**

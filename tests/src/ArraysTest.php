@@ -44,6 +44,7 @@ use function is_null;
 
 /**
  * Array utilities tests.
+ * @internal
  */
 #[CoversClass(Arrays::class)]
 class ArraysTest extends TestCase
@@ -67,9 +68,9 @@ class ArraysTest extends TestCase
     {
         $array = ['this' => 'is', 'a' => 'test'];
 
-        self::assertEquals('is', Arrays::get($array, 'this'));
-        self::assertEquals('test', Arrays::get($array, 'a'));
-        self::assertEquals(null, Arrays::get($array, 'notexist'));
+        self::assertSame('is', Arrays::get($array, 'this'));
+        self::assertSame('test', Arrays::get($array, 'a'));
+        self::assertNull(Arrays::get($array, 'notexist'));
     }
 
     /**
@@ -81,22 +82,51 @@ class ArraysTest extends TestCase
         $newArray = ['that' => 4, 'was' => 3, 'a' => 2, 'test' => 1];
 
         Arrays::set($array, 'test', 5);
-        self::assertEquals(5, Arrays::get($array, 'test'));
+        self::assertSame(5, Arrays::get($array, 'test'));
 
         Arrays::set($array, null, $newArray);
-        self::assertEquals(4, Arrays::get($array, 'that'));
+        self::assertSame(4, Arrays::get($array, 'that'));
     }
 
     /**
-     * Test Arrays::exists().
+     * Test Arrays::keyExists().
      */
-    public function testExists(): void
+    public function testKeyExists(): void
     {
         $array = ['test' => 1];
 
         $arrayAccess         = new TestArrayAccess();
         $arrayAccess['test'] = 1;
 
+        self::assertTrue(Arrays::keyExists($array, 'test'));
+        self::assertFalse(Arrays::keyExists($array, 'this'));
+
+        self::assertTrue(Arrays::keyExists($arrayAccess, 'test'));
+        self::assertFalse(Arrays::keyExists($arrayAccess, 'this'));
+    }
+
+    /**
+     * Test Arrays::valueExists().
+     */
+    public function testValueExists(): void
+    {
+        $array = ['test' => 1, 1 => 'foo', 'bar' => 2];
+
+        self::assertTrue(Arrays::valueExists($array, 1));
+        self::assertFalse(Arrays::valueExists($array, 'test'));
+
+        self::assertTrue(Arrays::valueExists($array, 'foo'));
+        self::assertFalse(Arrays::valueExists($array, 'bar'));
+    }
+
+    public function testExistsDeprecation(): void
+    {
+        $array = ['test' => 1];
+
+        $arrayAccess         = new TestArrayAccess();
+        $arrayAccess['test'] = 1;
+
+        $this->expectUserDeprecationMessage('Esi\Utility\Arrays::exists is deprecated and will be removed in v2.1.0, use Esi\Utility\Arrays::keyExists instead.');
         self::assertTrue(Arrays::exists($array, 'test'));
         self::assertFalse(Arrays::exists($array, 'this'));
 
@@ -109,7 +139,7 @@ class ArraysTest extends TestCase
      */
     public function testFlatten(): void
     {
-        self::assertEquals([
+        self::assertSame([
             0           => 'a',
             1           => 'b',
             2           => 'c',
@@ -123,12 +153,12 @@ class ArraysTest extends TestCase
             'a', 'b', 'c', 'd', ['first' => 'e', 'f', 'second' => 'g', ['h', 'third' => 'i']],
         ]));
 
-        self::assertEquals(
+        self::assertSame(
             [0 => 'a', 1 => 'b', 2 => 'c', 3 => 'd', '4.0' => 'e', '4.1' => 'f', '4.2' => 'g'],
             Arrays::flatten(['a', 'b', 'c', 'd', ['e', 'f', 'g']])
         );
 
-        self::assertEquals(
+        self::assertSame(
             ['k0' => 'a', 'k1' => 'b', 'k2' => 'c', 'k3' => 'd', 'k4.0' => 'e', 'k4.1' => 'f', 'k4.2' => 'g'],
             Arrays::flatten(['a', 'b', 'c', 'd', ['e', 'f', 'g']], '.', 'k')
         );
@@ -139,7 +169,7 @@ class ArraysTest extends TestCase
      */
     public function testMapDeep(): void
     {
-        self::assertEquals([
+        self::assertSame([
             '&lt;',
             'abc',
             '&gt;',
@@ -172,10 +202,10 @@ class ArraysTest extends TestCase
         $input  = Arrays::interlace([1, 2, 3], ['a', 'b', 'c']);
         $expect = [1, 'a', 2, 'b', 3, 'c'];
 
-        self::assertEquals($expect, $input);
+        self::assertSame($expect, $input);
 
         // With one argument
-        self::assertEquals([1, 2, 3], Arrays::interlace([1, 2, 3]));
+        self::assertSame([1, 2, 3], Arrays::interlace([1, 2, 3]));
 
         // With no arguments
         self::assertFalse(Arrays::interlace());

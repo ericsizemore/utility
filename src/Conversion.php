@@ -37,22 +37,23 @@ use Random\RandomException;
 use ValueError;
 
 // Functions
-use function round;
-use function number_format;
 use function abs;
 use function atan;
-use function tan;
-use function deg2rad;
-use function sin;
-use function cos;
-use function sqrt;
 use function atan2;
+use function cos;
+use function deg2rad;
 use function is_nan;
+use function number_format;
+use function round;
+use function sin;
+use function sqrt;
+use function tan;
 
 use const NAN;
 
 /**
  * Conversion utilities.
+ * @see \Esi\Utility\Tests\ConversionTest
  */
 final class Conversion
 {
@@ -66,13 +67,17 @@ final class Conversion
     public const METERS_TO_MILES     = 1_609.344;
 
     /**
+     * @todo The temperature conversion functions are approximate, lose some accuracy.
+     */
+
+    /**
      * Convert Fahrenheit (Fº) To Celsius (Cº)
      *
      * @since  1.2.0
      *
-     * @param   float  $fahrenheit  Value in Fahrenheit
-     * @param   bool   $rounded     Whether to round the result.
-     * @param   int    $precision   Precision to use if $rounded is true.
+     * @param  float  $fahrenheit  Value in Fahrenheit
+     * @param  bool   $rounded     Whether to round the result.
+     * @param  int    $precision   Precision to use if $rounded is true.
      */
     public static function fahrenheitToCelsius(float $fahrenheit, bool $rounded = true, int $precision = 2): float
     {
@@ -86,9 +91,9 @@ final class Conversion
      *
      * @since  1.2.0
      *
-     * @param   float  $celsius    Value in Celsius
-     * @param   bool   $rounded    Whether to round the result.
-     * @param   int    $precision  Precision to use if $rounded is true.
+     * @param  float  $celsius    Value in Celsius
+     * @param  bool   $rounded    Whether to round the result.
+     * @param  int    $precision  Precision to use if $rounded is true.
      */
     public static function celsiusToFahrenheit(float $celsius, bool $rounded = true, int $precision = 2): float
     {
@@ -102,9 +107,9 @@ final class Conversion
      *
      * @since  1.2.0
      *
-     * @param   float  $celsius    Value in Celsius
-     * @param   bool   $rounded    Whether to round the result.
-     * @param   int    $precision  Precision to use if $rounded is true.
+     * @param  float  $celsius    Value in Celsius
+     * @param  bool   $rounded    Whether to round the result.
+     * @param  int    $precision  Precision to use if $rounded is true.
      */
     public static function celsiusToKelvin(float $celsius, bool $rounded = true, int $precision = 2): float
     {
@@ -118,9 +123,9 @@ final class Conversion
      *
      * @since  1.2.0
      *
-     * @param   float  $kelvin     Value in Kelvin
-     * @param   bool   $rounded    Whether to round the result.
-     * @param   int    $precision  Precision to use if $rounded is true.
+     * @param  float  $kelvin     Value in Kelvin
+     * @param  bool   $rounded    Whether to round the result.
+     * @param  int    $precision  Precision to use if $rounded is true.
      */
     public static function kelvinToCelsius(float $kelvin, bool $rounded = true, int $precision = 2): float
     {
@@ -134,9 +139,9 @@ final class Conversion
      *
      * @since  1.2.0
      *
-     * @param   float  $fahrenheit  Value in Fahrenheit
-     * @param   bool   $rounded     Whether to round the result.
-     * @param   int    $precision   Precision to use if $rounded is true.
+     * @param  float  $fahrenheit  Value in Fahrenheit
+     * @param  bool   $rounded     Whether to round the result.
+     * @param  int    $precision   Precision to use if $rounded is true.
      */
     public static function fahrenheitToKelvin(float $fahrenheit, bool $rounded = true, int $precision = 2): float
     {
@@ -150,9 +155,9 @@ final class Conversion
      *
      * @since  1.2.0
      *
-     * @param   float  $kelvin     Value in Kelvin
-     * @param   bool   $rounded    Whether to round the result.
-     * @param   int    $precision  Precision to use if $rounded is true.
+     * @param  float  $kelvin     Value in Kelvin
+     * @param  bool   $rounded    Whether to round the result.
+     * @param  int    $precision  Precision to use if $rounded is true.
      */
     public static function kelvinToFahrenheit(float $kelvin, bool $rounded = true, int $precision = 2): float
     {
@@ -166,9 +171,9 @@ final class Conversion
      *
      * @since  1.2.0
      *
-     * @param   float  $fahrenheit  Value in Fahrenheit
-     * @param   bool   $rounded     Whether to round the result.
-     * @param   int    $precision   Precision to use if $rounded is true.
+     * @param  float  $fahrenheit  Value in Fahrenheit
+     * @param  bool   $rounded     Whether to round the result.
+     * @param  int    $precision   Precision to use if $rounded is true.
      */
     public static function fahrenheitToRankine(float $fahrenheit, bool $rounded = true, int $precision = 2): float
     {
@@ -182,9 +187,9 @@ final class Conversion
      *
      * @since  1.2.0
      *
-     * @param   float  $rankine    Value in Rankine
-     * @param   bool   $rounded    Whether to round the result.
-     * @param   int    $precision  Precision to use if $rounded is true.
+     * @param  float  $rankine    Value in Rankine
+     * @param  bool   $rounded    Whether to round the result.
+     * @param  int    $precision  Precision to use if $rounded is true.
      */
     public static function rankineToFahrenheit(float $rankine, bool $rounded = true, int $precision = 2): float
     {
@@ -198,9 +203,9 @@ final class Conversion
      *
      * @since  1.2.0
      *
-     * @param   float  $celsius    Value in Celsius
-     * @param   bool   $rounded    Whether to round the result.
-     * @param   int    $precision  Precision to use if $rounded is true.
+     * @param  float  $celsius    Value in Celsius
+     * @param  bool   $rounded    Whether to round the result.
+     * @param  int    $precision  Precision to use if $rounded is true.
      */
     public static function celsiusToRankine(float $celsius, bool $rounded = true, int $precision = 2): float
     {
@@ -214,9 +219,9 @@ final class Conversion
      *
      * @since  1.2.0
      *
-     * @param   float  $rankine    Value in Rankine
-     * @param   bool   $rounded    Whether to round the result.
-     * @param   int    $precision  Precision to use if $rounded is true.
+     * @param  float  $rankine    Value in Rankine
+     * @param  bool   $rounded    Whether to round the result.
+     * @param  int    $precision  Precision to use if $rounded is true.
      */
     public static function rankineToCelsius(float $rankine, bool $rounded = true, int $precision = 2): float
     {
@@ -230,9 +235,9 @@ final class Conversion
      *
      * @since  1.2.0
      *
-     * @param   float  $kelvin     Value in Kelvin
-     * @param   bool   $rounded    Whether to round the result.
-     * @param   int    $precision  Precision to use if $rounded is true.
+     * @param  float  $kelvin     Value in Kelvin
+     * @param  bool   $rounded    Whether to round the result.
+     * @param  int    $precision  Precision to use if $rounded is true.
      */
     public static function kelvinToRankine(float $kelvin, bool $rounded = true, int $precision = 2): float
     {
@@ -246,9 +251,9 @@ final class Conversion
      *
      * @since  1.2.0
      *
-     * @param   float  $rankine    Value in Rankine
-     * @param   bool   $rounded    Whether to round the result.
-     * @param   int    $precision  Precision to use if $rounded is true.
+     * @param  float  $rankine    Value in Rankine
+     * @param  bool   $rounded    Whether to round the result.
+     * @param  int    $precision  Precision to use if $rounded is true.
      */
     public static function rankineToKelvin(float $rankine, bool $rounded = true, int $precision = 2): float
     {

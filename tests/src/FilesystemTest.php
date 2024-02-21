@@ -62,6 +62,7 @@ use const DIRECTORY_SEPARATOR;
 
 /**
  * File system utility tests.
+ * @internal
  */
 #[CoversClass(Filesystem::class)]
 class FilesystemTest extends TestCase

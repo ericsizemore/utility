@@ -24,10 +24,11 @@
         "voku/portable-ascii": "^2.0"
     },
     "require-dev": {
-        "phpstan/phpstan": ">=1.11",
-        "phpstan/phpstan-phpunit": ">=1.4",
-        "phpstan/phpstan-strict-rules": ">=1.6",
-        "phpunit/phpunit": "^10.5 || ^11.0"
+        "friendsofphp/php-cs-fixer": "dev-master",
+        "phpstan/phpstan": "^1.11",
+        "phpstan/phpstan-phpunit": "^1.4",
+        "phpstan/phpstan-strict-rules": "^1.6",
+        "phpunit/phpunit": "^11.0"
     },
     "suggest": {
         "ext-exif": "To be able to use Exif for guessing image types with Utility\\Image",
@@ -50,6 +51,8 @@
         }
     },
     "scripts": {
+        "phpcs-fix": "vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php",
+        "phpcs-nofix": "vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php --dry-run --diff",
         "phpstan": "vendor/bin/phpstan analyse -c phpstan.neon",
         "test": "phpunit"
     }
