@@ -97,18 +97,19 @@ final class Arrays
      *
      * Add a value to an array.
      *
-     * @param  array<mixed>|ArrayAccess<mixed, mixed>     &$array  Array to add value to.
-     * @param  string|int|null  $key     Key to add
-     * @param  mixed            $value   Value to add
+     * @param  array<mixed>|ArrayAccess<mixed, mixed>  &$array  Array to add value to.
+     * @param  string|int|null                         $key     Key to add
+     * @param  mixed                                   $value   Value to add
      *
      * @throws RuntimeException  If $array is not accessible
      */
-    public static function set(array | ArrayAccess &$array, string | int | null $key, mixed $value): mixed
+    public static function set(array | ArrayAccess &$array, string | int | null $key, mixed $value): void
     {
-        if (is_null($key)) {
-            return $array = $value;
+        if ($key === null) {
+            $array = $value; // @phpstan-ignore-line
+        } else {
+            $array[$key] = $value;
         }
-        return $array[$key] = $value;
     }
 
     /**
