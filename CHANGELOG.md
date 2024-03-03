@@ -207,7 +207,7 @@ Simply replace the version numbers depending on which set of changes you wish to
 ```
   * `Arrays::exists` is now `Arrays::keyExists`
     * Added new function `Arrays:valueExists`
-  * Updated `composer.json` for the `test` script, and moved all of the phpunit command line options to the relevant options in the `phpunit.xml` xml config.
+  * Updated `composer.json` for the `test` script, and moved all the phpunit command line options to the relevant options in the `phpunit.xml` xml config.
 
 ## Branch [1.3.x](https://github.com/ericsizemore/utility/tree/1.3.x) Changelog
 
@@ -240,7 +240,7 @@ Simply replace the version numbers depending on which set of changes you wish to
   * New functions for temperature conversions:
     * fahrenheitToCelsius, celsiusToFahrenheit, celsiusToKelvin, kelvinToCelsius, fahrenheitToKelvin, kelvinToFahrenheit
     * fahrenheitToRankine, rankineToFahrenheit, celsiusToRankine, rankineToCelsius, kelvinToRankine, rankineToKelvin
-  * Reworked arrayFlatten, now has new paramater $prepend
+  * Reworked arrayFlatten, now has new parameter $prepend
   * statusHeader() is now deprecated, you can use PHP's built-in http_response_code function instead.
   * validJson() should now return properly
   * Initial implementation of PHPUnit and the testing suite.

@@ -25,7 +25,6 @@ use Esi\Utility\Environment;
 // with $_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE'] = 'GET'
 // and $_SERVER['REQUEST_METHOD'] to say, 'POST' for example
 echo Environment::requestMethod(); // GET
-
 ```
 
 ## var

@@ -21,7 +21,7 @@ guessImageTypeGetImageSize(string $imagePath): string | false;
 ```
 
 
-## 
+## isGdAvailable
 
 
 
@@ -29,7 +29,7 @@ guessImageTypeGetImageSize(string $imagePath): string | false;
 
 ```
 
-## 
+## isGmagickAvailable
 
 
 
@@ -37,7 +37,7 @@ guessImageTypeGetImageSize(string $imagePath): string | false;
 
 ```
 
-## 
+## isImagickAvailable
 
 
 
@@ -45,7 +45,7 @@ guessImageTypeGetImageSize(string $imagePath): string | false;
 
 ```
 
-## 
+## isExifAvailable
 
 
 
@@ -53,7 +53,7 @@ guessImageTypeGetImageSize(string $imagePath): string | false;
 
 ```
 
-## 
+## guessImageType
 
 
 
@@ -61,7 +61,7 @@ guessImageTypeGetImageSize(string $imagePath): string | false;
 
 ```
 
-## 
+## isJpg
 
 
 
@@ -69,7 +69,7 @@ guessImageTypeGetImageSize(string $imagePath): string | false;
 
 ```
 
-## 
+## isGif
 
 
 
@@ -77,7 +77,7 @@ guessImageTypeGetImageSize(string $imagePath): string | false;
 
 ```
 
-## 
+## isPng
 
 
 
@@ -85,7 +85,7 @@ guessImageTypeGetImageSize(string $imagePath): string | false;
 
 ```
 
-## 
+## isWebp
 
 
 

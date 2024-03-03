@@ -9,7 +9,7 @@
 * [sizeFormat](#sizeformat)(int $bytes, int $precision = 0, string $standard = 'binary'): string;
 
 
-## 
+## inside
 
 
 
@@ -17,7 +17,7 @@
 
 ```
 
-## 
+## outside
 
 
 
@@ -25,7 +25,7 @@
 
 ```
 
-## 
+## random
 
 
 
@@ -33,7 +33,7 @@
 
 ```
 
-## 
+## ordinal
 
 
 
@@ -41,7 +41,7 @@
 
 ```
 
-## 
+## sizeFormat
 
 
 
