@@ -220,23 +220,41 @@ class StringsTest extends TestCase
     public static function camelCaseProvider(): Iterator
     {
         yield ['camelCase', 'CamelCase'];
+
         yield ['camelCase', 'Camel-Case'];
+
         yield ['camelCase', 'camel case'];
+
         yield ['camelCase', 'camel -case'];
+
         yield ['camelCase', 'camel - case'];
+
         yield ['camelCase', 'camel_case'];
+
         yield ['camelCTest', 'camel c test'];
+
         yield ['stringWith1Number', 'string_with1number'];
+
         yield ['stringWith22Numbers', 'string-with-2-2 numbers'];
+
         yield ['dataRate', 'data_rate'];
+
         yield ['backgroundColor', 'background-color'];
+
         yield ['yesWeCan', 'yes_we_can'];
+
         yield ['mozSomething', '-moz-something'];
+
         yield ['carSpeed', '_car_speed_'];
+
         yield ['serveHTTP', 'ServeHTTP'];
+
         yield ['1Camel2Case', '1camel2case'];
+
         yield ['camelΣase', 'camel σase', 'UTF-8'];
+
         yield ['στανιλCase', 'Στανιλ case', 'UTF-8'];
+
         yield ['σamelCase', 'σamel  Case', 'UTF-8'];
     }
 

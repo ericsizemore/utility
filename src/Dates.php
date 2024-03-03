@@ -184,6 +184,7 @@ final class Dates
         if ($timestamp === 0 || $timestamp < 0) {
             return false;
         }
+
         return (preg_match(self::VALIDATE_TIMESTAMP_REGEX, (string) $timestamp) === 1);
     }
 }

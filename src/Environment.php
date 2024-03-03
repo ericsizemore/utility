@@ -39,12 +39,9 @@ use ArgumentCountError;
 
 // Functions
 
-use function count;
 use function explode;
 use function filter_var;
 use function function_exists;
-use function inet_ntop;
-use function inet_pton;
 use function ini_get;
 use function ini_set;
 use function preg_match;
@@ -178,6 +175,7 @@ final class Environment
                 )
             )
         );
+
         return Strings::upper($method);
     }
 
@@ -248,6 +246,7 @@ final class Environment
             if (Environment::isPublicIp($value)) {
                 $ip = $value;
             }
+
             return $ip;
         });
         unset($ips);
@@ -260,6 +259,7 @@ final class Environment
                 Environment::var(self::IP_ADDRESS_HEADERS['default'])
             );
         }
+
         return $ip;
     }
 
@@ -338,6 +338,7 @@ final class Environment
         if ($stripWww) {
             $strippedHost = preg_replace('#^www\.#', '', $host);
         }
+
         return ($strippedHost ?? $host);
     }
 
@@ -357,6 +358,7 @@ final class Environment
         if ($server !== 'off' && $server !== '') {
             return true;
         }
+
         return $forwarded === 'https' || ($frontEnd !== '' && $frontEnd !== 'off');
     }
 
@@ -436,6 +438,7 @@ final class Environment
         if ($standardize) {
             return Environment::BOOLEAN_MAPPINGS[Strings::lower($value)] ?? $value;
         }
+
         return $value;
     }
 
@@ -462,6 +465,7 @@ final class Environment
             throw new RuntimeException('Native ini_set function not available.');
             // @codeCoverageIgnoreEnd
         }
+
         return ini_set($option, $value);
     }
 }

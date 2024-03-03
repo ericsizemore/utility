@@ -39,8 +39,6 @@ use PHPUnit\Framework\Attributes\CoversClass;
 
 use ValueError;
 
-use function intval;
-
 use const PHP_INT_MAX;
 use const PHP_INT_MIN;
 

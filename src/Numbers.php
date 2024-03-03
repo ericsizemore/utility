@@ -181,6 +181,7 @@ final class Numbers
         for ($i = 0; ($bytes / $base) > Numbers::CONVERSION_MODIFIER && ($i < count($units) - 1); $i++) {
             $bytes /= $base;
         }
+
         // @phpstan-ignore-next-line
         return number_format($bytes, $precision, '.', '') . ' ' . $units[$i];
     }

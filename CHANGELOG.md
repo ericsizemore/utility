@@ -40,7 +40,7 @@ Simply replace the version numbers depending on which set of changes you wish to
      * @var int METERS_TO_MILES       Used in the conversion of meters to miles.
      */
     public const EARTH_RADIUS = 6_370_986;
-    public const METERS_TO_KILOMTERS = 1000;
+    public const METERS_TO_KILOMETERS = 1000;
     public const METERS_TO_MILES = 1609.344;
 ```
   * These are mainly used in the `Conversion::haversineDistance()` function at the moment.

@@ -229,6 +229,7 @@ final class Strings
             $haystack = Strings::lower($haystack);
             $needle   = Strings::lower($needle);
         }
+
         return (
             $multibyte
             ? mb_strpos($haystack, $needle) === 0
@@ -253,6 +254,7 @@ final class Strings
             $haystack = Strings::lower($haystack);
             $needle   = Strings::lower($needle);
         }
+
         return (
             $multibyte
             ? Strings::substr($haystack, -Strings::length($needle)) === $needle
@@ -277,6 +279,7 @@ final class Strings
             $haystack = Strings::lower($haystack);
             $needle   = Strings::lower($needle);
         }
+
         return (
             $multibyte
             ? mb_strpos($haystack, $needle) !== false
@@ -344,6 +347,7 @@ final class Strings
             static fn (array $match): string => isset($match[1]) ? self::upper($match[1]) : '',
             $string
         );
+
         return (string) preg_replace_callback('/\p{N}+(.)?/u', static fn (array $match): string => self::upper($match[0]), $transformation);
     }
 
@@ -435,6 +439,7 @@ final class Strings
         if ($length < 1) {
             throw new RandomException('$length must be greater than 1.');
         }
+
         // Convert bytes to hexadecimal and truncate to the desired length
         return Strings::substr(bin2hex(Strings::randomBytes($length * 2)), 0, $length);
     }

@@ -155,7 +155,7 @@ final class Image
         $result = $finfo->file($imagePath);
 
         if ($result === false) {
-            // false means an error occured
+            // false means an error occurred
             return false;
         }
 
@@ -164,6 +164,7 @@ final class Image
         if (Strings::beginsWith($mime, 'image/')) {
             return $mime;
         }
+
         return false;
         //@codeCoverageIgnoreEnd
     }
@@ -197,8 +198,6 @@ final class Image
     {
         static $hasFinfo;
 
-        $hasFinfo ??= class_exists('finfo');
-
         if (!Filesystem::isFile($imagePath)) {
             throw new InvalidArgumentException('$imagePath not found or is not a file.');
         }
@@ -208,6 +207,8 @@ final class Image
         if (self::isExifAvailable()) {
             return self::guessImageTypeExif($imagePath);
         }
+
+        $hasFinfo ??= class_exists('finfo');
 
         if ($hasFinfo) {
             // Next, let's try finfo
@@ -230,15 +231,12 @@ final class Image
      */
     public static function isJpg(string $imagePath): bool
     {
-        if (!Filesystem::isFile($imagePath)) {
-            throw new InvalidArgumentException('$imagePath not found or is not a file.');
-        }
-
         $imageType = self::guessImageType($imagePath);
 
         if ($imageType === false) {
             throw new RuntimeException('Unable to determine the image type. Is it a valid image file?');
         }
+
         return Arrays::valueExists(self::IMAGE_TYPES['jpg'], $imageType);
     }
 
@@ -252,15 +250,12 @@ final class Image
      */
     public static function isGif(string $imagePath): bool
     {
-        if (!Filesystem::isFile($imagePath)) {
-            throw new InvalidArgumentException('$imagePath not found or is not a file.');
-        }
-
         $imageType = self::guessImageType($imagePath);
 
         if ($imageType === false) {
             throw new RuntimeException('Unable to determine the image type. Is it a valid image file?');
         }
+
         return Arrays::valueExists(self::IMAGE_TYPES['gif'], $imageType);
     }
 
@@ -274,15 +269,12 @@ final class Image
      */
     public static function isPng(string $imagePath): bool
     {
-        if (!Filesystem::isFile($imagePath)) {
-            throw new InvalidArgumentException('$imagePath not found or is not a file.');
-        }
-
         $imageType = self::guessImageType($imagePath);
 
         if ($imageType === false) {
             throw new RuntimeException('Unable to determine the image type. Is it a valid image file?');
         }
+
         return Arrays::valueExists(self::IMAGE_TYPES['png'], $imageType);
     }
 
@@ -296,15 +288,12 @@ final class Image
      */
     public static function isWebp(string $imagePath): bool
     {
-        if (!Filesystem::isFile($imagePath)) {
-            throw new InvalidArgumentException('$imagePath not found or is not a file.');
-        }
-
         $imageType = self::guessImageType($imagePath);
 
         if ($imageType === false) {
             throw new RuntimeException('Unable to determine the image type. Is it a valid image file?');
         }
+
         return Arrays::valueExists(self::IMAGE_TYPES['webp'], $imageType);
     }
 }

@@ -48,7 +48,6 @@ use function call_user_func;
 use function count;
 use function get_object_vars;
 use function is_array;
-use function is_null;
 use function is_object;
 use function sprintf;
 use function trigger_error;
@@ -89,6 +88,7 @@ final class Arrays
         if (Arrays::keyExists($array, $key)) {
             return $array[$key];
         }
+
         return $default;
     }
 
@@ -141,6 +141,7 @@ final class Arrays
         if ($array instanceof ArrayAccess) {
             return $array->offsetExists($key);
         }
+
         return array_key_exists($key, $array);
     }
 
@@ -181,6 +182,7 @@ final class Arrays
                 $result[$prepend . $key] = $value;
             }
         }
+
         return $result;
     }
 
@@ -209,6 +211,7 @@ final class Arrays
         } else {
             $array = call_user_func($callback, $array);
         }
+
         return $array;
     }
 
@@ -261,6 +264,7 @@ final class Arrays
                 }
             }
         }
+
         return $newArray;
     }
 
@@ -294,12 +298,10 @@ final class Arrays
 
             $groupKey = $item[$key];
 
-            if (!isset($result[$groupKey])) {
-                $result[$groupKey] = [];
-            }
-
+            $result[$groupKey] ??= [];
             $result[$groupKey][] = $item;
         }
+
         return $result;
     }
 }

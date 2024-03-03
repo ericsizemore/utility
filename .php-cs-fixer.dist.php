@@ -5,25 +5,36 @@ $config = new PhpCsFixer\Config();
 $config
     ->setRiskyAllowed(true)
     ->setRules([
-        '@PER-CS'                             => true,
-        '@PSR2'                               => true,
-        '@PSR12'                              => true,
-        '@PHP82Migration'                     => true,
-        'array_syntax'                        => ['syntax' => 'short'],
-        'php_unit_internal_class'             => ['types' => ['normal', 'final']],
-        'php_unit_namespaced'                 => true,
-        'php_unit_expectation'                => true,
-        'php_unit_strict'                     => ['assertions' => ['assertAttributeEquals', 'assertAttributeNotEquals', 'assertEquals', 'assertNotEquals']],
-        'align_multiline_comment'             => true,
-        'phpdoc_add_missing_param_annotation' => ['only_untyped' => true],
-        'binary_operator_spaces'              => [
+        '@PER-CS'                     => true,
+        '@PSR2'                       => true,
+        '@PSR12'                      => true,
+        '@PHP82Migration'             => true,
+        'array_syntax'                => ['syntax' => 'short'],
+        'binary_operator_spaces'      => [
             'operators' => [
                 '=>' => 'align',
                 '='  => 'align',
             ],
         ],
-        'ordered_imports'         => false,
-        //'global_namespace_import' => ['import_classes' => true, 'import_constants' => true, 'import_functions' => true],
+        'ordered_imports'             => false,
+        'blank_line_before_statement' => [
+            'statements' => [
+                'continue',
+                'declare',
+                'exit',
+                'include',
+                'include_once',
+                'phpdoc',
+                'require',
+                'require_once',
+                'return',
+                'throw',
+                'try',
+                'yield',
+                'yield_from',
+            ],
+        ],
+        //'global_namespace_import' => ['import_classes' => false, 'import_constants' => false, 'import_functions' => false],
     ])
     ->setLineEnding("\n")
     ->setFinder(

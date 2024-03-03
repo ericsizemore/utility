@@ -44,7 +44,6 @@ use function array_diff;
 use function array_sum;
 use function chmod;
 use function count;
-use function dirname;
 use function file_exists;
 use function implode;
 use function is_dir;

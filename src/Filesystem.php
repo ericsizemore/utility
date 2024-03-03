@@ -49,7 +49,6 @@ use function array_filter;
 use function array_pop;
 use function array_reduce;
 use function clearstatcache;
-use function count;
 use function explode;
 use function file_exists;
 use function file_get_contents;
@@ -62,7 +61,6 @@ use function iterator_count;
 use function natsort;
 use function preg_match;
 use function preg_quote;
-use function realpath;
 use function rtrim;
 use function sprintf;
 use function unlink;
@@ -139,6 +137,7 @@ final class Filesystem
                 $lines[] = $lineCount;
             }
         }
+
         return $lines;
     }
 
@@ -174,6 +173,7 @@ final class Filesystem
                 $size += $fileInfo->getSize();
             }
         }
+
         return $size;
     }
 
@@ -242,6 +242,7 @@ final class Filesystem
             } elseif ($item !== '.') {
                 $tmp[] = $item;
             }
+
             return $tmp;
         }, []);
 
@@ -285,6 +286,7 @@ final class Filesystem
         } else {
             $data = file_get_contents($file);
         }
+
         return ($data !== false);
         // @codeCoverageIgnoreEnd
     }
@@ -305,6 +307,7 @@ final class Filesystem
         if (!Filesystem::isFile($file)) {
             throw new InvalidArgumentException(sprintf("File '%s' does not exist or is not readable.", $file));
         }
+
         return file_get_contents($file);
     }
 
@@ -333,6 +336,7 @@ final class Filesystem
         if (!Filesystem::isReallyWritable($file)) {
             throw new InvalidArgumentException(sprintf("File '%s' is not writable.", $file));
         }
+
         // @codeCoverageIgnoreEnd
         return file_put_contents($file, $data, $flags);
     }
@@ -402,6 +406,7 @@ final class Filesystem
         if ($ignore !== []) {
             return preg_quote(implode('|', $ignore), '#');
         }
+
         return '';
     }
 

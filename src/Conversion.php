@@ -33,23 +33,14 @@ declare(strict_types=1);
 
 namespace Esi\Utility;
 
-use Random\RandomException;
-use ValueError;
-
 // Functions
-use function abs;
-use function atan;
 use function atan2;
 use function cos;
 use function deg2rad;
-use function is_nan;
 use function number_format;
 use function round;
 use function sin;
 use function sqrt;
-use function tan;
-
-use const NAN;
 
 /**
  * Conversion utilities.
@@ -62,9 +53,9 @@ final class Conversion
      * @var int METERS_TO_KILOMETERS  Used in the conversion of meters to kilometers.
      * @var int METERS_TO_MILES       Used in the conversion of meters to miles.
      */
-    public const EARTH_RADIUS        = 6_370_986;
-    public const METERS_TO_KILOMTERS = 1_000;
-    public const METERS_TO_MILES     = 1_609.344;
+    public const EARTH_RADIUS         = 6_370_986;
+    public const METERS_TO_KILOMETERS = 1_000;
+    public const METERS_TO_MILES      = 1_609.344;
 
     /**
      * @todo The temperature conversion functions are approximate, lose some accuracy.
@@ -314,7 +305,7 @@ final class Conversion
 
         return [
             'meters'     => number_format($distance, $precision),
-            'kilometers' => number_format($distance / self::METERS_TO_KILOMTERS, $precision),
+            'kilometers' => number_format($distance / self::METERS_TO_KILOMETERS, $precision),
             'miles'      => number_format($distance / self::METERS_TO_MILES, $precision),
         ];
     }
