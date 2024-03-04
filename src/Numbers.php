@@ -59,7 +59,9 @@ final class Numbers
      * @var float CONVERSION_MODIFIER
      */
     public const BINARY_STANDARD_BASE = 1_024;
+
     public const METRIC_STANDARD_BASE = 1_000;
+
     public const CONVERSION_MODIFIER  = 0.9;
 
     /**
@@ -178,7 +180,7 @@ final class Numbers
         }
 
         // Perform the conversion
-        for ($i = 0; ($bytes / $base) > Numbers::CONVERSION_MODIFIER && ($i < count($units) - 1); $i++) {
+        for ($i = 0; ($bytes / $base) > Numbers::CONVERSION_MODIFIER && ($i < count($units) - 1); ++$i) {
             $bytes /= $base;
         }
 

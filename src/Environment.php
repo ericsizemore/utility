@@ -69,6 +69,7 @@ final class Environment
      * @var int PORT_UNSECURE
      */
     public const PORT_SECURE   = 443;
+
     public const PORT_UNSECURE = 80;
 
     /**
@@ -375,14 +376,14 @@ final class Environment
         // Auth
         $authUser = Environment::var(self::URL_HEADERS['authuser']);
         $authPwd  = Environment::var(self::URL_HEADERS['authpw']);
-        $auth     = ($authUser !== '' ? $authUser . ($authPwd !== '' ? ":$authPwd" : '') . '@' : '');
+        $auth     = ($authUser !== '' ? $authUser . ($authPwd !== '' ? ':' . $authPwd : '') . '@' : '');
 
         // Host and port
         $host = Environment::host();
 
         /** @var int $port */
         $port = Environment::var(self::URL_HEADERS['port'], 0);
-        $port = ($port === (Environment::isHttps() ? Environment::PORT_SECURE : Environment::PORT_UNSECURE) || $port === 0) ? '' : ":$port";
+        $port = ($port === (Environment::isHttps() ? Environment::PORT_SECURE : Environment::PORT_UNSECURE) || $port === 0) ? '' : ':' . $port;
 
         // Path
         /** @var string $self */

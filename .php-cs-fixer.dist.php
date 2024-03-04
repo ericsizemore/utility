@@ -41,7 +41,7 @@ $config
         PhpCsFixer\Finder::create()
             ->in(__DIR__ . '/src')
             ->in(__DIR__ . '/tests')
-            ->append([__DIR__ . '/rector.php', __DIR__ . '/.php-cs-fixer.dist.php'])
+            ->append([__DIR__ . '/.php-cs-fixer.dist.php'])
     )
 ;
 

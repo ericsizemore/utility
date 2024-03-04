@@ -207,8 +207,10 @@ final class Filesystem
             if (Filesystem::checkIgnore($fileInfo->getPath(), $ignore)) {
                 continue;
             }
+
             $contents[] = $key;
         }
+
         natsort($contents);
 
         return $contents;
@@ -420,7 +422,7 @@ final class Filesystem
      */
     private static function checkIgnore(string $path, string $ignore): bool
     {
-        return $ignore !== '' && preg_match("#($ignore)#i", $path) === 1;
+        return $ignore !== '' && preg_match(sprintf('#(%s)#i', $ignore), $path) === 1;
     }
 
     /**

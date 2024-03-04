@@ -95,14 +95,14 @@ class ArraysTest extends TestCase
     {
         $array = ['test' => 1];
 
-        $arrayAccess         = new TestArrayAccess();
-        $arrayAccess['test'] = 1;
+        $testArrayAccess         = new TestArrayAccess();
+        $testArrayAccess['test'] = 1;
 
         self::assertTrue(Arrays::keyExists($array, 'test'));
         self::assertFalse(Arrays::keyExists($array, 'this'));
 
-        self::assertTrue(Arrays::keyExists($arrayAccess, 'test'));
-        self::assertFalse(Arrays::keyExists($arrayAccess, 'this'));
+        self::assertTrue(Arrays::keyExists($testArrayAccess, 'test'));
+        self::assertFalse(Arrays::keyExists($testArrayAccess, 'this'));
     }
 
     /**
@@ -123,15 +123,15 @@ class ArraysTest extends TestCase
     {
         $array = ['test' => 1];
 
-        $arrayAccess         = new TestArrayAccess();
-        $arrayAccess['test'] = 1;
+        $testArrayAccess         = new TestArrayAccess();
+        $testArrayAccess['test'] = 1;
 
-        $this->expectUserDeprecationMessage('Esi\Utility\Arrays::exists is deprecated and will be removed in v2.1.0, use Esi\Utility\Arrays::keyExists instead.');
+        $this->expectUserDeprecationMessage(Arrays::class . '::exists is deprecated and will be removed in v2.1.0, use ' . Arrays::class . '::keyExists instead.');
         self::assertTrue(Arrays::exists($array, 'test'));
         self::assertFalse(Arrays::exists($array, 'this'));
 
-        self::assertTrue(Arrays::exists($arrayAccess, 'test'));
-        self::assertFalse(Arrays::exists($arrayAccess, 'this'));
+        self::assertTrue(Arrays::exists($testArrayAccess, 'test'));
+        self::assertFalse(Arrays::exists($testArrayAccess, 'this'));
     }
 
     /**

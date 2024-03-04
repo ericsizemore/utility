@@ -6,7 +6,7 @@ you can use the following url: https://github.com/ericsizemore/utility/compare/v
 
 Simply replace the version numbers depending on which set of changes you wish to see.
 
-### 2.0.0-dev (Work in Progress)
+### 2.0.0 (2024-03-04)
 
   * Utility has undergone a complete restructuring.
   * src/Utility/Utility.php no longer exists. The class has been broken down into smaller classes or "components":

@@ -52,7 +52,7 @@ class ImageTest extends TestCase
     protected array $resources;
 
     #[\Override]
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->resourceDir = dirname(__FILE__, 2) . DIRECTORY_SEPARATOR . 'resources/';
 

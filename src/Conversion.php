@@ -54,7 +54,9 @@ final class Conversion
      * @var int METERS_TO_MILES       Used in the conversion of meters to miles.
      */
     public const EARTH_RADIUS         = 6_370_986;
+
     public const METERS_TO_KILOMETERS = 1_000;
+
     public const METERS_TO_MILES      = 1_609.344;
 
     /**

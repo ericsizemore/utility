@@ -257,7 +257,7 @@ final class Arrays
         $newArray      = [];
         $totalElements = array_sum(array_map('count', $args));
 
-        for ($i = 0; $i < $totalElements; $i++) {
+        for ($i = 0; $i < $totalElements; ++$i) {
             foreach ($args as $arg) {
                 if (isset($arg[$i])) {
                     $newArray[] = $arg[$i];
