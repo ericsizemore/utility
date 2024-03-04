@@ -15,6 +15,7 @@ Make sure you include `vendor/autoload.php` in your application. To make all of 
 ```php
 use Esi\Utility\{
     Arrays,
+    Conversion,
     Dates,
     Environment,
     Filesystem,
