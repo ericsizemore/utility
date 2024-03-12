@@ -102,7 +102,7 @@ class DatesTest extends TestCase
     public function testTimezoneInfo(): void
     {
         $zoneInfo = Dates::timezoneInfo('America/New_York');
-        $expected = ($zoneInfo['dst']) ? -4 : -5;
+        $expected = ((bool) $zoneInfo['dst']) ? -4 : -5;
 
         self::assertSame($expected, $zoneInfo['offset']);
         self::assertSame('US', $zoneInfo['country']);
