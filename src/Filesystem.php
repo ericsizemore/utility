@@ -6,7 +6,9 @@ declare(strict_types=1);
  * Utility - Collection of various PHP utility functions.
  *
  * @author    Eric Sizemore <admin@secondversion.com>
+ *
  * @version   2.0.0
+ *
  * @copyright (C) 2017 - 2024 Eric Sizemore
  * @license   The MIT License (MIT)
  *
@@ -34,14 +36,14 @@ declare(strict_types=1);
 namespace Esi\Utility;
 
 // Exceptions
+use FilesystemIterator;
 use InvalidArgumentException;
-use RuntimeException;
 use Random\RandomException;
 
 // Classes
-use FilesystemIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use RuntimeException;
 use SplFileObject;
 
 // Functions
@@ -72,29 +74,30 @@ use const PHP_OS_FAMILY;
 
 /**
  * File system utilities.
+ *
  * @see \Esi\Utility\Tests\FilesystemTest
  */
 final class Filesystem
 {
     /**
-     * lineCounter()
+     * lineCounter().
      *
      * Parse a given directory's files for an approximate line count. Could be used for
      * a project directory, for example, to determine the line count for a project's codebase.
      *
      * NOTE: It does not count empty lines.
      *
-     * @param   string          $directory      Directory to parse.
-     * @param   array<string>   $ignore         Subdirectories of $directory you wish
-     *                                          to not include in the line count.
-     * @param   array<string>   $extensions     An array of file types/extensions of
-     *                                          files you want included in the line count.
-     * @param   bool            $onlyLineCount  If set to true, only returns an array
-     *                                          of line counts without directory/filenames.
+     * @param string        $directory     Directory to parse.
+     * @param array<string> $ignore        Subdirectories of $directory you wish
+     *                                     to not include in the line count.
+     * @param array<string> $extensions    An array of file types/extensions of
+     *                                     files you want included in the line count.
+     * @param bool          $onlyLineCount If set to true, only returns an array
+     *                                     of line counts without directory/filenames.
      *
-     * @return  array<string, array<string, int>>|array<int>
+     * @return array<string, array<string, int>>|array<int>
      *
-     * @throws  InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public static function lineCounter(string $directory, array $ignore = [], array $extensions = [], bool $onlyLineCount = false): array
     {
@@ -142,14 +145,14 @@ final class Filesystem
     }
 
     /**
-     * directorySize()
+     * directorySize().
      *
      * Retrieves size of a directory (in bytes).
      *
-     * @param   string          $directory  Directory to parse.
-     * @param   array<string>   $ignore     Subdirectories of $directory you wish to not include.
+     * @param string        $directory Directory to parse.
+     * @param array<string> $ignore    Subdirectories of $directory you wish to not include.
      *
-     * @throws  InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public static function directorySize(string $directory, array $ignore = []): int
     {
@@ -178,15 +181,16 @@ final class Filesystem
     }
 
     /**
-     * directoryList()
+     * directoryList().
      *
      * Retrieves contents of a directory.
      *
-     * @param   string          $directory  Directory to parse.
-     * @param   array<string>   $ignore     Subdirectories of $directory you wish to not include.
-     * @return  array<mixed>
+     * @param string        $directory Directory to parse.
+     * @param array<string> $ignore    Subdirectories of $directory you wish to not include.
      *
-     * @throws  InvalidArgumentException
+     * @return array<mixed>
+     *
+     * @throws InvalidArgumentException
      */
     public static function directoryList(string $directory, array $ignore = []): array
     {
@@ -217,12 +221,13 @@ final class Filesystem
     }
 
     /**
-     * normalizeFilePath()
+     * normalizeFilePath().
      *
      * Normalizes a file or directory path.
      *
-     * @param   string  $path  The file or directory path.
-     * @return  string         The normalized file or directory path.
+     * @param string $path The file or directory path.
+     *
+     * @return string The normalized file or directory path.
      */
     public static function normalizeFilePath(string $path): string
     {
@@ -253,11 +258,11 @@ final class Filesystem
     }
 
     /**
-     * isReallyWritable()
+     * isReallyWritable().
      *
      * Checks to see if a file or directory is really writable.
      *
-     * @param  string  $file  File or directory to check.
+     * @param string $file File or directory to check.
      *
      * @throws RandomException  If unable to generate random string for the temp file.
      * @throws RuntimeException If the file or directory does not exist.
@@ -294,14 +299,15 @@ final class Filesystem
     }
 
     /**
-     * fileRead()
+     * fileRead().
      *
      * Perform a read operation on a pre-existing file.
      *
-     * @param   string        $file  Filename.
-     * @return  string|false
+     * @param string $file Filename.
      *
-     * @throws  InvalidArgumentException
+     * @return string|false
+     *
+     * @throws InvalidArgumentException
      */
     public static function fileRead(string $file): string | false
     {
@@ -314,16 +320,17 @@ final class Filesystem
     }
 
     /**
-     * fileWrite()
+     * fileWrite().
      *
      * Perform a write operation on a pre-existing file.
      *
-     * @param   string  $file   Filename.
-     * @param   string  $data   If writing to the file, the data to write.
-     * @param   int     $flags  Bitwise OR'ed set of flags for file_put_contents. One or
-     *                          more of FILE_USE_INCLUDE_PATH, FILE_APPEND, LOCK_EX.
-     *                          {@link http://php.net/file_put_contents}
-     * @return  int<0, max>|false
+     * @param string $file  Filename.
+     * @param string $data  If writing to the file, the data to write.
+     * @param int    $flags Bitwise OR'ed set of flags for file_put_contents. One or
+     *                      more of FILE_USE_INCLUDE_PATH, FILE_APPEND, LOCK_EX.
+     *                      {@link http://php.net/file_put_contents}
+     *
+     * @return int<0, max>|false
      *
      * @throws InvalidArgumentException|RandomException
      */
@@ -346,13 +353,13 @@ final class Filesystem
     /** Helper functions for the directory related functions **/
 
     /**
-     * isFile()
+     * isFile().
      *
      * Determines if the given $file is both a file and readable.
      *
      * @since 2.0.0
      *
-     * @param  string  $file  Directory to check.
+     * @param string $file Directory to check.
      */
     public static function isFile(string $file): bool
     {
@@ -360,13 +367,13 @@ final class Filesystem
     }
 
     /**
-     * isDirectory()
+     * isDirectory().
      *
      * Determines if the given $directory is both a directory and readable.
      *
      * @since 2.0.0
      *
-     * @param  string  $directory  Directory to check.
+     * @param string $directory Directory to check.
      */
     public static function isDirectory(string $directory): bool
     {
@@ -378,10 +385,10 @@ final class Filesystem
      *
      * @since 2.0.0
      *
-     * @param   string  $forDirectory  The directory to create an iterator for.
-     * @param   bool    $keyAsPath     Whether to use the key as pathname.
+     * @param string $forDirectory The directory to create an iterator for.
+     * @param bool   $keyAsPath    Whether to use the key as pathname.
      *
-     * @return  RecursiveIteratorIterator<RecursiveDirectoryIterator>
+     * @return RecursiveIteratorIterator<RecursiveDirectoryIterator>
      */
     private static function getIterator(string $forDirectory, bool $keyAsPath = false): RecursiveIteratorIterator
     {
@@ -401,7 +408,7 @@ final class Filesystem
      *
      * @since 2.0.0
      *
-     * @param  array<string>  $ignore  Array of file/folder names to ignore.
+     * @param array<string> $ignore Array of file/folder names to ignore.
      */
     private static function buildIgnore(array $ignore): string
     {
@@ -417,8 +424,8 @@ final class Filesystem
      *
      * @since 2.0.0
      *
-     * @param  string  $path    The file path to check against ignore list.
-     * @param  string  $ignore  The ignore list pattern.
+     * @param string $path   The file path to check against ignore list.
+     * @param string $ignore The ignore list pattern.
      */
     private static function checkIgnore(string $path, string $ignore): bool
     {
@@ -430,8 +437,8 @@ final class Filesystem
      *
      * @since 2.0.0
      *
-     * @param  string         $extension   File extension to check.
-     * @param  array<string>  $extensions  Array of file extensions to ignore.
+     * @param string        $extension  File extension to check.
+     * @param array<string> $extensions Array of file extensions to ignore.
      */
     private static function checkExtensions(string $extension, array $extensions): bool
     {

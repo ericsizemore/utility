@@ -6,7 +6,9 @@ declare(strict_types=1);
  * Utility - Collection of various PHP utility functions.
  *
  * @author    Eric Sizemore <admin@secondversion.com>
+ *
  * @version   2.0.0
+ *
  * @copyright (C) 2017 - 2024 Eric Sizemore
  * @license   The MIT License (MIT)
  *
@@ -44,6 +46,7 @@ use Random\RandomException;
 
 /**
  * String utility tests.
+ *
  * @internal
  */
 #[CoversClass(Strings::class)]

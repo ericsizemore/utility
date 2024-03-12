@@ -6,7 +6,9 @@ declare(strict_types=1);
  * Utility - Collection of various PHP utility functions.
  *
  * @author    Eric Sizemore <admin@secondversion.com>
+ *
  * @version   2.0.0
+ *
  * @copyright (C) 2017 - 2024 Eric Sizemore
  * @license   The MIT License (MIT)
  *
@@ -34,22 +36,24 @@ declare(strict_types=1);
 namespace Esi\Utility;
 
 // Exceptions
-use RuntimeException;
 use ArgumentCountError;
+use RuntimeException;
 
 // Functions
 
 use function explode;
 use function filter_var;
 use function function_exists;
+use function getallheaders;
 use function ini_get;
 use function ini_set;
 use function preg_match;
 use function preg_replace;
 use function sprintf;
-use function trim;
 
 // Constants
+use function trim;
+
 use const FILTER_FLAG_IPV4;
 use const FILTER_FLAG_IPV6;
 use const FILTER_FLAG_NO_PRIV_RANGE;
@@ -58,6 +62,7 @@ use const FILTER_VALIDATE_IP;
 
 /**
  * Environment utilities.
+ *
  * @see \Esi\Utility\Tests\EnvironmentTest
  */
 final class Environment
@@ -68,7 +73,7 @@ final class Environment
      * @var int PORT_SECURE
      * @var int PORT_UNSECURE
      */
-    public const PORT_SECURE   = 443;
+    public const PORT_SECURE = 443;
 
     public const PORT_UNSECURE = 80;
 
@@ -80,7 +85,7 @@ final class Environment
     public const VALIDATE_HOST_REGEX = '#^\[?(?:[a-z0-9-:\]_]+\.?)+$#';
 
     /**
-     * Maps values to their boolean equivalent for Environment::iniGet(standardize: true)
+     * Maps values to their boolean equivalent for Environment::iniGet(standardize: true).
      *
      * @var array<string> BOOLEAN_MAPPINGS
      */
@@ -160,7 +165,7 @@ final class Environment
     ];
 
     /**
-     * requestMethod()
+     * requestMethod().
      *
      * Gets the request method.
      */
@@ -181,12 +186,12 @@ final class Environment
     }
 
     /**
-     * var()
+     * var().
      *
      * Gets a variable from $_SERVER using $default if not provided.
      *
-     * @param  string           $var      Variable name.
-     * @param  string|int|null  $default  Default value to substitute.
+     * @param string          $var     Variable name.
+     * @param string|int|null $default Default value to substitute.
      */
     public static function var(string $var, string | int | null $default = ''): string | int | null
     {
@@ -197,11 +202,11 @@ final class Environment
     }
 
     /**
-     * ipAddress()
+     * ipAddress().
      *
      * Return the visitor's IP address.
      *
-     * @param  bool  $trustProxy  Whether to trust HTTP_CLIENT_IP and HTTP_X_FORWARDED_FOR.
+     * @param bool $trustProxy Whether to trust HTTP_CLIENT_IP and HTTP_X_FORWARDED_FOR.
      */
     public static function ipAddress(bool $trustProxy = false): string
     {
@@ -265,11 +270,11 @@ final class Environment
     }
 
     /**
-     * isPrivateIp()
+     * isPrivateIp().
      *
      * Determines if an IP address is within the private range.
      *
-     * @param  string  $ipaddress  IP address to check.
+     * @param string $ipaddress IP address to check.
      */
     public static function isPrivateIp(string $ipaddress): bool
     {
@@ -281,11 +286,11 @@ final class Environment
     }
 
     /**
-     * isReservedIp()
+     * isReservedIp().
      *
      * Determines if an IP address is within the reserved range.
      *
-     * @param  string  $ipaddress  IP address to check.
+     * @param string $ipaddress IP address to check.
      */
     public static function isReservedIp(string $ipaddress): bool
     {
@@ -297,11 +302,11 @@ final class Environment
     }
 
     /**
-     * isPublicIp()
+     * isPublicIp().
      *
      * Determines if an IP address is not within the private or reserved ranges.
      *
-     * @param  string  $ipaddress  IP address to check.
+     * @param string $ipaddress IP address to check.
      */
     public static function isPublicIp(string $ipaddress): bool
     {
@@ -309,12 +314,12 @@ final class Environment
     }
 
     /**
-     * host()
+     * host().
      *
      * Determines current hostname.
      *
-     * @param  bool  $stripWww         True to strip www. off the host, false to leave it be.
-     * @param  bool  $acceptForwarded  True to accept, false otherwise.
+     * @param bool $stripWww        True to strip www. off the host, false to leave it be.
+     * @param bool $acceptForwarded True to accept, false otherwise.
      */
     public static function host(bool $stripWww = false, bool $acceptForwarded = false): string
     {
@@ -344,13 +349,13 @@ final class Environment
     }
 
     /**
-     * isHttps()
+     * isHttps().
      *
      * Checks to see if SSL is in use.
      */
     public static function isHttps(): bool
     {
-        $headers = \getallheaders();
+        $headers = getallheaders();
 
         $server    = Environment::var(self::HTTPS_HEADERS['default']);
         $frontEnd  = Arrays::get($headers, self::HTTPS_HEADERS['forwarded'], '');
@@ -364,7 +369,7 @@ final class Environment
     }
 
     /**
-     * url()
+     * url().
      *
      * Retrieve the current URL.
      */
@@ -406,14 +411,14 @@ final class Environment
     }
 
     /**
-     * iniGet()
+     * iniGet().
      *
      * Safe ini_get taking into account its availability.
      *
-     * @param   string  $option       The configuration option name.
-     * @param   bool    $standardize  Standardize returned values to 1 or 0?
+     * @param string $option      The configuration option name.
+     * @param bool   $standardize Standardize returned values to 1 or 0?
      *
-     * @throws  RuntimeException|ArgumentCountError
+     * @throws RuntimeException|ArgumentCountError
      */
     public static function iniGet(string $option, bool $standardize = false): string
     {
@@ -444,13 +449,14 @@ final class Environment
     }
 
     /**
-     * iniSet()
+     * iniSet().
      *
      * Safe ini_set taking into account its availability.
      *
-     * @param   string  $option  The configuration option name.
-     * @param   string|int|float|bool|null $value   The new value for the option.
-     * @return  string|false
+     * @param string                     $option The configuration option name.
+     * @param string|int|float|bool|null $value  The new value for the option.
+     *
+     * @return string|false
      *
      * @throws RuntimeException|ArgumentCountError
      */

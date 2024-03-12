@@ -6,6 +6,14 @@ you can use the following url: https://github.com/ericsizemore/utility/compare/v
 
 Simply replace the version numbers depending on which set of changes you wish to see.
 
+### 2.0.1 (work in progress)
+
+  * Implemented various minor PHPCS-Fixer recommendations.
+    * Mostly reordering imports and reformatting doc blocks.
+  * Updated composer.lock
+  * Updated `tests` github workflow to add uploading coverage data to Codecov.io
+  * Added mend.io's Renovate to workflow
+
 ### 2.0.0 (2024-03-04)
 
   * Utility has undergone a complete restructuring.

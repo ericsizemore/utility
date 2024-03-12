@@ -6,7 +6,9 @@ declare(strict_types=1);
  * Utility - Collection of various PHP utility functions.
  *
  * @author    Eric Sizemore <admin@secondversion.com>
+ *
  * @version   2.0.0
+ *
  * @copyright (C) 2017 - 2024 Eric Sizemore
  * @license   The MIT License (MIT)
  *
@@ -34,16 +36,21 @@ declare(strict_types=1);
 namespace Esi\Utility;
 
 // Exceptions
+use finfo;
 use InvalidArgumentException;
-use RuntimeException;
 
 // Functions
+use RuntimeException;
+
 use function class_exists;
+use function exif_imagetype;
 use function explode;
 use function extension_loaded;
 use function getimagesize;
 use function image_type_to_mime_type;
 use function is_int;
+
+use const FILEINFO_MIME;
 
 /**
  * Image utilities.
@@ -126,14 +133,15 @@ final class Image
      *
      * If the Exif extension is available, use Exif to determine mime type.
      *
-     * @param   string        $imagePath  File path to the image.
-     * @return  string|false              Returns the image type string on success, false on any failure.
+     * @param string $imagePath File path to the image.
+     *
+     * @return string|false Returns the image type string on success, false on any failure.
      */
     private static function guessImageTypeExif(string $imagePath): string | false
     {
         //@codeCoverageIgnoreStart
         // Ignoring code coverage as if one method is available over another, the others won't be or need to be tested
-        $imageType = @\exif_imagetype($imagePath);
+        $imageType = @exif_imagetype($imagePath);
 
         return (is_int($imageType) ? image_type_to_mime_type($imageType) : false);
         //@codeCoverageIgnoreEnd
@@ -144,14 +152,15 @@ final class Image
      *
      * If the FileInfo (finfo) extension is available, use finfo to determine mime type.
      *
-     * @param   string        $imagePath  File path to the image.
-     * @return  string|false              Returns the image type string on success, false on any failure.
+     * @param string $imagePath File path to the image.
+     *
+     * @return string|false Returns the image type string on success, false on any failure.
      */
     private static function guessImageTypeFinfo(string $imagePath): string | false
     {
         //@codeCoverageIgnoreStart
         // Ignoring code coverage as if one method is available over another, the others won't be or need to be tested
-        $finfo  = new \finfo(\FILEINFO_MIME);
+        $finfo  = new finfo(FILEINFO_MIME);
         $result = $finfo->file($imagePath);
 
         if ($result === false) {
@@ -170,12 +179,13 @@ final class Image
     }
 
     /**
-     * Helper function for guessImageType()
+     * Helper function for guessImageType().
      *
      * If the Exif extension is available, use Exif to determine mime type.
      *
-     * @param   string        $imagePath  File path to the image.
-     * @return  string|false              Returns the image type string on success, false on any failure.
+     * @param string $imagePath File path to the image.
+     *
+     * @return string|false Returns the image type string on success, false on any failure.
      */
     private static function guessImageTypeGetImageSize(string $imagePath): string | false
     {
@@ -191,8 +201,9 @@ final class Image
      * Attempts to determine the image type. It tries to determine the image type with, in order
      * of preference: Exif, finfo, and getimagesize.
      *
-     * @param   string        $imagePath  File path to the image.
-     * @return  string|false              Returns the image type string on success, false on any failure.
+     * @param string $imagePath File path to the image.
+     *
+     * @return string|false Returns the image type string on success, false on any failure.
      */
     public static function guessImageType(string $imagePath): string | false
     {
@@ -224,7 +235,7 @@ final class Image
     /**
      * Checks if image has JPG format.
      *
-     * @param  string  $imagePath  File path to the image.
+     * @param string $imagePath File path to the image.
      *
      * @throws InvalidArgumentException If the image path provided is not valid.
      * @throws RuntimeException         If we are unable to determine the file type.
@@ -243,7 +254,7 @@ final class Image
     /**
      * Checks if image has GIF format.
      *
-     * @param  string  $imagePath  File path to the image.
+     * @param string $imagePath File path to the image.
      *
      * @throws InvalidArgumentException If the image path provided is not valid.
      * @throws RuntimeException         If we are unable to determine the file type.
@@ -262,7 +273,7 @@ final class Image
     /**
      * Checks if image has PNG format.
      *
-     * @param  string  $imagePath  File path to the image.
+     * @param string $imagePath File path to the image.
      *
      * @throws InvalidArgumentException If the image path provided is not valid.
      * @throws RuntimeException         If we are unable to determine the file type.
@@ -281,7 +292,7 @@ final class Image
     /**
      * Checks if image has WEBP format.
      *
-     * @param  string  $imagePath  File path to the image.
+     * @param string $imagePath File path to the image.
      *
      * @throws InvalidArgumentException If the image path provided is not valid.
      * @throws RuntimeException         If we are unable to determine the file type.

@@ -19,6 +19,11 @@ build:
                     - composer config allow-plugins true
                     - command: phpcs-run
                       use_website_config: true
+
+filter:
+    excluded_paths:
+        - 'tests/*'
+
 checks:
     php: true
 

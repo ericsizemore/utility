@@ -6,7 +6,9 @@ declare(strict_types=1);
  * Utility - Collection of various PHP utility functions.
  *
  * @author    Eric Sizemore <admin@secondversion.com>
+ *
  * @version   2.0.0
+ *
  * @copyright (C) 2017 - 2024 Eric Sizemore
  * @license   The MIT License (MIT)
  *
@@ -33,19 +35,20 @@ declare(strict_types=1);
 
 namespace Esi\Utility\Tests;
 
-use Esi\Utility\Environment;
-use Esi\Utility\Arrays;
-use PHPUnit\Framework\TestCase;
-use PHPUnit\Framework\Attributes\CoversClass;
-
-use InvalidArgumentException;
 use ArgumentCountError;
+use Esi\Utility\Arrays;
+use Esi\Utility\Environment;
+use InvalidArgumentException;
+
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
 use function sprintf;
 
 /**
  * Environment utility tests.
+ *
  * @internal
  */
 #[CoversClass(Environment::class)]

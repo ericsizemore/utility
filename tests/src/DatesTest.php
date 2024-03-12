@@ -6,7 +6,9 @@ declare(strict_types=1);
  * Utility - Collection of various PHP utility functions.
  *
  * @author    Eric Sizemore <admin@secondversion.com>
+ *
  * @version   2.0.0
+ *
  * @copyright (C) 2017 - 2024 Eric Sizemore
  * @license   The MIT License (MIT)
  *
@@ -34,16 +36,17 @@ declare(strict_types=1);
 namespace Esi\Utility\Tests;
 
 use Esi\Utility\Dates;
-use PHPUnit\Framework\TestCase;
+use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\CoversClass;
 
-use InvalidArgumentException;
+use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
 use function time;
 
 /**
  * Date utility tests.
+ *
  * @internal
  */
 #[CoversClass(Dates::class)]
@@ -94,12 +97,12 @@ class DatesTest extends TestCase
     }
 
     /**
-     * Test Dates::timezoneInfo()
+     * Test Dates::timezoneInfo().
      */
     public function testTimezoneInfo(): void
     {
         $zoneInfo = Dates::timezoneInfo('America/New_York');
-        $expected = ($zoneInfo['dst'] === 1) ? -4 : -5;
+        $expected = ($zoneInfo['dst']) ? -4 : -5;
 
         self::assertSame($expected, $zoneInfo['offset']);
         self::assertSame('US', $zoneInfo['country']);

@@ -50,3 +50,9 @@ jobs:
       - uses: sudo-bot/action-scrutinizer@latest
         with:
            cli-args: "--format=php-clover build/logs/clover.xml"
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v4.1.0
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: ericsizemore/utility

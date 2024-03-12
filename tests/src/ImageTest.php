@@ -6,7 +6,9 @@ declare(strict_types=1);
  * Utility - Collection of various PHP utility functions.
  *
  * @author    Eric Sizemore <admin@secondversion.com>
+ *
  * @version   2.0.0
+ *
  * @copyright (C) 2017 - 2024 Eric Sizemore
  * @license   The MIT License (MIT)
  *
@@ -34,11 +36,14 @@ declare(strict_types=1);
 namespace Esi\Utility\Tests;
 
 use Esi\Utility\Image;
-use PHPUnit\Framework\TestCase;
+use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\TestCase;
+use RuntimeException;
 
 /**
  * Image utility test.
+ *
  * @internal
  */
 #[CoversClass(Image::class)]
@@ -77,7 +82,7 @@ class ImageTest extends TestCase
 
     public function testGuessImageTypeInvalidFile(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         Image::guessImageType('');
     }
 
@@ -88,13 +93,13 @@ class ImageTest extends TestCase
 
     public function testIsJpgInvalidFile(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         Image::isJpg($this->resourceDir . 'doesNotExist.jpg');
     }
 
     public function testIsJpgInvalidImageFile(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         Image::isJpg($this->resourceDir . 'notAnImage.txt');
     }
 
@@ -105,13 +110,13 @@ class ImageTest extends TestCase
 
     public function testIsGifInvalidFile(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         Image::isGif($this->resourceDir . 'doesNotExist.gif');
     }
 
     public function testIsGifInvalidImageFile(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         Image::isGif($this->resourceDir . 'notAnImage.txt');
     }
 
@@ -122,13 +127,13 @@ class ImageTest extends TestCase
 
     public function testIsPngInvalidImageFile(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         Image::isPng($this->resourceDir . 'notAnImage.txt');
     }
 
     public function testIsPngInvalidFile(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         Image::isPng($this->resourceDir . 'doesNotExist.png');
     }
 
@@ -139,13 +144,13 @@ class ImageTest extends TestCase
 
     public function testIsWebpInvalidImageFile(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         Image::isWebp($this->resourceDir . 'notAnImage.txt');
     }
 
     public function testIsWebpInvalidFile(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         Image::isWebp($this->resourceDir . 'doesNotExist.webp');
     }
 }

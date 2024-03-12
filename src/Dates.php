@@ -6,7 +6,9 @@ declare(strict_types=1);
  * Utility - Collection of various PHP utility functions.
  *
  * @author    Eric Sizemore <admin@secondversion.com>
+ *
  * @version   2.0.0
+ *
  * @copyright (C) 2017 - 2024 Eric Sizemore
  * @license   The MIT License (MIT)
  *
@@ -34,13 +36,13 @@ declare(strict_types=1);
 namespace Esi\Utility;
 
 // Exceptions
+use DateTime;
+use DateTimeZone;
 use Exception;
-use InvalidArgumentException;
-use RuntimeException;
 
 // Classes
-use DateTimeZone;
-use DateTime;
+use InvalidArgumentException;
+use RuntimeException;
 
 // Functions
 use function ceil;
@@ -48,6 +50,7 @@ use function time;
 
 /**
  * Date utilities.
+ *
  * @see \Esi\Utility\Tests\DatesTest
  */
 final class Dates
@@ -65,17 +68,17 @@ final class Dates
     public const DEFAULT_TIMEZONE = 'UTC';
 
     /**
-     * timeDifference()
+     * timeDifference().
      *
      * Formats the difference between two timestamps to be human-readable.
      *
-     * @param   int     $timestampFrom  Starting unix timestamp.
-     * @param   int     $timestampTo    Ending unix timestamp.
-     * @param   string  $timezone       The timezone to use. Must be a valid timezone:
-     *                                  {@see http://www.php.net/manual/en/timezones.php}
-     * @param   string  $append         The string to append to the difference.
+     * @param int    $timestampFrom Starting unix timestamp.
+     * @param int    $timestampTo   Ending unix timestamp.
+     * @param string $timezone      The timezone to use. Must be a valid timezone:
+     *                              http://www.php.net/manual/en/timezones.php
+     * @param string $append        The string to append to the difference.
      *
-     * @throws  InvalidArgumentException|RuntimeException|Exception
+     * @throws InvalidArgumentException|RuntimeException|Exception
      */
     public static function timeDifference(int $timestampFrom, int $timestampTo = 0, string $timezone = Dates::DEFAULT_TIMEZONE, string $append = ' old'): string
     {
@@ -120,7 +123,7 @@ final class Dates
     }
 
     /**
-     * timezoneInfo()
+     * timezoneInfo().
      *
      * Retrieves information about a timezone.
      *
@@ -128,10 +131,11 @@ final class Dates
      *
      * @see http://www.php.net/manual/en/timezones.php
      *
-     * @param   string  $timezone  The timezone to return information for.
-     * @return  array<string, bool|float|int|string|null>
+     * @param string $timezone The timezone to return information for.
      *
-     * @throws  InvalidArgumentException|RuntimeException|Exception
+     * @return array<string, bool|float|int|string|null>
+     *
+     * @throws InvalidArgumentException|RuntimeException|Exception
      */
     public static function timezoneInfo(string $timezone = Dates::DEFAULT_TIMEZONE): array
     {
@@ -160,7 +164,7 @@ final class Dates
      * Determines if a given timezone is valid, according to
      * {@link http://www.php.net/manual/en/timezones.php}.
      *
-     * @param  string  $timezone  The timezone to validate.
+     * @param string $timezone The timezone to validate.
      */
     public static function validTimezone(string $timezone): bool
     {
@@ -177,7 +181,7 @@ final class Dates
      *
      * Typically, a timestamp for PHP can be valid if it is either 0 or between 8 and 11 digits in length.
      *
-     * @param  int  $timestamp  The timestamp to validate.
+     * @param int $timestamp The timestamp to validate.
      */
     public static function validateTimestamp(int $timestamp): bool
     {

@@ -6,7 +6,9 @@ declare(strict_types=1);
  * Utility - Collection of various PHP utility functions.
  *
  * @author    Eric Sizemore <admin@secondversion.com>
+ *
  * @version   2.0.0
+ *
  * @copyright (C) 2017 - 2024 Eric Sizemore
  * @license   The MIT License (MIT)
  *
@@ -47,6 +49,7 @@ use function sprintf;
 
 /**
  * Number utilities.
+ *
  * @see \Esi\Utility\Tests\NumbersTest
  */
 final class Numbers
@@ -62,7 +65,7 @@ final class Numbers
 
     public const METRIC_STANDARD_BASE = 1_000;
 
-    public const CONVERSION_MODIFIER  = 0.9;
+    public const CONVERSION_MODIFIER = 0.9;
 
     /**
      * Ordinal suffixes.
@@ -82,13 +85,13 @@ final class Numbers
     ];
 
     /**
-     * inside()
+     * inside().
      *
      * Determines if a number is inside the min and max.
      *
-     * @param  float|int  $number  The number to check.
-     * @param  float|int  $min     The minimum.
-     * @param  float|int  $max     The maximum.
+     * @param float|int $number The number to check.
+     * @param float|int $min    The minimum.
+     * @param float|int $max    The maximum.
      */
     public static function inside(float | int $number, float | int $min, float | int $max): bool
     {
@@ -96,13 +99,13 @@ final class Numbers
     }
 
     /**
-     * outside()
+     * outside().
      *
      * Determines if a number is outside the min and max.
      *
-     * @param  float|int  $number  The number to check.
-     * @param  float|int  $min     The minimum.
-     * @param  float|int  $max     The maximum.
+     * @param float|int $number The number to check.
+     * @param float|int $min    The minimum.
+     * @param float|int $max    The maximum.
      */
     public static function outside(float | int $number, float | int $min, float | int $max): bool
     {
@@ -110,13 +113,14 @@ final class Numbers
     }
 
     /**
-     * random()
+     * random().
      *
      * Generate a cryptographically secure pseudo-random integer.
      *
-     * @param   int<min, max>  $min  The lowest value to be returned, which must be PHP_INT_MIN or higher.
-     * @param   int<min, max>  $max  The highest value to be returned, which must be less than or equal to PHP_INT_MAX.
-     * @return  int<min, max>
+     * @param int<min, max> $min The lowest value to be returned, which must be PHP_INT_MIN or higher.
+     * @param int<min, max> $max The highest value to be returned, which must be less than or equal to PHP_INT_MAX.
+     *
+     * @return int<min, max>
      *
      * @throws RandomException | ValueError
      */
@@ -127,13 +131,13 @@ final class Numbers
     }
 
     /**
-     * ordinal()
+     * ordinal().
      *
      * Retrieve the ordinal version of a number.
      *
      * Basically, it will append th, st, nd, or rd based on what the number ends with.
      *
-     * @param  int  $number  The number to create an ordinal version of.
+     * @param int $number The number to create an ordinal version of.
      */
     public static function ordinal(int $number): string
     {
@@ -149,13 +153,13 @@ final class Numbers
     }
 
     /**
-     * sizeFormat()
+     * sizeFormat().
      *
      * Format bytes to a human-readable format.
      *
-     * @param  int     $bytes      The number in bytes.
-     * @param  int     $precision  Sets the number of decimal digits.
-     * @param  string  $standard   Determines which mod ('base') to use in the conversion.
+     * @param int    $bytes     The number in bytes.
+     * @param int    $precision Sets the number of decimal digits.
+     * @param string $standard  Determines which mod ('base') to use in the conversion.
      */
     public static function sizeFormat(int $bytes, int $precision = 0, string $standard = 'binary'): string
     {
