@@ -24,6 +24,7 @@
         "voku/portable-ascii": "^2.0"
     },
     "require-dev": {
+        "esi/phpunit-coverage-check": "^1.0",
         "friendsofphp/php-cs-fixer": "dev-master",
         "phpstan/phpstan": "^1.11",
         "phpstan/phpstan-phpunit": "^1.4",
@@ -35,6 +36,7 @@
         "ext-fileinfo": "To be able to use finfo/fileinfo for guessing image types with Utility\\Image"
     },
     "minimum-stability": "dev",
+    "prefer-stable": true,
     "autoload": {
         "psr-4": {
             "Esi\\Utility\\": "src/"
@@ -51,6 +53,7 @@
         }
     },
     "scripts": {
+        "coverage-check": "vendor/bin/coverage-check coverage:check build/logs/clover.xml 100 --ansi",
         "phpcs-fix": "vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php",
         "phpcs-nofix": "vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php --dry-run --diff",
         "phpstan": "vendor/bin/phpstan analyse -c phpstan.neon",
