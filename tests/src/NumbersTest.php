@@ -3,34 +3,12 @@
 declare(strict_types=1);
 
 /**
- * Utility - Collection of various PHP utility functions.
+ * This file is part of PHPUnit Coverage Check.
  *
- * @author    Eric Sizemore <admin@secondversion.com>
+ * (c) 2017 - 2024 Eric Sizemore <admin@secondversion.com>
  *
- * @version   2.0.0
- *
- * @copyright (C) 2017 - 2024 Eric Sizemore
- * @license   The MIT License (MIT)
- *
- * Copyright (C) 2017 - 2024 Eric Sizemore <https://www.secondversion.com>.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to
- * deal in the Software without restriction, including without limitation the
- * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
- * sell copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * For the full copyright and license information, please view
+ * the LICENSE.md file that was distributed with this source code.
  */
 
 namespace Esi\Utility\Tests;
@@ -38,9 +16,7 @@ namespace Esi\Utility\Tests;
 use Esi\Utility\Numbers;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\CoversClass;
-
 use PHPUnit\Framework\TestCase;
-
 use ValueError;
 
 use const PHP_INT_MAX;
@@ -55,15 +31,6 @@ use const PHP_INT_MIN;
 class NumbersTest extends TestCase
 {
     /**
-     * Test Numbers::inside() with int's.
-     */
-    public function testInsideInt(): void
-    {
-        self::assertTrue(Numbers::inside(25, 24, 26));
-        self::assertFalse(Numbers::inside(25, 26, 27));
-    }
-
-    /**
      * Test Numbers::inside() with float's.
      */
     public function testInsideFloat(): void
@@ -73,35 +40,12 @@ class NumbersTest extends TestCase
     }
 
     /**
-     * Test Numbers::outside() with int's.
+     * Test Numbers::inside() with int's.
      */
-    public function testOutsideInt(): void
+    public function testInsideInt(): void
     {
-        self::assertTrue(Numbers::outside(23, 24, 26));
-        self::assertFalse(Numbers::outside(25, 24, 26));
-    }
-
-    /**
-     * Test Numbers::outside() with float's.
-     */
-    public function testOutsideFloat(): void
-    {
-        self::assertTrue(Numbers::outside(23.0, 24.0, 26.0));
-        self::assertFalse(Numbers::outside(25.0, 24.0, 26.0));
-    }
-
-    /**
-     * Test Numbers::randomInt().
-     */
-    public function testRandomInt(): void
-    {
-        $int = Numbers::random(100, 250);
-        self::assertGreaterThanOrEqual(100, $int);
-        self::assertLessThanOrEqual(250, $int);
-
-        self::expectException(ValueError::class);
-        Numbers::random((int) (PHP_INT_MIN - 1), PHP_INT_MAX);
-        Numbers::random(PHP_INT_MAX, PHP_INT_MIN);
+        self::assertTrue(Numbers::inside(25, 24, 26));
+        self::assertFalse(Numbers::inside(25, 26, 27));
     }
 
     /**
@@ -136,6 +80,38 @@ class NumbersTest extends TestCase
     }
 
     /**
+     * Test Numbers::outside() with float's.
+     */
+    public function testOutsideFloat(): void
+    {
+        self::assertTrue(Numbers::outside(23.0, 24.0, 26.0));
+        self::assertFalse(Numbers::outside(25.0, 24.0, 26.0));
+    }
+
+    /**
+     * Test Numbers::outside() with int's.
+     */
+    public function testOutsideInt(): void
+    {
+        self::assertTrue(Numbers::outside(23, 24, 26));
+        self::assertFalse(Numbers::outside(25, 24, 26));
+    }
+
+    /**
+     * Test Numbers::randomInt().
+     */
+    public function testRandomInt(): void
+    {
+        $int = Numbers::random(100, 250);
+        self::assertGreaterThanOrEqual(100, $int);
+        self::assertLessThanOrEqual(250, $int);
+
+        self::expectException(ValueError::class);
+        Numbers::random((int) (PHP_INT_MIN - 1), PHP_INT_MAX);
+        Numbers::random(PHP_INT_MAX, PHP_INT_MIN);
+    }
+
+    /**
      * Test Numbers::sizeFormat() with binary standard.
      */
     public function testSizeFormatBinary(): void
@@ -164,6 +140,16 @@ class NumbersTest extends TestCase
     }
 
     /**
+     * Test Numbers::sizeFormat() with an invalid standard.
+     */
+    public function testSizeFormatInvalidStandard(): void
+    {
+        // Test if we provide an invalid $standard option (should throw an exception).
+        self::expectException(InvalidArgumentException::class);
+        Numbers::sizeFormat(2_048, 1, 'notanoption');
+    }
+
+    /**
      * Test Numbers::sizeFormat() with metric standard.
      */
     public function testSizeFormatMetric(): void
@@ -189,15 +175,5 @@ class NumbersTest extends TestCase
 
         $size = Numbers::sizeFormat(2_748_779_069_440 * (1_000 * 1_000), 1, 'metric');
         self::assertSame('2.7 EB', $size);
-    }
-
-    /**
-     * Test Numbers::sizeFormat() with an invalid standard.
-     */
-    public function testSizeFormatInvalidStandard(): void
-    {
-        // Test if we provide an invalid $standard option (should throw an exception).
-        self::expectException(InvalidArgumentException::class);
-        Numbers::sizeFormat(2_048, 1, 'notanoption');
     }
 }

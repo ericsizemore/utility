@@ -3,34 +3,12 @@
 declare(strict_types=1);
 
 /**
- * Utility - Collection of various PHP utility functions.
+ * This file is part of PHPUnit Coverage Check.
  *
- * @author    Eric Sizemore <admin@secondversion.com>
+ * (c) 2017 - 2024 Eric Sizemore <admin@secondversion.com>
  *
- * @version   2.0.0
- *
- * @copyright (C) 2017 - 2024 Eric Sizemore
- * @license   The MIT License (MIT)
- *
- * Copyright (C) 2017 - 2024 Eric Sizemore <https://www.secondversion.com>.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to
- * deal in the Software without restriction, including without limitation the
- * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
- * sell copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * For the full copyright and license information, please view
+ * the LICENSE.md file that was distributed with this source code.
  */
 
 namespace Esi\Utility\Tests;
@@ -38,9 +16,10 @@ namespace Esi\Utility\Tests;
 use ArgumentCountError;
 use Esi\Utility\Arrays;
 use Esi\Utility\Environment;
+use Esi\Utility\Strings;
 use InvalidArgumentException;
-
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
@@ -52,26 +31,77 @@ use function sprintf;
  * @internal
  */
 #[CoversClass(Environment::class)]
+#[CoversMethod(Arrays::class, 'get')]
+#[CoversMethod(Arrays::class, 'keyExists')]
+#[CoversMethod(Arrays::class, 'mapDeep')]
+#[CoversMethod(Arrays::class, 'set')]
+#[CoversMethod(Strings::class, 'length')]
+#[CoversMethod(Strings::class, 'lower')]
+#[CoversMethod(Strings::class, 'upper')]
 class EnvironmentTest extends TestCase
 {
     /**
-     * Test Environment::requestMethod().
+     * Test Environment::host().
      */
-    public function testRequestMethod(): void
+    public function testHost(): void
     {
-        Arrays::set($_SERVER, 'HTTP_X_HTTP_METHOD_OVERRIDE', 'GET');
-        Arrays::set($_SERVER, 'REQUEST_METHOD', 'POST');
+        $origHost    = Environment::var('HTTP_HOST');
+        $origFwdHost = Environment::var('HTTP_X_FORWARDED_HOST');
+        $origSrvName = Environment::var('SERVER_NAME');
 
-        self::assertSame('GET', Environment::requestMethod());
+        Arrays::set($_SERVER, 'HTTP_HOST', 'example.com');
+        Arrays::set($_SERVER, 'HTTP_X_FORWARDED_HOST', 'example2.com');
+        Arrays::set($_SERVER, 'SERVER_NAME', null);
 
-        Arrays::set($_SERVER, 'HTTP_X_HTTP_METHOD_OVERRIDE', null);
+        self::assertSame('example2.com', Environment::host(false, true));
+        self::assertSame('example.com', Environment::host());
 
-        self::assertSame('POST', Environment::requestMethod());
+        Arrays::set($_SERVER, 'HTTP_HOST', 'www.example.com');
 
-        Arrays::set($_SERVER, 'HTTP_X_HTTP_METHOD_OVERRIDE', 'GET');
-        Arrays::set($_SERVER, 'REQUEST_METHOD', null);
+        self::assertSame('www.example.com', Environment::host());
+        self::assertSame('example.com', Environment::host(true));
 
-        self::assertSame('GET', Environment::requestMethod());
+        Arrays::set($_SERVER, 'HTTP_HOST', null);
+        Arrays::set($_SERVER, 'SERVER_NAME', null);
+        self::assertSame('localhost', Environment::host());
+
+        Arrays::set($_SERVER, 'HTTP_HOST', $origHost);
+        Arrays::set($_SERVER, 'HTTP_X_FORWARDED_HOST', $origFwdHost);
+        Arrays::set($_SERVER, 'SERVER_NAME', $origSrvName);
+    }
+
+    /**
+     * Test Environment::iniGet().
+     */
+    public function testIniGet(): void
+    {
+        self::assertNotEmpty(Environment::iniGet('request_order'));
+
+        self::assertLessThanOrEqual('1', Environment::iniGet('display_errors', true));
+
+        self::expectException(RuntimeException::class);
+        Environment::iniGet('');
+
+        self::expectException(RuntimeException::class);
+        Environment::iniGet('this_should_notbe_a_valid_option');
+    }
+
+    /**
+     * Test Environment::iniSet().
+     */
+    public function testIniSet(): void
+    {
+        // @var string $oldValue
+        $oldValue = Environment::iniSet('display_errors', Environment::iniGet('display_errors'));
+
+        self::assertSame($oldValue, Environment::iniSet('display_errors', $oldValue));
+
+        self::expectException(ArgumentCountError::class);
+        // @phpstan-ignore-next-line
+        Environment::iniSet('');
+
+        self::expectException(InvalidArgumentException::class);
+        Environment::iniSet('', '');
     }
 
     /**
@@ -105,64 +135,6 @@ class EnvironmentTest extends TestCase
     }
 
     /**
-     * Test Environment::isPrivateIp().
-     */
-    public function testIsPrivateIp(): void
-    {
-        self::assertTrue(Environment::isPrivateIp('192.168.0.0'));
-        self::assertFalse(Environment::isPrivateIp('1.1.1.1'));
-    }
-
-    /**
-     * Test Environment::isReservedIp().
-     */
-    public function testIsReservedIp(): void
-    {
-        self::assertTrue(Environment::isReservedIp('0.255.255.255'));
-        self::assertFalse(Environment::isReservedIp('192.168.0.0'));
-    }
-
-    /**
-     * Test Environment::isPublicIp().
-     */
-    public function testIsPublicIp(): void
-    {
-        self::assertTrue(Environment::isPublicIp('1.1.1.1'));
-        self::assertFalse(Environment::isPublicIp('192.168.0.0'));
-        self::assertFalse(Environment::isPublicIp('0.255.255.255'));
-    }
-
-    /**
-     * Test Environment::host().
-     */
-    public function testHost(): void
-    {
-        $origHost    = Environment::var('HTTP_HOST');
-        $origFwdHost = Environment::var('HTTP_X_FORWARDED_HOST');
-        $origSrvName = Environment::var('SERVER_NAME');
-
-        Arrays::set($_SERVER, 'HTTP_HOST', 'example.com');
-        Arrays::set($_SERVER, 'HTTP_X_FORWARDED_HOST', 'example2.com');
-        Arrays::set($_SERVER, 'SERVER_NAME', null);
-
-        self::assertSame('example2.com', Environment::host(false, true));
-        self::assertSame('example.com', Environment::host());
-
-        Arrays::set($_SERVER, 'HTTP_HOST', 'www.example.com');
-
-        self::assertSame('www.example.com', Environment::host());
-        self::assertSame('example.com', Environment::host(true));
-
-        Arrays::set($_SERVER, 'HTTP_HOST', null);
-        Arrays::set($_SERVER, 'SERVER_NAME', null);
-        self::assertSame('localhost', Environment::host());
-
-        Arrays::set($_SERVER, 'HTTP_HOST', $origHost);
-        Arrays::set($_SERVER, 'HTTP_X_FORWARDED_HOST', $origFwdHost);
-        Arrays::set($_SERVER, 'SERVER_NAME', $origSrvName);
-    }
-
-    /**
      * Test Environment::isHttps().
      */
     public function testIsHttps(): void
@@ -181,6 +153,54 @@ class EnvironmentTest extends TestCase
         self::assertTrue(Environment::isHttps());
 
         Arrays::set($_SERVER, 'HTTP_X_FORWARDED_PROTO', null);
+    }
+
+    /**
+     * Test Environment::isPrivateIp().
+     */
+    public function testIsPrivateIp(): void
+    {
+        self::assertTrue(Environment::isPrivateIp('192.168.0.0'));
+        self::assertFalse(Environment::isPrivateIp('1.1.1.1'));
+    }
+
+    /**
+     * Test Environment::isPublicIp().
+     */
+    public function testIsPublicIp(): void
+    {
+        self::assertTrue(Environment::isPublicIp('1.1.1.1'));
+        self::assertFalse(Environment::isPublicIp('192.168.0.0'));
+        self::assertFalse(Environment::isPublicIp('0.255.255.255'));
+    }
+
+    /**
+     * Test Environment::isReservedIp().
+     */
+    public function testIsReservedIp(): void
+    {
+        self::assertTrue(Environment::isReservedIp('0.255.255.255'));
+        self::assertFalse(Environment::isReservedIp('192.168.0.0'));
+    }
+
+    /**
+     * Test Environment::requestMethod().
+     */
+    public function testRequestMethod(): void
+    {
+        Arrays::set($_SERVER, 'HTTP_X_HTTP_METHOD_OVERRIDE', 'GET');
+        Arrays::set($_SERVER, 'REQUEST_METHOD', 'POST');
+
+        self::assertSame('GET', Environment::requestMethod());
+
+        Arrays::set($_SERVER, 'HTTP_X_HTTP_METHOD_OVERRIDE', null);
+
+        self::assertSame('POST', Environment::requestMethod());
+
+        Arrays::set($_SERVER, 'HTTP_X_HTTP_METHOD_OVERRIDE', 'GET');
+        Arrays::set($_SERVER, 'REQUEST_METHOD', null);
+
+        self::assertSame('GET', Environment::requestMethod());
     }
 
     /**
@@ -231,39 +251,5 @@ class EnvironmentTest extends TestCase
         Arrays::set($_SERVER, 'HTTP_HOST', null);
         Arrays::set($_SERVER, 'QUERY_STRING', null);
         Arrays::set($_SERVER, 'PHP_SELF', null);
-    }
-
-    /**
-     * Test Environment::iniGet().
-     */
-    public function testIniGet(): void
-    {
-        self::assertNotEmpty(Environment::iniGet('request_order'));
-
-        self::assertLessThanOrEqual('1', Environment::iniGet('display_errors', true));
-
-        self::expectException(RuntimeException::class);
-        Environment::iniGet('');
-
-        self::expectException(RuntimeException::class);
-        Environment::iniGet('this_should_notbe_a_valid_option');
-    }
-
-    /**
-     * Test Environment::iniSet().
-     */
-    public function testIniSet(): void
-    {
-        // @var string $oldValue
-        $oldValue = Environment::iniSet('display_errors', Environment::iniGet('display_errors'));
-
-        self::assertSame($oldValue, Environment::iniSet('display_errors', $oldValue));
-
-        self::expectException(ArgumentCountError::class);
-        // @phpstan-ignore-next-line
-        Environment::iniSet('');
-
-        self::expectException(InvalidArgumentException::class);
-        Environment::iniSet('', '');
     }
 }

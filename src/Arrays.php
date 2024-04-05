@@ -3,45 +3,19 @@
 declare(strict_types=1);
 
 /**
- * Utility - Collection of various PHP utility functions.
+ * This file is part of PHPUnit Coverage Check.
  *
- * @author    Eric Sizemore <admin@secondversion.com>
+ * (c) 2017 - 2024 Eric Sizemore <admin@secondversion.com>
  *
- * @version   2.0.0
- *
- * @copyright (C) 2017 - 2024 Eric Sizemore
- * @license   The MIT License (MIT)
- *
- * Copyright (C) 2017 - 2024 Eric Sizemore <https://www.secondversion.com>.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to
- * deal in the Software without restriction, including without limitation the
- * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
- * sell copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * For the full copyright and license information, please view
+ * the LICENSE.md file that was distributed with this source code.
  */
 
 namespace Esi\Utility;
 
-// Exceptions
 use ArrayAccess;
-
-// Classes
 use RuntimeException;
 
-// Functions
 use function array_key_exists;
 use function array_map;
 use function array_merge;
@@ -49,6 +23,7 @@ use function array_sum;
 use function call_user_func;
 use function count;
 use function get_object_vars;
+use function in_array;
 use function is_array;
 use function is_object;
 use function sprintf;
@@ -59,62 +34,10 @@ use const E_USER_DEPRECATED;
 /**
  * Array utilities.
  *
- * @see \Esi\Utility\Tests\ArraysTest
+ * @see Tests\ArraysTest
  */
 final class Arrays
 {
-    /**
-     * isAssociative().
-     *
-     * Determines if the given array is an associative array.
-     *
-     * @param array<mixed> $array Array to check
-     */
-    public static function isAssociative(array $array): bool
-    {
-        return !array_is_list($array);
-    }
-
-    /**
-     * get().
-     *
-     * Retrieve a value from an array.
-     *
-     * @param array<mixed>|ArrayAccess<mixed, mixed> $array   Array to retrieve value from.
-     * @param string|int                             $key     Key to retrieve
-     * @param mixed                                  $default A default value to return if $key does not exist
-     *
-     * @throws RuntimeException If $array is not accessible
-     */
-    public static function get(array | ArrayAccess $array, string | int $key, mixed $default = null): mixed
-    {
-        if (Arrays::keyExists($array, $key)) {
-            return $array[$key];
-        }
-
-        return $default;
-    }
-
-    /**
-     * set().
-     *
-     * Add a value to an array.
-     *
-     * @param array<mixed>|ArrayAccess<mixed, mixed> &$array Array to add value to.
-     * @param string|int|null                        $key    Key to add
-     * @param mixed                                  $value  Value to add
-     *
-     * @throws RuntimeException If $array is not accessible
-     */
-    public static function set(array | ArrayAccess &$array, string | int | null $key, mixed $value): void
-    {
-        if ($key === null) {
-            $array = $value; // @phpstan-ignore-line
-        } else {
-            $array[$key] = $value;
-        }
-    }
-
     /**
      * Checks if a key exists in an array.
      *
@@ -132,32 +55,6 @@ final class Arrays
         ), E_USER_DEPRECATED);
 
         return Arrays::keyExists($array, $key);
-    }
-
-    /**
-     * Checks if a key exists in an array.
-     *
-     * @param array<mixed>|ArrayAccess<mixed, mixed> $array Array to check
-     * @param string|int                             $key   Key to check
-     */
-    public static function keyExists(array | ArrayAccess $array, string | int $key): bool
-    {
-        if ($array instanceof ArrayAccess) {
-            return $array->offsetExists($key);
-        }
-
-        return array_key_exists($key, $array);
-    }
-
-    /**
-     * Checks if a value exists in an array.
-     *
-     * @param array<mixed> $array Array to check
-     * @param string|int   $value Value to check
-     */
-    public static function valueExists(array $array, string | int $value): bool
-    {
-        return in_array($value, $array, true);
     }
 
     /**
@@ -191,32 +88,60 @@ final class Arrays
     }
 
     /**
-     * mapDeep().
+     * get().
      *
-     * Recursively applies a callback to all non-iterable elements of an array or an object.
+     * Retrieve a value from an array.
      *
-     * @since 1.2.0 - updated with inspiration from the WordPress map_deep() function.
-     *      @see https://developer.wordpress.org/reference/functions/map_deep/
+     * @param array<mixed>|ArrayAccess<mixed, mixed> $array   Array to retrieve value from.
+     * @param string|int                             $key     Key to retrieve
+     * @param mixed                                  $default A default value to return if $key does not exist
      *
-     * @param mixed    $array    The array to apply $callback to.
-     * @param callable $callback The callback function to apply.
+     * @throws RuntimeException If $array is not accessible
      */
-    public static function mapDeep(mixed $array, callable $callback): mixed
+    public static function get(array | ArrayAccess $array, string | int $key, mixed $default = null): mixed
     {
-        if (is_array($array)) {
-            foreach ($array as $key => $value) {
-                $array[$key] = Arrays::mapDeep($value, $callback);
-            }
-        } elseif (is_object($array)) {
-            foreach (get_object_vars($array) as $key => $value) {
-                // @phpstan-ignore-next-line
-                $array->$key = Arrays::mapDeep($value, $callback);
-            }
-        } else {
-            $array = call_user_func($callback, $array);
+        if (Arrays::keyExists($array, $key)) {
+            return $array[$key];
         }
 
-        return $array;
+        return $default;
+    }
+
+    /**
+     * Returns an associative array, grouped by $key, where the keys are the distinct values of $key,
+     * and the values are arrays of items that share the same $key.
+     *
+     * *Important to note:* if a $key is provided that does not exist, the result will be an empty array.
+     *
+     * @since 2.0.0
+     *
+     * @param array<mixed, array<mixed>> $array Input array.
+     * @param string                     $key   Key to use for grouping.
+     *
+     * @return array<mixed, array<mixed>>
+     */
+    public static function groupBy(array $array, string $key): array
+    {
+        $result = [];
+
+        foreach ($array as $item) {
+            if (!self::isAssociative($item)) {
+                //@codeCoverageIgnoreStart
+                continue;
+                //@codeCoverageIgnoreEnd
+            }
+
+            if (!isset($item[$key])) {
+                continue;
+            }
+
+            $groupKey = $item[$key];
+
+            $result[$groupKey] ??= [];
+            $result[$groupKey][] = $item;
+        }
+
+        return $result;
     }
 
     /**
@@ -274,39 +199,89 @@ final class Arrays
     }
 
     /**
-     * Returns an associative array, grouped by $key, where the keys are the distinct values of $key,
-     * and the values are arrays of items that share the same $key.
+     * isAssociative().
      *
-     * *Important to note:* if a $key is provided that does not exist, the result will be an empty array.
+     * Determines if the given array is an associative array.
      *
-     * @since 2.0.0
-     *
-     * @param array<mixed, array<mixed>> $array Input array.
-     * @param string                     $key   Key to use for grouping.
-     *
-     * @return array<mixed, array<mixed>>
+     * @param array<mixed> $array Array to check
      */
-    public static function groupBy(array $array, string $key): array
+    public static function isAssociative(array $array): bool
     {
-        $result = [];
+        return !array_is_list($array);
+    }
 
-        foreach ($array as $item) {
-            if (!self::isAssociative($item)) {
-                //@codeCoverageIgnoreStart
-                continue;
-                //@codeCoverageIgnoreEnd
-            }
-
-            if (!isset($item[$key])) {
-                continue;
-            }
-
-            $groupKey = $item[$key];
-
-            $result[$groupKey] ??= [];
-            $result[$groupKey][] = $item;
+    /**
+     * Checks if a key exists in an array.
+     *
+     * @param array<mixed>|ArrayAccess<mixed, mixed> $array Array to check
+     * @param string|int                             $key   Key to check
+     */
+    public static function keyExists(array | ArrayAccess $array, string | int $key): bool
+    {
+        if ($array instanceof ArrayAccess) {
+            return $array->offsetExists($key);
         }
 
-        return $result;
+        return array_key_exists($key, $array);
+    }
+
+    /**
+     * mapDeep().
+     *
+     * Recursively applies a callback to all non-iterable elements of an array or an object.
+     *
+     * @since 1.2.0 - updated with inspiration from the WordPress map_deep() function.
+     *      @see https://developer.wordpress.org/reference/functions/map_deep/
+     *
+     * @param mixed    $array    The array to apply $callback to.
+     * @param callable $callback The callback function to apply.
+     */
+    public static function mapDeep(mixed $array, callable $callback): mixed
+    {
+        if (is_array($array)) {
+            foreach ($array as $key => $value) {
+                $array[$key] = Arrays::mapDeep($value, $callback);
+            }
+        } elseif (is_object($array)) {
+            foreach (get_object_vars($array) as $key => $value) {
+                // @phpstan-ignore-next-line
+                $array->$key = Arrays::mapDeep($value, $callback);
+            }
+        } else {
+            $array = call_user_func($callback, $array);
+        }
+
+        return $array;
+    }
+
+    /**
+     * set().
+     *
+     * Add a value to an array.
+     *
+     * @param array<mixed>|ArrayAccess<mixed, mixed> &$array Array to add value to.
+     * @param string|int|null                        $key    Key to add
+     * @param mixed                                  $value  Value to add
+     *
+     * @throws RuntimeException If $array is not accessible
+     */
+    public static function set(array | ArrayAccess &$array, string | int | null $key, mixed $value): void
+    {
+        if ($key === null) {
+            $array = $value; // @phpstan-ignore-line
+        } else {
+            $array[$key] = $value;
+        }
+    }
+
+    /**
+     * Checks if a value exists in an array.
+     *
+     * @param array<mixed> $array Array to check
+     * @param string|int   $value Value to check
+     */
+    public static function valueExists(array $array, string | int $value): bool
+    {
+        return in_array($value, $array, true);
     }
 }

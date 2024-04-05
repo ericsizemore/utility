@@ -3,50 +3,24 @@
 declare(strict_types=1);
 
 /**
- * Utility - Collection of various PHP utility functions.
+ * This file is part of PHPUnit Coverage Check.
  *
- * @author    Eric Sizemore <admin@secondversion.com>
+ * (c) 2017 - 2024 Eric Sizemore <admin@secondversion.com>
  *
- * @version   2.0.0
- *
- * @copyright (C) 2017 - 2024 Eric Sizemore
- * @license   The MIT License (MIT)
- *
- * Copyright (C) 2017 - 2024 Eric Sizemore <https://www.secondversion.com>.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to
- * deal in the Software without restriction, including without limitation the
- * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
- * sell copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * For the full copyright and license information, please view
+ * the LICENSE.md file that was distributed with this source code.
  */
 
 namespace Esi\Utility;
 
-// Exceptions
 use FilesystemIterator;
 use InvalidArgumentException;
 use Random\RandomException;
-
-// Classes
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RuntimeException;
 use SplFileObject;
 
-// Functions
 use function array_filter;
 use function array_pop;
 use function array_reduce;
@@ -67,7 +41,6 @@ use function rtrim;
 use function sprintf;
 use function unlink;
 
-// Constants
 use const DIRECTORY_SEPARATOR;
 use const FILE_APPEND;
 use const PHP_OS_FAMILY;
@@ -75,10 +48,207 @@ use const PHP_OS_FAMILY;
 /**
  * File system utilities.
  *
- * @see \Esi\Utility\Tests\FilesystemTest
+ * @see Tests\FilesystemTest
  */
 final class Filesystem
 {
+    /**
+     * directoryList().
+     *
+     * Retrieves contents of a directory.
+     *
+     * @param string        $directory Directory to parse.
+     * @param array<string> $ignore    Subdirectories of $directory you wish to not include.
+     *
+     * @return array<mixed>
+     *
+     * @throws InvalidArgumentException
+     */
+    public static function directoryList(string $directory, array $ignore = []): array
+    {
+        // Sanity checks
+        if (!Filesystem::isDirectory($directory)) {
+            throw new InvalidArgumentException('Invalid $directory specified');
+        }
+
+        // Initialize
+        $contents = [];
+
+        // Directories to ignore, if any
+        $ignore = Filesystem::buildIgnore($ignore);
+
+        // Build the actual contents of the directory
+        /** @var RecursiveDirectoryIterator $fileInfo */
+        foreach (Filesystem::getIterator($directory, true) as $key => $fileInfo) {
+            if (Filesystem::checkIgnore($fileInfo->getPath(), $ignore)) {
+                continue;
+            }
+
+            $contents[] = $key;
+        }
+
+        natsort($contents);
+
+        return $contents;
+    }
+
+    /**
+     * directorySize().
+     *
+     * Retrieves size of a directory (in bytes).
+     *
+     * @param string        $directory Directory to parse.
+     * @param array<string> $ignore    Subdirectories of $directory you wish to not include.
+     *
+     * @throws InvalidArgumentException
+     */
+    public static function directorySize(string $directory, array $ignore = []): int
+    {
+        // Sanity checks
+        if (!Filesystem::isDirectory($directory)) {
+            throw new InvalidArgumentException('Invalid $directory specified');
+        }
+
+        // Initialize
+        $size = 0;
+
+        // Determine directory size by checking file sizes
+        /** @var RecursiveDirectoryIterator $fileInfo */
+        foreach (Filesystem::getIterator($directory) as $fileInfo) {
+            // Directories we wish to ignore, if any
+            if (Filesystem::checkIgnore($fileInfo->getPath(), Filesystem::buildIgnore($ignore))) {
+                continue;
+            }
+
+            if ($fileInfo->isFile()) {
+                $size += $fileInfo->getSize();
+            }
+        }
+
+        return $size;
+    }
+
+    /**
+     * fileRead().
+     *
+     * Perform a read operation on a pre-existing file.
+     *
+     * @param string $file Filename.
+     *
+     * @return string|false
+     *
+     * @throws InvalidArgumentException
+     */
+    public static function fileRead(string $file): string | false
+    {
+        // Sanity check
+        if (!Filesystem::isFile($file)) {
+            throw new InvalidArgumentException(sprintf("File '%s' does not exist or is not readable.", $file));
+        }
+
+        return file_get_contents($file);
+    }
+
+    /**
+     * fileWrite().
+     *
+     * Perform a write operation on a pre-existing file.
+     *
+     * @param string $file  Filename.
+     * @param string $data  If writing to the file, the data to write.
+     * @param int    $flags Bitwise OR'ed set of flags for file_put_contents. One or
+     *                      more of FILE_USE_INCLUDE_PATH, FILE_APPEND, LOCK_EX.
+     *                      {@link http://php.net/file_put_contents}
+     *
+     * @return int<0, max>|false
+     *
+     * @throws InvalidArgumentException|RandomException
+     */
+    public static function fileWrite(string $file, string $data = '', int $flags = 0): false | int
+    {
+        // Sanity checks
+        if (!Filesystem::isFile($file)) {
+            throw new InvalidArgumentException(sprintf("File '%s' does not exist or is not readable.", $file));
+        }
+
+        // @codeCoverageIgnoreStart
+        if (!Filesystem::isReallyWritable($file)) {
+            throw new InvalidArgumentException(sprintf("File '%s' is not writable.", $file));
+        }
+
+        // @codeCoverageIgnoreEnd
+        return file_put_contents($file, $data, $flags);
+    }
+
+    /**
+     * isDirectory().
+     *
+     * Determines if the given $directory is both a directory and readable.
+     *
+     * @since 2.0.0
+     *
+     * @param string $directory Directory to check.
+     */
+    public static function isDirectory(string $directory): bool
+    {
+        return (is_dir($directory) && is_readable($directory));
+    }
+
+    /**
+     * isFile().
+     *
+     * Determines if the given $file is both a file and readable.
+     *
+     * @since 2.0.0
+     *
+     * @param string $file Directory to check.
+     */
+    public static function isFile(string $file): bool
+    {
+        return (is_file($file) && is_readable($file));
+    }
+
+    /**
+     * isReallyWritable().
+     *
+     * Checks to see if a file or directory is really writable.
+     *
+     * @param string $file File or directory to check.
+     *
+     * @throws RandomException  If unable to generate random string for the temp file.
+     * @throws RuntimeException If the file or directory does not exist.
+     */
+    public static function isReallyWritable(string $file): bool
+    {
+        clearstatcache(true, $file);
+
+        if (!file_exists($file)) {
+            throw new RuntimeException('Invalid file or directory specified');
+        }
+
+        // If we are on Unix/Linux just run is_writable()
+        // @codeCoverageIgnoreStart
+        if (PHP_OS_FAMILY !== 'Windows') {
+            return is_writable($file);
+        }
+
+        // We ignore code coverage due to differences in local and remote testing environments
+
+        // Otherwise, if on Windows...
+        // Attempt to write to the file or directory
+        if (is_dir($file)) {
+            $tmpFile = rtrim($file, '\\/') . DIRECTORY_SEPARATOR . Strings::randomString() . '.txt';
+            $data    = file_put_contents($tmpFile, 'tmpData', FILE_APPEND);
+
+            unlink($tmpFile);
+        } else {
+            $data = file_get_contents($file);
+        }
+
+        return ($data !== false);
+        // @codeCoverageIgnoreEnd
+    }
+
     /**
      * lineCounter().
      *
@@ -145,82 +315,6 @@ final class Filesystem
     }
 
     /**
-     * directorySize().
-     *
-     * Retrieves size of a directory (in bytes).
-     *
-     * @param string        $directory Directory to parse.
-     * @param array<string> $ignore    Subdirectories of $directory you wish to not include.
-     *
-     * @throws InvalidArgumentException
-     */
-    public static function directorySize(string $directory, array $ignore = []): int
-    {
-        // Sanity checks
-        if (!Filesystem::isDirectory($directory)) {
-            throw new InvalidArgumentException('Invalid $directory specified');
-        }
-
-        // Initialize
-        $size = 0;
-
-        // Determine directory size by checking file sizes
-        /** @var RecursiveDirectoryIterator $fileInfo */
-        foreach (Filesystem::getIterator($directory) as $fileInfo) {
-            // Directories we wish to ignore, if any
-            if (Filesystem::checkIgnore($fileInfo->getPath(), Filesystem::buildIgnore($ignore))) {
-                continue;
-            }
-
-            if ($fileInfo->isFile()) {
-                $size += $fileInfo->getSize();
-            }
-        }
-
-        return $size;
-    }
-
-    /**
-     * directoryList().
-     *
-     * Retrieves contents of a directory.
-     *
-     * @param string        $directory Directory to parse.
-     * @param array<string> $ignore    Subdirectories of $directory you wish to not include.
-     *
-     * @return array<mixed>
-     *
-     * @throws InvalidArgumentException
-     */
-    public static function directoryList(string $directory, array $ignore = []): array
-    {
-        // Sanity checks
-        if (!Filesystem::isDirectory($directory)) {
-            throw new InvalidArgumentException('Invalid $directory specified');
-        }
-
-        // Initialize
-        $contents = [];
-
-        // Directories to ignore, if any
-        $ignore = Filesystem::buildIgnore($ignore);
-
-        // Build the actual contents of the directory
-        /** @var RecursiveDirectoryIterator $fileInfo */
-        foreach (Filesystem::getIterator($directory, true) as $key => $fileInfo) {
-            if (Filesystem::checkIgnore($fileInfo->getPath(), $ignore)) {
-                continue;
-            }
-
-            $contents[] = $key;
-        }
-
-        natsort($contents);
-
-        return $contents;
-    }
-
-    /**
      * normalizeFilePath().
      *
      * Normalizes a file or directory path.
@@ -258,126 +352,45 @@ final class Filesystem
     }
 
     /**
-     * isReallyWritable().
-     *
-     * Checks to see if a file or directory is really writable.
-     *
-     * @param string $file File or directory to check.
-     *
-     * @throws RandomException  If unable to generate random string for the temp file.
-     * @throws RuntimeException If the file or directory does not exist.
-     */
-    public static function isReallyWritable(string $file): bool
-    {
-        clearstatcache(true, $file);
-
-        if (!file_exists($file)) {
-            throw new RuntimeException('Invalid file or directory specified');
-        }
-
-        // If we are on Unix/Linux just run is_writable()
-        // @codeCoverageIgnoreStart
-        if (PHP_OS_FAMILY !== 'Windows') {
-            return is_writable($file);
-        }
-
-        // We ignore code coverage due to differences in local and remote testing environments
-
-        // Otherwise, if on Windows...
-        // Attempt to write to the file or directory
-        if (is_dir($file)) {
-            $tmpFile = rtrim($file, '\\/') . DIRECTORY_SEPARATOR . Strings::randomString() . '.txt';
-            $data    = file_put_contents($tmpFile, 'tmpData', FILE_APPEND);
-
-            unlink($tmpFile);
-        } else {
-            $data = file_get_contents($file);
-        }
-
-        return ($data !== false);
-        // @codeCoverageIgnoreEnd
-    }
-
-    /**
-     * fileRead().
-     *
-     * Perform a read operation on a pre-existing file.
-     *
-     * @param string $file Filename.
-     *
-     * @return string|false
-     *
-     * @throws InvalidArgumentException
-     */
-    public static function fileRead(string $file): string | false
-    {
-        // Sanity check
-        if (!Filesystem::isFile($file)) {
-            throw new InvalidArgumentException(sprintf("File '%s' does not exist or is not readable.", $file));
-        }
-
-        return file_get_contents($file);
-    }
-
-    /**
-     * fileWrite().
-     *
-     * Perform a write operation on a pre-existing file.
-     *
-     * @param string $file  Filename.
-     * @param string $data  If writing to the file, the data to write.
-     * @param int    $flags Bitwise OR'ed set of flags for file_put_contents. One or
-     *                      more of FILE_USE_INCLUDE_PATH, FILE_APPEND, LOCK_EX.
-     *                      {@link http://php.net/file_put_contents}
-     *
-     * @return int<0, max>|false
-     *
-     * @throws InvalidArgumentException|RandomException
-     */
-    public static function fileWrite(string $file, string $data = '', int $flags = 0): false | int
-    {
-        // Sanity checks
-        if (!Filesystem::isFile($file)) {
-            throw new InvalidArgumentException(sprintf("File '%s' does not exist or is not readable.", $file));
-        }
-
-        // @codeCoverageIgnoreStart
-        if (!Filesystem::isReallyWritable($file)) {
-            throw new InvalidArgumentException(sprintf("File '%s' is not writable.", $file));
-        }
-
-        // @codeCoverageIgnoreEnd
-        return file_put_contents($file, $data, $flags);
-    }
-
-    /** Helper functions for the directory related functions **/
-
-    /**
-     * isFile().
-     *
-     * Determines if the given $file is both a file and readable.
+     * Builds the ignore list for lineCounter(), directorySize(), and directoryList().
      *
      * @since 2.0.0
      *
-     * @param string $file Directory to check.
+     * @param array<string> $ignore Array of file/folder names to ignore.
      */
-    public static function isFile(string $file): bool
+    private static function buildIgnore(array $ignore): string
     {
-        return (is_file($file) && is_readable($file));
+        if ($ignore !== []) {
+            return preg_quote(implode('|', $ignore), '#');
+        }
+
+        return '';
     }
 
     /**
-     * isDirectory().
-     *
-     * Determines if the given $directory is both a directory and readable.
+     * Checks the extension ignore list for lineCounter(), directorySize(), and directoryList().
      *
      * @since 2.0.0
      *
-     * @param string $directory Directory to check.
+     * @param string        $extension  File extension to check.
+     * @param array<string> $extensions Array of file extensions to ignore.
      */
-    public static function isDirectory(string $directory): bool
+    private static function checkExtensions(string $extension, array $extensions): bool
     {
-        return (is_dir($directory) && is_readable($directory));
+        return $extensions !== [] && !Arrays::valueExists($extensions, $extension);
+    }
+
+    /**
+     * Checks the ignore list for lineCounter(), directorySize(), and directoryList().
+     *
+     * @since 2.0.0
+     *
+     * @param string $path   The file path to check against ignore list.
+     * @param string $ignore The ignore list pattern.
+     */
+    private static function checkIgnore(string $path, string $ignore): bool
+    {
+        return $ignore !== '' && preg_match(sprintf('#(%s)#i', $ignore), $path) === 1;
     }
 
     /**
@@ -401,47 +414,5 @@ final class Filesystem
         return new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator($forDirectory, $options)
         );
-    }
-
-    /**
-     * Builds the ignore list for lineCounter(), directorySize(), and directoryList().
-     *
-     * @since 2.0.0
-     *
-     * @param array<string> $ignore Array of file/folder names to ignore.
-     */
-    private static function buildIgnore(array $ignore): string
-    {
-        if ($ignore !== []) {
-            return preg_quote(implode('|', $ignore), '#');
-        }
-
-        return '';
-    }
-
-    /**
-     * Checks the ignore list for lineCounter(), directorySize(), and directoryList().
-     *
-     * @since 2.0.0
-     *
-     * @param string $path   The file path to check against ignore list.
-     * @param string $ignore The ignore list pattern.
-     */
-    private static function checkIgnore(string $path, string $ignore): bool
-    {
-        return $ignore !== '' && preg_match(sprintf('#(%s)#i', $ignore), $path) === 1;
-    }
-
-    /**
-     * Checks the extension ignore list for lineCounter(), directorySize(), and directoryList().
-     *
-     * @since 2.0.0
-     *
-     * @param string        $extension  File extension to check.
-     * @param array<string> $extensions Array of file extensions to ignore.
-     */
-    private static function checkExtensions(string $extension, array $extensions): bool
-    {
-        return $extensions !== [] && !Arrays::valueExists($extensions, $extension);
     }
 }

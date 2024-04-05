@@ -3,44 +3,20 @@
 declare(strict_types=1);
 
 /**
- * Utility - Collection of various PHP utility functions.
+ * This file is part of PHPUnit Coverage Check.
  *
- * @author    Eric Sizemore <admin@secondversion.com>
+ * (c) 2017 - 2024 Eric Sizemore <admin@secondversion.com>
  *
- * @version   2.0.0
- *
- * @copyright (C) 2017 - 2024 Eric Sizemore
- * @license   The MIT License (MIT)
- *
- * Copyright (C) 2017 - 2024 Eric Sizemore <https://www.secondversion.com>.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to
- * deal in the Software without restriction, including without limitation the
- * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
- * sell copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * For the full copyright and license information, please view
+ * the LICENSE.md file that was distributed with this source code.
  */
 
 namespace Esi\Utility;
 
-// Exceptions
 use InvalidArgumentException;
 use Random\RandomException;
 use ValueError;
 
-// Functions
 use function abs;
 use function count;
 use function number_format;
@@ -50,7 +26,7 @@ use function sprintf;
 /**
  * Number utilities.
  *
- * @see \Esi\Utility\Tests\NumbersTest
+ * @see Tests\NumbersTest
  */
 final class Numbers
 {
@@ -63,16 +39,9 @@ final class Numbers
      */
     public const BINARY_STANDARD_BASE = 1_024;
 
-    public const METRIC_STANDARD_BASE = 1_000;
-
     public const CONVERSION_MODIFIER = 0.9;
 
-    /**
-     * Ordinal suffixes.
-     *
-     * @var array<string> SUFFIXES
-     */
-    public const SUFFIXES = ['th', 'st', 'nd', 'rd'];
+    public const METRIC_STANDARD_BASE = 1_000;
 
     /**
      * Standards units.
@@ -83,6 +52,13 @@ final class Numbers
         'binary' => ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'],
         'metric' => ['B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'],
     ];
+
+    /**
+     * Ordinal suffixes.
+     *
+     * @var array<string> SUFFIXES
+     */
+    public const SUFFIXES = ['th', 'st', 'nd', 'rd'];
 
     /**
      * inside().
@@ -96,6 +72,28 @@ final class Numbers
     public static function inside(float | int $number, float | int $min, float | int $max): bool
     {
         return ($number >= $min && $number <= $max);
+    }
+
+    /**
+     * ordinal().
+     *
+     * Retrieve the ordinal version of a number.
+     *
+     * Basically, it will append th, st, nd, or rd based on what the number ends with.
+     *
+     * @param int $number The number to create an ordinal version of.
+     */
+    public static function ordinal(int $number): string
+    {
+        static $suffixes = self::SUFFIXES;
+
+        $absNumber = abs($number);
+
+        $suffix = ($absNumber % 100 >= 11 && $absNumber % 100 <= 13)
+                  ? $suffixes[0]
+                  : $suffixes[$absNumber % 10] ?? $suffixes[0];
+
+        return $number . $suffix;
     }
 
     /**
@@ -128,28 +126,6 @@ final class Numbers
     {
         // Generate random int
         return random_int($min, $max);
-    }
-
-    /**
-     * ordinal().
-     *
-     * Retrieve the ordinal version of a number.
-     *
-     * Basically, it will append th, st, nd, or rd based on what the number ends with.
-     *
-     * @param int $number The number to create an ordinal version of.
-     */
-    public static function ordinal(int $number): string
-    {
-        static $suffixes = self::SUFFIXES;
-
-        $absNumber = abs($number);
-
-        $suffix = ($absNumber % 100 >= 11 && $absNumber % 100 <= 13)
-                  ? $suffixes[0]
-                  : $suffixes[$absNumber % 10] ?? $suffixes[0];
-
-        return $number . $suffix;
     }
 
     /**

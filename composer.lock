@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "00db9a55ef157ad12f87586d6703821a",
+    "content-hash": "b59f12b23fe1e888b6df2977ed2d188c",
     "packages": [
         {
             "name": "ralouphie/getallheaders",
@@ -441,12 +441,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer.git",
-                "reference": "0e69940277f81ee3011906c546a1166b275ad6b7"
+                "reference": "7eb5ec3b5a8d8d46b700721fd21ffafd6ad07bcf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHP-CS-Fixer/PHP-CS-Fixer/zipball/0e69940277f81ee3011906c546a1166b275ad6b7",
-                "reference": "0e69940277f81ee3011906c546a1166b275ad6b7",
+                "url": "https://api.github.com/repos/PHP-CS-Fixer/PHP-CS-Fixer/zipball/7eb5ec3b5a8d8d46b700721fd21ffafd6ad07bcf",
+                "reference": "7eb5ec3b5a8d8d46b700721fd21ffafd6ad07bcf",
                 "shasum": ""
             },
             "require": {
@@ -527,7 +527,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-04-04T16:22:16+00:00"
+            "time": "2024-04-05T07:13:06+00:00"
         },
         {
             "name": "myclabs/deep-copy",
@@ -770,12 +770,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "df0007478b121e50404abab3393b2f38697672c6"
+                "reference": "d05b694862dbac3d06620ff41f3538ded3a0ff9d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/df0007478b121e50404abab3393b2f38697672c6",
-                "reference": "df0007478b121e50404abab3393b2f38697672c6",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/d05b694862dbac3d06620ff41f3538ded3a0ff9d",
+                "reference": "d05b694862dbac3d06620ff41f3538ded3a0ff9d",
                 "shasum": ""
             },
             "require": {
@@ -821,7 +821,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-04-04T12:49:45+00:00"
+            "time": "2024-04-05T08:09:51+00:00"
         },
         {
             "name": "phpstan/phpstan-phpunit",
@@ -1251,16 +1251,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "11.0.9",
+            "version": "11.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "591bbfe416400385527d5086b346b92c06de404b"
+                "reference": "882c5bf7aa85328d1010da2a76f4bb10c43778c6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/591bbfe416400385527d5086b346b92c06de404b",
-                "reference": "591bbfe416400385527d5086b346b92c06de404b",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/882c5bf7aa85328d1010da2a76f4bb10c43778c6",
+                "reference": "882c5bf7aa85328d1010da2a76f4bb10c43778c6",
                 "shasum": ""
             },
             "require": {
@@ -1299,7 +1299,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-main": "11.0-dev"
+                    "dev-main": "11.1-dev"
                 }
             },
             "autoload": {
@@ -1331,7 +1331,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/11.0.9"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/11.1.0"
             },
             "funding": [
                 {
@@ -1347,7 +1347,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-03-28T10:09:42+00:00"
+            "time": "2024-04-05T04:44:29+00:00"
         },
         {
             "name": "psr/container",

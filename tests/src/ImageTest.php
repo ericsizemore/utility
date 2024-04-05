@@ -3,43 +3,29 @@
 declare(strict_types=1);
 
 /**
- * Utility - Collection of various PHP utility functions.
+ * This file is part of PHPUnit Coverage Check.
  *
- * @author    Eric Sizemore <admin@secondversion.com>
+ * (c) 2017 - 2024 Eric Sizemore <admin@secondversion.com>
  *
- * @version   2.0.0
- *
- * @copyright (C) 2017 - 2024 Eric Sizemore
- * @license   The MIT License (MIT)
- *
- * Copyright (C) 2017 - 2024 Eric Sizemore <https://www.secondversion.com>.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to
- * deal in the Software without restriction, including without limitation the
- * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
- * sell copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * For the full copyright and license information, please view
+ * the LICENSE.md file that was distributed with this source code.
  */
 
 namespace Esi\Utility\Tests;
 
+use Esi\Utility\Arrays;
+use Esi\Utility\Filesystem;
 use Esi\Utility\Image;
+use Esi\Utility\Strings;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
+
+use function dirname;
+
+use const DIRECTORY_SEPARATOR;
 
 /**
  * Image utility test.
@@ -47,6 +33,9 @@ use RuntimeException;
  * @internal
  */
 #[CoversClass(Image::class)]
+#[CoversMethod(Arrays::class, 'valueExists')]
+#[CoversMethod(Filesystem::class, 'isFile')]
+#[CoversMethod(Strings::class, 'beginsWith')]
 class ImageTest extends TestCase
 {
     protected string $resourceDir;
@@ -86,23 +75,6 @@ class ImageTest extends TestCase
         Image::guessImageType('');
     }
 
-    public function testIsJpg(): void
-    {
-        self::assertTrue(Image::isJpg($this->resources['image/jpeg']));
-    }
-
-    public function testIsJpgInvalidFile(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        Image::isJpg($this->resourceDir . 'doesNotExist.jpg');
-    }
-
-    public function testIsJpgInvalidImageFile(): void
-    {
-        $this->expectException(RuntimeException::class);
-        Image::isJpg($this->resourceDir . 'notAnImage.txt');
-    }
-
     public function testIsGif(): void
     {
         self::assertTrue(Image::isGif($this->resources['image/gif']));
@@ -120,15 +92,26 @@ class ImageTest extends TestCase
         Image::isGif($this->resourceDir . 'notAnImage.txt');
     }
 
+    public function testIsJpg(): void
+    {
+        self::assertTrue(Image::isJpg($this->resources['image/jpeg']));
+    }
+
+    public function testIsJpgInvalidFile(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        Image::isJpg($this->resourceDir . 'doesNotExist.jpg');
+    }
+
+    public function testIsJpgInvalidImageFile(): void
+    {
+        $this->expectException(RuntimeException::class);
+        Image::isJpg($this->resourceDir . 'notAnImage.txt');
+    }
+
     public function testIsPng(): void
     {
         self::assertTrue(Image::isPng($this->resources['image/png']));
-    }
-
-    public function testIsPngInvalidImageFile(): void
-    {
-        $this->expectException(RuntimeException::class);
-        Image::isPng($this->resourceDir . 'notAnImage.txt');
     }
 
     public function testIsPngInvalidFile(): void
@@ -137,20 +120,26 @@ class ImageTest extends TestCase
         Image::isPng($this->resourceDir . 'doesNotExist.png');
     }
 
+    public function testIsPngInvalidImageFile(): void
+    {
+        $this->expectException(RuntimeException::class);
+        Image::isPng($this->resourceDir . 'notAnImage.txt');
+    }
+
     public function testIsWebp(): void
     {
         self::assertTrue(Image::isWebp($this->resources['image/webp']));
-    }
-
-    public function testIsWebpInvalidImageFile(): void
-    {
-        $this->expectException(RuntimeException::class);
-        Image::isWebp($this->resourceDir . 'notAnImage.txt');
     }
 
     public function testIsWebpInvalidFile(): void
     {
         $this->expectException(InvalidArgumentException::class);
         Image::isWebp($this->resourceDir . 'doesNotExist.webp');
+    }
+
+    public function testIsWebpInvalidImageFile(): void
+    {
+        $this->expectException(RuntimeException::class);
+        Image::isWebp($this->resourceDir . 'notAnImage.txt');
     }
 }

@@ -3,34 +3,12 @@
 declare(strict_types=1);
 
 /**
- * Utility - Collection of various PHP utility functions.
+ * This file is part of PHPUnit Coverage Check.
  *
- * @author    Eric Sizemore <admin@secondversion.com>
+ * (c) 2017 - 2024 Eric Sizemore <admin@secondversion.com>
  *
- * @version   2.0.0
- *
- * @copyright (C) 2017 - 2024 Eric Sizemore
- * @license   The MIT License (MIT)
- *
- * Copyright (C) 2017 - 2024 Eric Sizemore <https://www.secondversion.com>.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to
- * deal in the Software without restriction, including without limitation the
- * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
- * sell copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * For the full copyright and license information, please view
+ * the LICENSE.md file that was distributed with this source code.
  */
 
 namespace Esi\Utility\Tests;
@@ -47,15 +25,6 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(Conversion::class)]
 class ConversionTest extends TestCase
 {
-    /**
-     * Test Conversion::fahrenheitToCelsius().
-     */
-    public function testFahrenheitToCelsius(): void
-    {
-        self::assertSame(23.33, Conversion::fahrenheitToCelsius(74));
-        self::assertSame(23.333_333_333_333_332, Conversion::fahrenheitToCelsius(74, false));
-    }
-
     /**
      * Test Conversion::celsiusToFahrenheit().
      */
@@ -75,12 +44,20 @@ class ConversionTest extends TestCase
     }
 
     /**
-     * Test Conversion::kelvinToCelsius().
+     * Test Conversion::celsiusToRankine().
      */
-    public function testKelvinToCelsius(): void
+    public function testCelsiusToRankine(): void
     {
-        self::assertSame(23.33, Conversion::kelvinToCelsius(296.48));
-        self::assertSame(23.333_333_333_333_314, Conversion::kelvinToCelsius(296.483_333_333_333_3, false));
+        self::assertSame(545.67, Conversion::celsiusToRankine(30));
+        self::assertSame(545.670_000_000_000_1, Conversion::celsiusToRankine(30, false));
+    }
+    /**
+     * Test Conversion::fahrenheitToCelsius().
+     */
+    public function testFahrenheitToCelsius(): void
+    {
+        self::assertSame(23.33, Conversion::fahrenheitToCelsius(74));
+        self::assertSame(23.333_333_333_333_332, Conversion::fahrenheitToCelsius(74, false));
     }
 
     /**
@@ -93,66 +70,12 @@ class ConversionTest extends TestCase
     }
 
     /**
-     * Test Conversion::kelvinToFahrenheit().
-     */
-    public function testKelvinToFahrenheit(): void
-    {
-        self::assertSame(73.99, Conversion::kelvinToFahrenheit(296.48));
-        self::assertSame(73.999_999_999_999_97, Conversion::kelvinToFahrenheit(296.483_333_333_333_3, false));
-    }
-
-    /**
      * Test Conversion::fahrenheitToRankine().
      */
     public function testFahrenheitToRankine(): void
     {
         self::assertSame(533.67, Conversion::fahrenheitToRankine(74));
         self::assertSame(533.670_000_000_000_1, Conversion::fahrenheitToRankine(74, false));
-    }
-
-    /**
-     * Test Conversion::rankineToFahrenheit().
-     */
-    public function testRankineToFahrenheit(): void
-    {
-        self::assertSame(74.0, Conversion::rankineToFahrenheit(533.67));
-        self::assertSame(74.000_000_000_000_06, Conversion::rankineToFahrenheit(533.670_000_000_000_1, false));
-    }
-
-    /**
-     * Test Conversion::celsiusToRankine().
-     */
-    public function testCelsiusToRankine(): void
-    {
-        self::assertSame(545.67, Conversion::celsiusToRankine(30));
-        self::assertSame(545.670_000_000_000_1, Conversion::celsiusToRankine(30, false));
-    }
-
-    /**
-     * Test Conversion::rankineToCelsius().
-     */
-    public function testRankineToCelsius(): void
-    {
-        self::assertSame(30.0, Conversion::rankineToCelsius(545.67));
-        self::assertSame(29.999_999_999_999_968, Conversion::rankineToCelsius(545.67, false));
-    }
-
-    /**
-     * Test Conversion::kelvinToRankine().
-     */
-    public function testKelvinToRankine(): void
-    {
-        self::assertSame(234.0, Conversion::kelvinToRankine(130));
-        self::assertSame(234.000_000_000_000_06, Conversion::kelvinToRankine(130, false));
-    }
-
-    /**
-     * Test Conversion::rankineToKelvin().
-     */
-    public function testRankineToKelvin(): void
-    {
-        self::assertSame(130.0, Conversion::rankineToKelvin(234.0));
-        self::assertSame(129.999_999_999_999_97, Conversion::rankineToKelvin(234.0, false));
     }
 
     /**
@@ -172,5 +95,59 @@ class ConversionTest extends TestCase
         $resultPrecision   = Conversion::haversineDistance($lat1, $lon1, $lat2, $lon2, 2);
         $expectedPrecision = ['meters' => '559,119.35', 'kilometers' => '559.12', 'miles' => '347.42'];
         self::assertSame($expectedPrecision, $resultPrecision);
+    }
+
+    /**
+     * Test Conversion::kelvinToCelsius().
+     */
+    public function testKelvinToCelsius(): void
+    {
+        self::assertSame(23.33, Conversion::kelvinToCelsius(296.48));
+        self::assertSame(23.333_333_333_333_314, Conversion::kelvinToCelsius(296.483_333_333_333_3, false));
+    }
+
+    /**
+     * Test Conversion::kelvinToFahrenheit().
+     */
+    public function testKelvinToFahrenheit(): void
+    {
+        self::assertSame(73.99, Conversion::kelvinToFahrenheit(296.48));
+        self::assertSame(73.999_999_999_999_97, Conversion::kelvinToFahrenheit(296.483_333_333_333_3, false));
+    }
+
+    /**
+     * Test Conversion::kelvinToRankine().
+     */
+    public function testKelvinToRankine(): void
+    {
+        self::assertSame(234.0, Conversion::kelvinToRankine(130));
+        self::assertSame(234.000_000_000_000_06, Conversion::kelvinToRankine(130, false));
+    }
+
+    /**
+     * Test Conversion::rankineToCelsius().
+     */
+    public function testRankineToCelsius(): void
+    {
+        self::assertSame(30.0, Conversion::rankineToCelsius(545.67));
+        self::assertSame(29.999_999_999_999_968, Conversion::rankineToCelsius(545.67, false));
+    }
+
+    /**
+     * Test Conversion::rankineToFahrenheit().
+     */
+    public function testRankineToFahrenheit(): void
+    {
+        self::assertSame(74.0, Conversion::rankineToFahrenheit(533.67));
+        self::assertSame(74.000_000_000_000_06, Conversion::rankineToFahrenheit(533.670_000_000_000_1, false));
+    }
+
+    /**
+     * Test Conversion::rankineToKelvin().
+     */
+    public function testRankineToKelvin(): void
+    {
+        self::assertSame(130.0, Conversion::rankineToKelvin(234.0));
+        self::assertSame(129.999_999_999_999_97, Conversion::rankineToKelvin(234.0, false));
     }
 }

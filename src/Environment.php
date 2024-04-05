@@ -3,43 +3,18 @@
 declare(strict_types=1);
 
 /**
- * Utility - Collection of various PHP utility functions.
+ * This file is part of PHPUnit Coverage Check.
  *
- * @author    Eric Sizemore <admin@secondversion.com>
+ * (c) 2017 - 2024 Eric Sizemore <admin@secondversion.com>
  *
- * @version   2.0.0
- *
- * @copyright (C) 2017 - 2024 Eric Sizemore
- * @license   The MIT License (MIT)
- *
- * Copyright (C) 2017 - 2024 Eric Sizemore <https://www.secondversion.com>.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to
- * deal in the Software without restriction, including without limitation the
- * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
- * sell copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * For the full copyright and license information, please view
+ * the LICENSE.md file that was distributed with this source code.
  */
 
 namespace Esi\Utility;
 
-// Exceptions
 use ArgumentCountError;
 use RuntimeException;
-
-// Functions
 
 use function explode;
 use function filter_var;
@@ -50,8 +25,6 @@ use function ini_set;
 use function preg_match;
 use function preg_replace;
 use function sprintf;
-
-// Constants
 use function trim;
 
 use const FILTER_FLAG_IPV4;
@@ -63,27 +36,10 @@ use const FILTER_VALIDATE_IP;
 /**
  * Environment utilities.
  *
- * @see \Esi\Utility\Tests\EnvironmentTest
+ * @see Tests\EnvironmentTest
  */
 final class Environment
 {
-    /**
-     * Default https/http port numbers.
-     *
-     * @var int PORT_SECURE
-     * @var int PORT_UNSECURE
-     */
-    public const PORT_SECURE = 443;
-
-    public const PORT_UNSECURE = 80;
-
-    /**
-     * Regex used by Environment::host() to validate a hostname.
-     *
-     * @var string VALIDATE_HOST_REGEX
-     */
-    public const VALIDATE_HOST_REGEX = '#^\[?(?:[a-z0-9-:\]_]+\.?)+$#';
-
     /**
      * Maps values to their boolean equivalent for Environment::iniGet(standardize: true).
      *
@@ -101,6 +57,31 @@ final class Environment
     ];
 
     /**
+     * A list of headers that Environment::host() checks to determine hostname, with a default of 'localhost'
+     * if it cannot make a determination.
+     *
+     * @var array<string> HOST_HEADERS
+     */
+    public const HOST_HEADERS = [
+        'forwarded' => 'HTTP_X_FORWARDED_HOST',
+        'server'    => 'SERVER_NAME',
+        'host'      => 'HTTP_HOST',
+        'default'   => 'localhost',
+    ];
+
+    /**
+     * A list of headers that Environment::isHttps() checks for to determine if current
+     * environment is under SSL.
+     *
+     * @var array<string> HTTPS_HEADERS
+     */
+    public const HTTPS_HEADERS = [
+        'default'   => 'HTTPS',
+        'forwarded' => 'X-Forwarded-Proto',
+        'frontend'  => 'Front-End-Https',
+    ];
+
+    /**
      * The default list of headers that Environment::getIpAddress() checks for.
      *
      * @var array<string> IP_ADDRESS_HEADERS
@@ -114,16 +95,25 @@ final class Environment
     ];
 
     /**
-     * A list of headers that Environment::host() checks to determine hostname, with a default of 'localhost'
-     * if it cannot make a determination.
+     * Default https/http port numbers.
      *
-     * @var array<string> HOST_HEADERS
+     * @var int PORT_SECURE
+     * @var int PORT_UNSECURE
      */
-    public const HOST_HEADERS = [
-        'forwarded' => 'HTTP_X_FORWARDED_HOST',
-        'server'    => 'SERVER_NAME',
-        'host'      => 'HTTP_HOST',
-        'default'   => 'localhost',
+    public const PORT_SECURE = 443;
+
+    public const PORT_UNSECURE = 80;
+
+    /**
+     * A list of options/headers used by Environment::requestMethod() to determine
+     * current request method.
+     *
+     * @var array<string> REQUEST_HEADERS
+     */
+    public const REQUEST_HEADERS = [
+        'override' => 'HTTP_X_HTTP_METHOD_OVERRIDE',
+        'method'   => 'REQUEST_METHOD',
+        'default'  => 'GET',
     ];
 
     /**
@@ -141,64 +131,111 @@ final class Environment
     ];
 
     /**
-     * A list of headers that Environment::isHttps() checks for to determine if current
-     * environment is under SSL.
+     * Regex used by Environment::host() to validate a hostname.
      *
-     * @var array<string> HTTPS_HEADERS
+     * @var string VALIDATE_HOST_REGEX
      */
-    public const HTTPS_HEADERS = [
-        'default'   => 'HTTPS',
-        'forwarded' => 'X-Forwarded-Proto',
-        'frontend'  => 'Front-End-Https',
-    ];
+    public const VALIDATE_HOST_REGEX = '#^\[?(?:[a-z0-9-:\]_]+\.?)+$#';
 
     /**
-     * A list of options/headers used by Environment::requestMethod() to determine
-     * current request method.
+     * host().
      *
-     * @var array<string> REQUEST_HEADERS
-     */
-    public const REQUEST_HEADERS = [
-        'override' => 'HTTP_X_HTTP_METHOD_OVERRIDE',
-        'method'   => 'REQUEST_METHOD',
-        'default'  => 'GET',
-    ];
-
-    /**
-     * requestMethod().
+     * Determines current hostname.
      *
-     * Gets the request method.
+     * @param bool $stripWww        True to strip www. off the host, false to leave it be.
+     * @param bool $acceptForwarded True to accept, false otherwise.
      */
-    public static function requestMethod(): string
+    public static function host(bool $stripWww = false, bool $acceptForwarded = false): string
     {
-        /** @var string $method */
-        $method = (
-            Environment::var(
-                self::REQUEST_HEADERS['override'],
-                Environment::var(
-                    self::REQUEST_HEADERS['method'],
-                    self::REQUEST_HEADERS['default']
-                )
-            )
-        );
+        /** @var string $forwarded */
+        $forwarded = Environment::var(self::HOST_HEADERS['forwarded']);
 
-        return Strings::upper($method);
+        /** @var string $host */
+        $host = (
+            ($acceptForwarded && ($forwarded !== ''))
+            ? $forwarded
+            : (Environment::var(self::HOST_HEADERS['host'], Environment::var(self::HOST_HEADERS['server'])))
+        );
+        $host = trim($host);
+
+        if ($host === '' || preg_match(Environment::VALIDATE_HOST_REGEX, $host) === 0) {
+            $host = self::HOST_HEADERS['default'];
+        }
+
+        $host = Strings::lower($host);
+
+        // Strip 'www.'
+        if ($stripWww) {
+            $strippedHost = preg_replace('#^www\.#', '', $host);
+        }
+
+        return ($strippedHost ?? $host);
     }
 
     /**
-     * var().
+     * iniGet().
      *
-     * Gets a variable from $_SERVER using $default if not provided.
+     * Safe ini_get taking into account its availability.
      *
-     * @param string          $var     Variable name.
-     * @param string|int|null $default Default value to substitute.
+     * @param string $option      The configuration option name.
+     * @param bool   $standardize Standardize returned values to 1 or 0?
+     *
+     * @throws RuntimeException|ArgumentCountError
      */
-    public static function var(string $var, string | int | null $default = ''): string | int | null
+    public static function iniGet(string $option, bool $standardize = false): string
     {
-        /** @var string|int|null $value */
-        $value = Arrays::get($_SERVER, $var) ?? $default;
+        static $iniGetAvailable;
+
+        $iniGetAvailable ??= function_exists('ini_get');
+
+        if (!$iniGetAvailable) {
+            // disabled_functions?
+            // @codeCoverageIgnoreStart
+            throw new RuntimeException('Native ini_get function not available.');
+            // @codeCoverageIgnoreEnd
+        }
+
+        $value = ini_get($option);
+
+        if ($value === false) {
+            throw new RuntimeException('$option does not exist.');
+        }
+
+        $value = trim($value);
+
+        if ($standardize) {
+            return Environment::BOOLEAN_MAPPINGS[Strings::lower($value)] ?? $value;
+        }
 
         return $value;
+    }
+
+    /**
+     * iniSet().
+     *
+     * Safe ini_set taking into account its availability.
+     *
+     * @param string                     $option The configuration option name.
+     * @param string|int|float|bool|null $value  The new value for the option.
+     *
+     * @return string|false
+     *
+     * @throws RuntimeException|ArgumentCountError
+     */
+    public static function iniSet(string $option, string | int | float | bool | null $value): string | false
+    {
+        static $iniSetAvailable;
+
+        $iniSetAvailable ??= function_exists('ini_set');
+
+        if (!$iniSetAvailable) {
+            // disabled_functions?
+            // @codeCoverageIgnoreStart
+            throw new RuntimeException('Native ini_set function not available.');
+            // @codeCoverageIgnoreEnd
+        }
+
+        return ini_set($option, $value);
     }
 
     /**
@@ -270,6 +307,26 @@ final class Environment
     }
 
     /**
+     * isHttps().
+     *
+     * Checks to see if SSL is in use.
+     */
+    public static function isHttps(): bool
+    {
+        $headers = getallheaders();
+
+        $server    = Environment::var(self::HTTPS_HEADERS['default']);
+        $frontEnd  = Arrays::get($headers, self::HTTPS_HEADERS['forwarded'], '');
+        $forwarded = Arrays::get($headers, self::HTTPS_HEADERS['frontend'], '');
+
+        if ($server !== 'off' && $server !== '') {
+            return true;
+        }
+
+        return $forwarded === 'https' || ($frontEnd !== '' && $frontEnd !== 'off');
+    }
+
+    /**
      * isPrivateIp().
      *
      * Determines if an IP address is within the private range.
@@ -283,6 +340,18 @@ final class Environment
             FILTER_VALIDATE_IP,
             FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6 | FILTER_FLAG_NO_PRIV_RANGE
         );
+    }
+
+    /**
+     * isPublicIp().
+     *
+     * Determines if an IP address is not within the private or reserved ranges.
+     *
+     * @param string $ipaddress IP address to check.
+     */
+    public static function isPublicIp(string $ipaddress): bool
+    {
+        return (!Environment::isPrivateIp($ipaddress) && !Environment::isReservedIp($ipaddress));
     }
 
     /**
@@ -302,70 +371,24 @@ final class Environment
     }
 
     /**
-     * isPublicIp().
+     * requestMethod().
      *
-     * Determines if an IP address is not within the private or reserved ranges.
-     *
-     * @param string $ipaddress IP address to check.
+     * Gets the request method.
      */
-    public static function isPublicIp(string $ipaddress): bool
+    public static function requestMethod(): string
     {
-        return (!Environment::isPrivateIp($ipaddress) && !Environment::isReservedIp($ipaddress));
-    }
-
-    /**
-     * host().
-     *
-     * Determines current hostname.
-     *
-     * @param bool $stripWww        True to strip www. off the host, false to leave it be.
-     * @param bool $acceptForwarded True to accept, false otherwise.
-     */
-    public static function host(bool $stripWww = false, bool $acceptForwarded = false): string
-    {
-        /** @var string $forwarded */
-        $forwarded = Environment::var(self::HOST_HEADERS['forwarded']);
-
-        /** @var string $host */
-        $host = (
-            ($acceptForwarded && ($forwarded !== ''))
-            ? $forwarded
-            : (Environment::var(self::HOST_HEADERS['host'], Environment::var(self::HOST_HEADERS['server'])))
+        /** @var string $method */
+        $method = (
+            Environment::var(
+                self::REQUEST_HEADERS['override'],
+                Environment::var(
+                    self::REQUEST_HEADERS['method'],
+                    self::REQUEST_HEADERS['default']
+                )
+            )
         );
-        $host = trim($host);
 
-        if ($host === '' || preg_match(Environment::VALIDATE_HOST_REGEX, $host) === 0) {
-            $host = self::HOST_HEADERS['default'];
-        }
-
-        $host = Strings::lower($host);
-
-        // Strip 'www.'
-        if ($stripWww) {
-            $strippedHost = preg_replace('#^www\.#', '', $host);
-        }
-
-        return ($strippedHost ?? $host);
-    }
-
-    /**
-     * isHttps().
-     *
-     * Checks to see if SSL is in use.
-     */
-    public static function isHttps(): bool
-    {
-        $headers = getallheaders();
-
-        $server    = Environment::var(self::HTTPS_HEADERS['default']);
-        $frontEnd  = Arrays::get($headers, self::HTTPS_HEADERS['forwarded'], '');
-        $forwarded = Arrays::get($headers, self::HTTPS_HEADERS['frontend'], '');
-
-        if ($server !== 'off' && $server !== '') {
-            return true;
-        }
-
-        return $forwarded === 'https' || ($frontEnd !== '' && $frontEnd !== 'off');
+        return Strings::upper($method);
     }
 
     /**
@@ -411,68 +434,18 @@ final class Environment
     }
 
     /**
-     * iniGet().
+     * var().
      *
-     * Safe ini_get taking into account its availability.
+     * Gets a variable from $_SERVER using $default if not provided.
      *
-     * @param string $option      The configuration option name.
-     * @param bool   $standardize Standardize returned values to 1 or 0?
-     *
-     * @throws RuntimeException|ArgumentCountError
+     * @param string          $var     Variable name.
+     * @param string|int|null $default Default value to substitute.
      */
-    public static function iniGet(string $option, bool $standardize = false): string
+    public static function var(string $var, string | int | null $default = ''): string | int | null
     {
-        static $iniGetAvailable;
-
-        $iniGetAvailable ??= function_exists('ini_get');
-
-        if (!$iniGetAvailable) {
-            // disabled_functions?
-            // @codeCoverageIgnoreStart
-            throw new RuntimeException('Native ini_get function not available.');
-            // @codeCoverageIgnoreEnd
-        }
-
-        $value = ini_get($option);
-
-        if ($value === false) {
-            throw new RuntimeException('$option does not exist.');
-        }
-
-        $value = trim($value);
-
-        if ($standardize) {
-            return Environment::BOOLEAN_MAPPINGS[Strings::lower($value)] ?? $value;
-        }
+        /** @var string|int|null $value */
+        $value = Arrays::get($_SERVER, $var) ?? $default;
 
         return $value;
-    }
-
-    /**
-     * iniSet().
-     *
-     * Safe ini_set taking into account its availability.
-     *
-     * @param string                     $option The configuration option name.
-     * @param string|int|float|bool|null $value  The new value for the option.
-     *
-     * @return string|false
-     *
-     * @throws RuntimeException|ArgumentCountError
-     */
-    public static function iniSet(string $option, string | int | float | bool | null $value): string | false
-    {
-        static $iniSetAvailable;
-
-        $iniSetAvailable ??= function_exists('ini_set');
-
-        if (!$iniSetAvailable) {
-            // disabled_functions?
-            // @codeCoverageIgnoreStart
-            throw new RuntimeException('Native ini_set function not available.');
-            // @codeCoverageIgnoreEnd
-        }
-
-        return ini_set($option, $value);
     }
 }

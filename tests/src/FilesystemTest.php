@@ -3,41 +3,22 @@
 declare(strict_types=1);
 
 /**
- * Utility - Collection of various PHP utility functions.
+ * This file is part of PHPUnit Coverage Check.
  *
- * @author    Eric Sizemore <admin@secondversion.com>
+ * (c) 2017 - 2024 Eric Sizemore <admin@secondversion.com>
  *
- * @version   2.0.0
- *
- * @copyright (C) 2017 - 2024 Eric Sizemore
- * @license   The MIT License (MIT)
- *
- * Copyright (C) 2017 - 2024 Eric Sizemore <https://www.secondversion.com>.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to
- * deal in the Software without restriction, including without limitation the
- * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
- * sell copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * For the full copyright and license information, please view
+ * the LICENSE.md file that was distributed with this source code.
  */
 
 namespace Esi\Utility\Tests;
 
+use Esi\Utility\Arrays;
 use Esi\Utility\Filesystem;
+use Esi\Utility\Strings;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
@@ -66,6 +47,11 @@ use const DIRECTORY_SEPARATOR;
  * @internal
  */
 #[CoversClass(Filesystem::class)]
+#[CoversMethod(Arrays::class, 'valueExists')]
+#[CoversMethod(Strings::class, 'length')]
+#[CoversMethod(Strings::class, 'randomString')]
+#[CoversMethod(Strings::class, 'randomBytes')]
+#[CoversMethod(Strings::class, 'substr')]
 class FilesystemTest extends TestCase
 {
     protected static string $testDir;
@@ -116,62 +102,6 @@ class FilesystemTest extends TestCase
     }
 
     /**
-     * Test Filesystem::lineCounter().
-     */
-    public function testLineCounter(): void
-    {
-        Filesystem::fileWrite(self::$testFiles['file1'], "This\nis\na\nnew\nline.\n");
-        self::assertSame(5, array_sum(Filesystem::lineCounter(directory: self::$testDir, onlyLineCount: true)));
-        self::assertSame(0, array_sum(Filesystem::lineCounter(directory: self::$testDir, ignore: ['dir1'], onlyLineCount: true)));
-        self::assertSame(0, array_sum(Filesystem::lineCounter(self::$testDir, extensions: ['.txt'], onlyLineCount: true)));
-
-        $result = Filesystem::lineCounter(directory: self::$testDir);
-
-        self::assertArrayHasKey(self::$testDir, $result);
-        self::assertArrayHasKey('file1', $result[self::$testDir]); // @phpstan-ignore-line
-        self::assertArrayHasKey('file2', $result[self::$testDir]);
-        self::assertArrayHasKey('file3.txt', $result[self::$testDir]);
-        self::assertSame(5, $result[self::$testDir]['file1']);
-        self::assertSame(0, $result[self::$testDir]['file2']);
-        self::assertSame(0, $result[self::$testDir]['file3.txt']);
-
-        self::assertSame([], Filesystem::lineCounter(directory: self::$testDir, ignore: ['dir1']));
-        self::assertSame([], Filesystem::lineCounter(self::$testDir, extensions: ['.txt']));
-
-        Filesystem::fileWrite(self::$testFiles['file1']);
-
-        self::expectException(InvalidArgumentException::class);
-        array_sum(Filesystem::lineCounter('/this/should/not/exist', onlyLineCount: true));
-
-        self::expectException(InvalidArgumentException::class);
-        count(Filesystem::lineCounter('/this/should/not/exist'));
-
-        self::expectException(InvalidArgumentException::class);
-        array_sum(Filesystem::lineCounter('/this/should/not/exist', ignore: ['dir1'], onlyLineCount: true));
-
-        self::expectException(InvalidArgumentException::class);
-        count(Filesystem::lineCounter('/this/should/not/exist', ignore: ['dir1']));
-    }
-
-    /**
-     * Test Filesystem::directorySize().
-     */
-    public function testDirectorySize(): void
-    {
-        Filesystem::fileWrite(self::$testFiles['file1'], '1234567890');
-        Filesystem::fileWrite(self::$testFiles['file2'], implode('', range('a', 'z')));
-
-        self::assertSame(10 + 26, Filesystem::directorySize(self::$testDir));
-        self::assertSame(0, Filesystem::directorySize(self::$testDir, ['dir1']));
-
-        Filesystem::fileWrite(self::$testFiles['file1']);
-        Filesystem::fileWrite(self::$testFiles['file2']);
-
-        self::expectException(InvalidArgumentException::class);
-        Filesystem::directorySize('/this/should/not/exist');
-    }
-
-    /**
      * Test Filesystem::directoryList().
      */
     public function testDirectoryList(): void
@@ -199,26 +129,21 @@ class FilesystemTest extends TestCase
     }
 
     /**
-     * Test Filesystem::normalizeFilePath().
+     * Test Filesystem::directorySize().
      */
-    public function testNormalizeFilePath(): void
+    public function testDirectorySize(): void
     {
-        $separator = DIRECTORY_SEPARATOR;
+        Filesystem::fileWrite(self::$testFiles['file1'], '1234567890');
+        Filesystem::fileWrite(self::$testFiles['file2'], implode('', range('a', 'z')));
 
-        $path1 = __DIR__ . $separator . 'dir1' . $separator . 'file1';
-        self::assertSame($path1, Filesystem::normalizeFilePath($path1));
+        self::assertSame(10 + 26, Filesystem::directorySize(self::$testDir));
+        self::assertSame(0, Filesystem::directorySize(self::$testDir, ['dir1']));
 
-        $path2 = $path1 . $separator;
-        self::assertSame($path1, Filesystem::normalizeFilePath($path2));
+        Filesystem::fileWrite(self::$testFiles['file1']);
+        Filesystem::fileWrite(self::$testFiles['file2']);
 
-        $path3 = str_replace($separator, '\\//', $path2);
-        self::assertSame($path1, Filesystem::normalizeFilePath($path3));
-
-        $path4 = $path2 . '..' . $separator;
-        self::assertSame(str_replace($separator . 'file1', '', $path1), Filesystem::normalizeFilePath($path4));
-
-        $path5 = $path4 . '..';
-        self::assertSame(str_replace($separator . 'dir1' . $separator . 'file1', '', $path1), Filesystem::normalizeFilePath($path5));
+        self::expectException(InvalidArgumentException::class);
+        Filesystem::directorySize('/this/should/not/exist');
     }
 
     /**
@@ -270,5 +195,66 @@ class FilesystemTest extends TestCase
         self::expectException(RuntimeException::class);
         self::assertFalse(Filesystem::isReallyWritable('/this/should/not/exist'));
         self::assertFalse(Filesystem::isReallyWritable('/this/should/not/exist/file'));
+    }
+
+    /**
+     * Test Filesystem::lineCounter().
+     */
+    public function testLineCounter(): void
+    {
+        Filesystem::fileWrite(self::$testFiles['file1'], "This\nis\na\nnew\nline.\n");
+        self::assertSame(5, array_sum(Filesystem::lineCounter(directory: self::$testDir, onlyLineCount: true)));
+        self::assertSame(0, array_sum(Filesystem::lineCounter(directory: self::$testDir, ignore: ['dir1'], onlyLineCount: true)));
+        self::assertSame(0, array_sum(Filesystem::lineCounter(self::$testDir, extensions: ['.txt'], onlyLineCount: true)));
+
+        $result = Filesystem::lineCounter(directory: self::$testDir);
+
+        self::assertArrayHasKey(self::$testDir, $result);
+        self::assertArrayHasKey('file1', $result[self::$testDir]); // @phpstan-ignore-line
+        self::assertArrayHasKey('file2', $result[self::$testDir]);
+        self::assertArrayHasKey('file3.txt', $result[self::$testDir]);
+        self::assertSame(5, $result[self::$testDir]['file1']);
+        self::assertSame(0, $result[self::$testDir]['file2']);
+        self::assertSame(0, $result[self::$testDir]['file3.txt']);
+
+        self::assertSame([], Filesystem::lineCounter(directory: self::$testDir, ignore: ['dir1']));
+        self::assertSame([], Filesystem::lineCounter(self::$testDir, extensions: ['.txt']));
+
+        Filesystem::fileWrite(self::$testFiles['file1']);
+
+        self::expectException(InvalidArgumentException::class);
+        array_sum(Filesystem::lineCounter('/this/should/not/exist', onlyLineCount: true));
+
+        self::expectException(InvalidArgumentException::class);
+        count(Filesystem::lineCounter('/this/should/not/exist'));
+
+        self::expectException(InvalidArgumentException::class);
+        array_sum(Filesystem::lineCounter('/this/should/not/exist', ignore: ['dir1'], onlyLineCount: true));
+
+        self::expectException(InvalidArgumentException::class);
+        count(Filesystem::lineCounter('/this/should/not/exist', ignore: ['dir1']));
+    }
+
+    /**
+     * Test Filesystem::normalizeFilePath().
+     */
+    public function testNormalizeFilePath(): void
+    {
+        $separator = DIRECTORY_SEPARATOR;
+
+        $path1 = __DIR__ . $separator . 'dir1' . $separator . 'file1';
+        self::assertSame($path1, Filesystem::normalizeFilePath($path1));
+
+        $path2 = $path1 . $separator;
+        self::assertSame($path1, Filesystem::normalizeFilePath($path2));
+
+        $path3 = str_replace($separator, '\\//', $path2);
+        self::assertSame($path1, Filesystem::normalizeFilePath($path3));
+
+        $path4 = $path2 . '..' . $separator;
+        self::assertSame(str_replace($separator . 'file1', '', $path1), Filesystem::normalizeFilePath($path4));
+
+        $path5 = $path4 . '..';
+        self::assertSame(str_replace($separator . 'dir1' . $separator . 'file1', '', $path1), Filesystem::normalizeFilePath($path5));
     }
 }

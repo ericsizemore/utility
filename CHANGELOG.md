@@ -8,9 +8,10 @@ Simply replace the version numbers depending on which set of changes you wish to
 
 ### 2.0.1 (work in progress)
 
-  * Implemented various minor PHPCS-Fixer recommendations.
-    * Mostly reordering imports and reformatting doc blocks.
-  * Updated composer.lock
+  * Implemented various PHPCS-Fixer recommendations.
+  * Updated coding style via `.php-cs-fixer.dist.php`, and as a result, implemented those changes throughout the library.
+  * Changed the header being used for all files to something smaller, and more simple.
+  * Bumped version requirement for the PHPUnit dev-dependency to 11.1
   * Updated `tests` github workflow to add uploading coverage data to Codecov.io
   * Added mend.io's Renovate to workflow
 

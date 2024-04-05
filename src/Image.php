@@ -3,43 +3,18 @@
 declare(strict_types=1);
 
 /**
- * Utility - Collection of various PHP utility functions.
+ * This file is part of PHPUnit Coverage Check.
  *
- * @author    Eric Sizemore <admin@secondversion.com>
+ * (c) 2017 - 2024 Eric Sizemore <admin@secondversion.com>
  *
- * @version   2.0.0
- *
- * @copyright (C) 2017 - 2024 Eric Sizemore
- * @license   The MIT License (MIT)
- *
- * Copyright (C) 2017 - 2024 Eric Sizemore <https://www.secondversion.com>.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to
- * deal in the Software without restriction, including without limitation the
- * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
- * sell copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * For the full copyright and license information, please view
+ * the LICENSE.md file that was distributed with this source code.
  */
 
 namespace Esi\Utility;
 
-// Exceptions
 use finfo;
 use InvalidArgumentException;
-
-// Functions
 use RuntimeException;
 
 use function class_exists;
@@ -56,7 +31,7 @@ use const FILEINFO_MIME;
  * Image utilities.
  *
  * @since 2.0.0
- * @see \Esi\Utility\Tests\ImageTest
+ * @see Tests\ImageTest
  */
 final class Image
 {
@@ -73,6 +48,55 @@ final class Image
     ];
 
     /**
+     * Attempts to determine the image type. It tries to determine the image type with, in order
+     * of preference: Exif, finfo, and getimagesize.
+     *
+     * @param string $imagePath File path to the image.
+     *
+     * @return string|false Returns the image type string on success, false on any failure.
+     */
+    public static function guessImageType(string $imagePath): string | false
+    {
+        static $hasFinfo;
+
+        if (!Filesystem::isFile($imagePath)) {
+            throw new InvalidArgumentException('$imagePath not found or is not a file.');
+        }
+
+        // If Exif is available, let's start there. It's the fastest.
+        //@codeCoverageIgnoreStart
+        if (self::isExifAvailable()) {
+            return self::guessImageTypeExif($imagePath);
+        }
+
+        $hasFinfo ??= class_exists('finfo');
+
+        if ($hasFinfo) {
+            // Next, let's try finfo
+            return self::guessImageTypeFinfo($imagePath);
+        }
+
+        // Last resort: getimagesize can be pretty slow, especially compared to exif_imagetype
+        // It may not return "mime". Theoretically, this should only happen for a file that is not an image.
+        return self::guessImageTypeGetImageSize($imagePath);
+        //@codeCoverageIgnoreEnd
+    }
+
+    /**
+     * Check if the Exif extension is available on the server.
+     */
+    public static function isExifAvailable(): bool
+    {
+        //@codeCoverageIgnoreStart
+        static $hasExif;
+
+        $hasExif ??= extension_loaded('exif');
+
+        return $hasExif;
+        //@codeCoverageIgnoreEnd
+    }
+
+    /**
      * Check if the GD library is available on the server.
      */
     public static function isGdAvailable(): bool
@@ -84,6 +108,25 @@ final class Image
 
         return $hasGd;
         //@codeCoverageIgnoreEnd
+    }
+
+    /**
+     * Checks if image has GIF format.
+     *
+     * @param string $imagePath File path to the image.
+     *
+     * @throws InvalidArgumentException If the image path provided is not valid.
+     * @throws RuntimeException         If we are unable to determine the file type.
+     */
+    public static function isGif(string $imagePath): bool
+    {
+        $imageType = self::guessImageType($imagePath);
+
+        if ($imageType === false) {
+            throw new RuntimeException('Unable to determine the image type. Is it a valid image file?');
+        }
+
+        return Arrays::valueExists(self::IMAGE_TYPES['gif'], $imageType);
     }
 
     /**
@@ -115,17 +158,60 @@ final class Image
     }
 
     /**
-     * Check if the Exif extension is available on the server.
+     * Checks if image has JPG format.
+     *
+     * @param string $imagePath File path to the image.
+     *
+     * @throws InvalidArgumentException If the image path provided is not valid.
+     * @throws RuntimeException         If we are unable to determine the file type.
      */
-    public static function isExifAvailable(): bool
+    public static function isJpg(string $imagePath): bool
     {
-        //@codeCoverageIgnoreStart
-        static $hasExif;
+        $imageType = self::guessImageType($imagePath);
 
-        $hasExif ??= extension_loaded('exif');
+        if ($imageType === false) {
+            throw new RuntimeException('Unable to determine the image type. Is it a valid image file?');
+        }
 
-        return $hasExif;
-        //@codeCoverageIgnoreEnd
+        return Arrays::valueExists(self::IMAGE_TYPES['jpg'], $imageType);
+    }
+
+    /**
+     * Checks if image has PNG format.
+     *
+     * @param string $imagePath File path to the image.
+     *
+     * @throws InvalidArgumentException If the image path provided is not valid.
+     * @throws RuntimeException         If we are unable to determine the file type.
+     */
+    public static function isPng(string $imagePath): bool
+    {
+        $imageType = self::guessImageType($imagePath);
+
+        if ($imageType === false) {
+            throw new RuntimeException('Unable to determine the image type. Is it a valid image file?');
+        }
+
+        return Arrays::valueExists(self::IMAGE_TYPES['png'], $imageType);
+    }
+
+    /**
+     * Checks if image has WEBP format.
+     *
+     * @param string $imagePath File path to the image.
+     *
+     * @throws InvalidArgumentException If the image path provided is not valid.
+     * @throws RuntimeException         If we are unable to determine the file type.
+     */
+    public static function isWebp(string $imagePath): bool
+    {
+        $imageType = self::guessImageType($imagePath);
+
+        if ($imageType === false) {
+            throw new RuntimeException('Unable to determine the image type. Is it a valid image file?');
+        }
+
+        return Arrays::valueExists(self::IMAGE_TYPES['webp'], $imageType);
     }
 
     /**
@@ -195,116 +281,5 @@ final class Image
 
         return $imageSize['mime'] ?? false;
         //@codeCoverageIgnoreEnd
-    }
-
-    /**
-     * Attempts to determine the image type. It tries to determine the image type with, in order
-     * of preference: Exif, finfo, and getimagesize.
-     *
-     * @param string $imagePath File path to the image.
-     *
-     * @return string|false Returns the image type string on success, false on any failure.
-     */
-    public static function guessImageType(string $imagePath): string | false
-    {
-        static $hasFinfo;
-
-        if (!Filesystem::isFile($imagePath)) {
-            throw new InvalidArgumentException('$imagePath not found or is not a file.');
-        }
-
-        // If Exif is available, let's start there. It's the fastest.
-        //@codeCoverageIgnoreStart
-        if (self::isExifAvailable()) {
-            return self::guessImageTypeExif($imagePath);
-        }
-
-        $hasFinfo ??= class_exists('finfo');
-
-        if ($hasFinfo) {
-            // Next, let's try finfo
-            return self::guessImageTypeFinfo($imagePath);
-        }
-
-        // Last resort: getimagesize can be pretty slow, especially compared to exif_imagetype
-        // It may not return "mime". Theoretically, this should only happen for a file that is not an image.
-        return self::guessImageTypeGetImageSize($imagePath);
-        //@codeCoverageIgnoreEnd
-    }
-
-    /**
-     * Checks if image has JPG format.
-     *
-     * @param string $imagePath File path to the image.
-     *
-     * @throws InvalidArgumentException If the image path provided is not valid.
-     * @throws RuntimeException         If we are unable to determine the file type.
-     */
-    public static function isJpg(string $imagePath): bool
-    {
-        $imageType = self::guessImageType($imagePath);
-
-        if ($imageType === false) {
-            throw new RuntimeException('Unable to determine the image type. Is it a valid image file?');
-        }
-
-        return Arrays::valueExists(self::IMAGE_TYPES['jpg'], $imageType);
-    }
-
-    /**
-     * Checks if image has GIF format.
-     *
-     * @param string $imagePath File path to the image.
-     *
-     * @throws InvalidArgumentException If the image path provided is not valid.
-     * @throws RuntimeException         If we are unable to determine the file type.
-     */
-    public static function isGif(string $imagePath): bool
-    {
-        $imageType = self::guessImageType($imagePath);
-
-        if ($imageType === false) {
-            throw new RuntimeException('Unable to determine the image type. Is it a valid image file?');
-        }
-
-        return Arrays::valueExists(self::IMAGE_TYPES['gif'], $imageType);
-    }
-
-    /**
-     * Checks if image has PNG format.
-     *
-     * @param string $imagePath File path to the image.
-     *
-     * @throws InvalidArgumentException If the image path provided is not valid.
-     * @throws RuntimeException         If we are unable to determine the file type.
-     */
-    public static function isPng(string $imagePath): bool
-    {
-        $imageType = self::guessImageType($imagePath);
-
-        if ($imageType === false) {
-            throw new RuntimeException('Unable to determine the image type. Is it a valid image file?');
-        }
-
-        return Arrays::valueExists(self::IMAGE_TYPES['png'], $imageType);
-    }
-
-    /**
-     * Checks if image has WEBP format.
-     *
-     * @param string $imagePath File path to the image.
-     *
-     * @throws InvalidArgumentException If the image path provided is not valid.
-     * @throws RuntimeException         If we are unable to determine the file type.
-     */
-    public static function isWebp(string $imagePath): bool
-    {
-        $imageType = self::guessImageType($imagePath);
-
-        if ($imageType === false) {
-            throw new RuntimeException('Unable to determine the image type. Is it a valid image file?');
-        }
-
-        return Arrays::valueExists(self::IMAGE_TYPES['webp'], $imageType);
     }
 }

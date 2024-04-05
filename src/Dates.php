@@ -3,69 +3,43 @@
 declare(strict_types=1);
 
 /**
- * Utility - Collection of various PHP utility functions.
+ * This file is part of PHPUnit Coverage Check.
  *
- * @author    Eric Sizemore <admin@secondversion.com>
+ * (c) 2017 - 2024 Eric Sizemore <admin@secondversion.com>
  *
- * @version   2.0.0
- *
- * @copyright (C) 2017 - 2024 Eric Sizemore
- * @license   The MIT License (MIT)
- *
- * Copyright (C) 2017 - 2024 Eric Sizemore <https://www.secondversion.com>.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to
- * deal in the Software without restriction, including without limitation the
- * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
- * sell copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * For the full copyright and license information, please view
+ * the LICENSE.md file that was distributed with this source code.
  */
 
 namespace Esi\Utility;
 
-// Exceptions
 use DateTime;
 use DateTimeZone;
 use Exception;
-
-// Classes
 use InvalidArgumentException;
 use RuntimeException;
 
-// Functions
 use function ceil;
 use function time;
 
 /**
  * Date utilities.
  *
- * @see \Esi\Utility\Tests\DatesTest
+ * @see Tests\DatesTest
  */
 final class Dates
 {
+    /**
+     * Timezone default when one isn't provided.
+     */
+    public const DEFAULT_TIMEZONE = 'UTC';
+
     /**
      * Regex used to validate a given timestamp.
      *
      * @var string VALIDATE_TIMESTAMP_REGEX
      */
     public const VALIDATE_TIMESTAMP_REGEX = '/^\d{8,11}$/';
-
-    /**
-     * Timezone default when one isn't provided.
-     */
-    public const DEFAULT_TIMEZONE = 'UTC';
 
     /**
      * timeDifference().
@@ -161,21 +135,6 @@ final class Dates
     }
 
     /**
-     * Determines if a given timezone is valid, according to
-     * {@link http://www.php.net/manual/en/timezones.php}.
-     *
-     * @param string $timezone The timezone to validate.
-     */
-    public static function validTimezone(string $timezone): bool
-    {
-        static $validTimezones;
-
-        $validTimezones ??= DateTimeZone::listIdentifiers();
-
-        return Arrays::valueExists($validTimezones, $timezone);
-    }
-
-    /**
      * Determines if a given timestamp matches the valid range that is typically
      * found in a unix timestamp (at least in PHP).
      *
@@ -190,5 +149,20 @@ final class Dates
         }
 
         return (preg_match(self::VALIDATE_TIMESTAMP_REGEX, (string) $timestamp) === 1);
+    }
+
+    /**
+     * Determines if a given timezone is valid, according to
+     * {@link http://www.php.net/manual/en/timezones.php}.
+     *
+     * @param string $timezone The timezone to validate.
+     */
+    public static function validTimezone(string $timezone): bool
+    {
+        static $validTimezones;
+
+        $validTimezones ??= DateTimeZone::listIdentifiers();
+
+        return Arrays::valueExists($validTimezones, $timezone);
     }
 }
