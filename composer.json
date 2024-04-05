@@ -16,6 +16,20 @@
         "source": "https://github.com/ericsizemore/utility/tree/master",
         "security": "https://github.com/ericsizemore/utility/security/policy"
     },
+    "funding": [
+        {
+            "type": "custom",
+            "url": "https://ko-fi.com/ericsizemore"
+        },
+        {
+            "type": "github",
+            "url": "https://github.com/ericsizemore"
+        },
+        {
+            "type": "tidelift",
+            "url": "https://tidelift.com/funding/github/packagist/esi/utility"
+        }
+    ],
     "require": {
         "php": "^8.2 <8.5",
         "ext-json": "*",
