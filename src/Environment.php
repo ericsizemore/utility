@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * This file is part of PHPUnit Coverage Check.
+ * This file is part of Esi\Utility.
  *
  * (c) 2017 - 2024 Eric Sizemore <admin@secondversion.com>
  *
@@ -18,7 +18,6 @@ use RuntimeException;
 
 use function explode;
 use function filter_var;
-use function function_exists;
 use function getallheaders;
 use function ini_get;
 use function ini_set;
@@ -186,7 +185,7 @@ final class Environment
     {
         static $iniGetAvailable;
 
-        $iniGetAvailable ??= function_exists('ini_get');
+        $iniGetAvailable ??= \function_exists('ini_get');
 
         if (!$iniGetAvailable) {
             // disabled_functions?
@@ -195,7 +194,7 @@ final class Environment
             // @codeCoverageIgnoreEnd
         }
 
-        $value = ini_get($option);
+        $value = \ini_get($option);
 
         if ($value === false) {
             throw new RuntimeException('$option does not exist.');
@@ -226,7 +225,7 @@ final class Environment
     {
         static $iniSetAvailable;
 
-        $iniSetAvailable ??= function_exists('ini_set');
+        $iniSetAvailable ??= \function_exists('ini_set');
 
         if (!$iniSetAvailable) {
             // disabled_functions?

@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * This file is part of PHPUnit Coverage Check.
+ * This file is part of Esi\Utility.
  *
  * (c) 2017 - 2024 Eric Sizemore <admin@secondversion.com>
  *
@@ -18,8 +18,6 @@ use Esi\Utility\Arrays;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use stdClass;
-
-use function is_null;
 
 /**
  * Array utilities tests.
@@ -273,7 +271,7 @@ class TestArrayAccess implements ArrayAccess
     #[\Override]
     public function offsetSet(mixed $offset, mixed $value): void
     {
-        if (is_null($offset)) {
+        if (\is_null($offset)) {
             $this->container[] = $value;
         } else {
             $this->container[$offset] = $value;

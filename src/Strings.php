@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * This file is part of PHPUnit Coverage Check.
+ * This file is part of Esi\Utility.
  *
  * (c) 2017 - 2024 Eric Sizemore <admin@secondversion.com>
  *
@@ -29,7 +29,6 @@ use function mb_convert_case;
 use function mb_strlen;
 use function mb_strpos;
 use function mb_substr;
-use function ord;
 use function preg_quote;
 use function preg_replace;
 use function preg_replace_callback;
@@ -308,7 +307,7 @@ final class Strings
 
         // Split and process
         $email = array_map(
-            static fn (string $char): string => '&#' . ord($char) . ';',
+            static fn (string $char): string => '&#' . \ord($char) . ';',
             /** @scrutinizer ignore-type */
             str_split($email)
         );

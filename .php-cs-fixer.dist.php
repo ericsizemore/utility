@@ -2,16 +2,8 @@
 
 declare(strict_types=1);
 
-/**
- * This file is part of PHPUnit Coverage Check.
- *
- * (c) 2017 - 2024 Eric Sizemore <admin@secondversion.com>
- *
- * For the full copyright and license information, please view
- * the LICENSE.md file that was distributed with this source code.
- */
 $header = <<<'EOF'
-    This file is part of PHPUnit Coverage Check.
+    This file is part of Esi\Utility.
 
     (c) 2017 - 2024 Eric Sizemore <admin@secondversion.com>
 
@@ -72,7 +64,7 @@ $config
         'declare_equal_normalize'      => ['space' => 'none'],
         'declare_parentheses'          => true,
         'declare_strict_types'         => true,
-        'global_namespace_import'      => ['import_classes' => true, 'import_constants' => true, 'import_functions' => true],
+        //'global_namespace_import'      => ['import_classes' => true, 'import_constants' => true, 'import_functions' => true],
         'header_comment'               => ['comment_type' => 'PHPDoc', 'header' => $header, 'separate' => 'top'],
         'ordered_class_elements'       => [
             'order' => [
@@ -106,7 +98,6 @@ $config
         PhpCsFixer\Finder::create()
             ->in(__DIR__ . '/src')
             ->in(__DIR__ . '/tests')
-            ->append([__DIR__ . '/.php-cs-fixer.dist.php'])
     )
 ;
 

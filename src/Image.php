@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * This file is part of PHPUnit Coverage Check.
+ * This file is part of Esi\Utility.
  *
  * (c) 2017 - 2024 Eric Sizemore <admin@secondversion.com>
  *
@@ -20,10 +20,8 @@ use RuntimeException;
 use function class_exists;
 use function exif_imagetype;
 use function explode;
-use function extension_loaded;
 use function getimagesize;
 use function image_type_to_mime_type;
-use function is_int;
 
 use const FILEINFO_MIME;
 
@@ -90,7 +88,7 @@ final class Image
         //@codeCoverageIgnoreStart
         static $hasExif;
 
-        $hasExif ??= extension_loaded('exif');
+        $hasExif ??= \extension_loaded('exif');
 
         return $hasExif;
         //@codeCoverageIgnoreEnd
@@ -104,7 +102,7 @@ final class Image
         //@codeCoverageIgnoreStart
         static $hasGd;
 
-        $hasGd ??= extension_loaded('gd');
+        $hasGd ??= \extension_loaded('gd');
 
         return $hasGd;
         //@codeCoverageIgnoreEnd
@@ -137,7 +135,7 @@ final class Image
         //@codeCoverageIgnoreStart
         static $hasGmagick;
 
-        $hasGmagick ??= extension_loaded('gmagick');
+        $hasGmagick ??= \extension_loaded('gmagick');
 
         return $hasGmagick;
         //@codeCoverageIgnoreEnd
@@ -151,7 +149,7 @@ final class Image
         //@codeCoverageIgnoreStart
         static $hasImagick;
 
-        $hasImagick ??= extension_loaded('imagick');
+        $hasImagick ??= \extension_loaded('imagick');
 
         return $hasImagick;
         //@codeCoverageIgnoreEnd
@@ -229,7 +227,7 @@ final class Image
         // Ignoring code coverage as if one method is available over another, the others won't be or need to be tested
         $imageType = @exif_imagetype($imagePath);
 
-        return (is_int($imageType) ? image_type_to_mime_type($imageType) : false);
+        return (\is_int($imageType) ? image_type_to_mime_type($imageType) : false);
         //@codeCoverageIgnoreEnd
     }
 

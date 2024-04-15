@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * This file is part of PHPUnit Coverage Check.
+ * This file is part of Esi\Utility.
  *
  * (c) 2017 - 2024 Eric Sizemore <admin@secondversion.com>
  *
@@ -16,16 +16,10 @@ namespace Esi\Utility;
 use ArrayAccess;
 use RuntimeException;
 
-use function array_key_exists;
 use function array_map;
 use function array_merge;
 use function array_sum;
-use function call_user_func;
-use function count;
 use function get_object_vars;
-use function in_array;
-use function is_array;
-use function is_object;
 use function sprintf;
 use function trigger_error;
 
@@ -77,7 +71,7 @@ final class Arrays
         $result = [];
 
         foreach ($array as $key => $value) {
-            if (is_array($value) && $value !== []) {
+            if (\is_array($value) && $value !== []) {
                 $result = array_merge($result, Arrays::flatten($value, $separator, $prepend . $key . $separator));
             } else {
                 $result[$prepend . $key] = $value;
@@ -174,7 +168,7 @@ final class Arrays
      */
     public static function interlace(array ...$args): array | false
     {
-        $numArgs = count($args);
+        $numArgs = \count($args);
 
         if ($numArgs === 0) {
             return false;
@@ -222,7 +216,7 @@ final class Arrays
             return $array->offsetExists($key);
         }
 
-        return array_key_exists($key, $array);
+        return \array_key_exists($key, $array);
     }
 
     /**
@@ -238,17 +232,17 @@ final class Arrays
      */
     public static function mapDeep(mixed $array, callable $callback): mixed
     {
-        if (is_array($array)) {
+        if (\is_array($array)) {
             foreach ($array as $key => $value) {
                 $array[$key] = Arrays::mapDeep($value, $callback);
             }
-        } elseif (is_object($array)) {
+        } elseif (\is_object($array)) {
             foreach (get_object_vars($array) as $key => $value) {
                 // @phpstan-ignore-next-line
                 $array->$key = Arrays::mapDeep($value, $callback);
             }
         } else {
-            $array = call_user_func($callback, $array);
+            $array = \call_user_func($callback, $array);
         }
 
         return $array;
@@ -282,6 +276,6 @@ final class Arrays
      */
     public static function valueExists(array $array, string | int $value): bool
     {
-        return in_array($value, $array, true);
+        return \in_array($value, $array, true);
     }
 }

@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * This file is part of PHPUnit Coverage Check.
+ * This file is part of Esi\Utility.
  *
  * (c) 2017 - 2024 Eric Sizemore <admin@secondversion.com>
  *
@@ -25,7 +25,6 @@ use RuntimeException;
 use function array_diff;
 use function array_sum;
 use function chmod;
-use function count;
 use function file_exists;
 use function implode;
 use function is_dir;
@@ -226,13 +225,13 @@ class FilesystemTest extends TestCase
         array_sum(Filesystem::lineCounter('/this/should/not/exist', onlyLineCount: true));
 
         self::expectException(InvalidArgumentException::class);
-        count(Filesystem::lineCounter('/this/should/not/exist'));
+        \count(Filesystem::lineCounter('/this/should/not/exist'));
 
         self::expectException(InvalidArgumentException::class);
         array_sum(Filesystem::lineCounter('/this/should/not/exist', ignore: ['dir1'], onlyLineCount: true));
 
         self::expectException(InvalidArgumentException::class);
-        count(Filesystem::lineCounter('/this/should/not/exist', ignore: ['dir1']));
+        \count(Filesystem::lineCounter('/this/should/not/exist', ignore: ['dir1']));
     }
 
     /**

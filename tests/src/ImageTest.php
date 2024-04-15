@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * This file is part of PHPUnit Coverage Check.
+ * This file is part of Esi\Utility.
  *
  * (c) 2017 - 2024 Eric Sizemore <admin@secondversion.com>
  *
@@ -22,8 +22,6 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
-
-use function dirname;
 
 use const DIRECTORY_SEPARATOR;
 
@@ -48,7 +46,7 @@ class ImageTest extends TestCase
     #[\Override]
     protected function setUp(): void
     {
-        $this->resourceDir = dirname(__FILE__, 2) . DIRECTORY_SEPARATOR . 'resources/';
+        $this->resourceDir = \dirname(__FILE__, 2) . DIRECTORY_SEPARATOR . 'resources/';
 
         $this->resources = [
             'image/jpeg' => $this->resourceDir . 'testImage.jpg',

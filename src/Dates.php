@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * This file is part of PHPUnit Coverage Check.
+ * This file is part of Esi\Utility.
  *
  * (c) 2017 - 2024 Eric Sizemore <admin@secondversion.com>
  *
@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Esi\Utility;
 
-use DateTime;
-use DateTimeZone;
+use Esi\Clock\FrozenClock;
+use Esi\Clock\SystemClock;
 use Exception;
 use InvalidArgumentException;
 use RuntimeException;
@@ -75,11 +75,11 @@ final class Dates
         }
 
         // Create DateTime objects and set timezone
-        $timestampFrom = (new DateTime('@' . $timestampFrom))->setTimezone(new DateTimeZone($timezone));
-        $timestampTo   = (new DateTime('@' . $timestampTo))->setTimezone(new DateTimeZone($timezone));
+        $timestampFrom = new FrozenClock(new \DateTimeImmutable('@' . $timestampFrom, new \DateTimeZone($timezone)));
+        $timestampTo   = new FrozenClock(new \DateTimeImmutable('@' . $timestampTo, new \DateTimeZone($timezone)));
 
         // Calculate difference
-        $difference = $timestampFrom->diff($timestampTo);
+        $difference = $timestampFrom->now()->diff($timestampTo->now());
 
         // Format the difference
         $string = match (true) {
@@ -121,16 +121,20 @@ final class Dates
             throw new RuntimeException('$timezone appears to be invalid.');
         }
 
-        $dateTimeZone = new DateTimeZone($timezone);
+        $clock = (new SystemClock($timezone))->freeze();
 
-        $location = $dateTimeZone->getLocation();
+        $location    = $clock->now()->getTimeZone()->getLocation();
+        $transitions = $clock->now()->getTimeZone()->getTransitions(
+            $clock->now()->getTimestamp(),
+            $clock->now()->getTimestamp()
+        );
 
         return [
-            'offset'    => $dateTimeZone->getOffset(new DateTime('now', new DateTimeZone('GMT'))) / 3_600,
+            'offset'    => $clock->now()->getOffset() / 3_600,
             'country'   => $location['country_code'] ?? 'N/A',
             'latitude'  => $location['latitude'] ?? 'N/A',
             'longitude' => $location['longitude'] ?? 'N/A',
-            'dst'       => $dateTimeZone->getTransitions(time(), time())[0]['isdst'] ?? null,
+            'dst'       => $transitions[0]['isdst'] ?? null,
         ];
     }
 
@@ -161,7 +165,7 @@ final class Dates
     {
         static $validTimezones;
 
-        $validTimezones ??= DateTimeZone::listIdentifiers();
+        $validTimezones ??= \DateTimeZone::listIdentifiers();
 
         return Arrays::valueExists($validTimezones, $timezone);
     }

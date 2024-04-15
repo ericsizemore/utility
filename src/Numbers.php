@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * This file is part of PHPUnit Coverage Check.
+ * This file is part of Esi\Utility.
  *
  * (c) 2017 - 2024 Eric Sizemore <admin@secondversion.com>
  *
@@ -18,7 +18,6 @@ use Random\RandomException;
 use ValueError;
 
 use function abs;
-use function count;
 use function number_format;
 use function random_int;
 use function sprintf;
@@ -160,7 +159,7 @@ final class Numbers
         }
 
         // Perform the conversion
-        for ($i = 0; ($bytes / $base) > Numbers::CONVERSION_MODIFIER && ($i < count($units) - 1); ++$i) {
+        for ($i = 0; ($bytes / $base) > Numbers::CONVERSION_MODIFIER && ($i < \count($units) - 1); ++$i) {
             $bytes /= $base;
         }
 
