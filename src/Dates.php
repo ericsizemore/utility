@@ -74,7 +74,7 @@ final class Dates
             throw new InvalidArgumentException('$timestampFrom needs to be less than $timestampTo.');
         }
 
-        // Create DateTime objects and set timezone
+        // Create FrozenClock objects with timezone
         $timestampFrom = new FrozenClock(new \DateTimeImmutable('@' . $timestampFrom, new \DateTimeZone($timezone)));
         $timestampTo   = new FrozenClock(new \DateTimeImmutable('@' . $timestampTo, new \DateTimeZone($timezone)));
 
@@ -123,8 +123,8 @@ final class Dates
 
         $clock = (new SystemClock($timezone))->freeze();
 
-        $location    = $clock->now()->getTimeZone()->getLocation();
-        $transitions = $clock->now()->getTimeZone()->getTransitions(
+        $location    = $clock->now()->getTimezone()->getLocation();
+        $transitions = $clock->now()->getTimezone()->getTransitions(
             $clock->now()->getTimestamp(),
             $clock->now()->getTimestamp()
         );
