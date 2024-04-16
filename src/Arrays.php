@@ -20,10 +20,6 @@ use function array_map;
 use function array_merge;
 use function array_sum;
 use function get_object_vars;
-use function sprintf;
-use function trigger_error;
-
-use const E_USER_DEPRECATED;
 
 /**
  * Array utilities.
@@ -32,25 +28,6 @@ use const E_USER_DEPRECATED;
  */
 final class Arrays
 {
-    /**
-     * Checks if a key exists in an array.
-     *
-     * @deprecated
-     *
-     * @param array<mixed>|ArrayAccess<mixed, mixed> $array Array to check
-     * @param string|int                             $key   Key to check
-     */
-    public static function exists(array | ArrayAccess $array, string | int $key): bool
-    {
-        trigger_error(sprintf(
-            '%s is deprecated and will be removed in v2.1.0, use %s instead.',
-            __METHOD__,
-            self::class . '::keyExists'
-        ), E_USER_DEPRECATED);
-
-        return Arrays::keyExists($array, $key);
-    }
-
     /**
      * flatten().
      *

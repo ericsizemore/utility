@@ -6,7 +6,7 @@ you can use the following url: https://github.com/ericsizemore/utility/compare/v
 
 Simply replace the version numbers depending on which set of changes you wish to see.
 
-### 2.0.1 (work in progress)
+### 2.1.0 (work in progress)
 
   * Implemented various PHPCS-Fixer recommendations.
   * Updated coding style via `.php-cs-fixer.dist.php`, and as a result, implemented those changes throughout the library.
@@ -15,6 +15,7 @@ Simply replace the version numbers depending on which set of changes you wish to
   * Updated `tests` github workflow to add uploading coverage data to Codecov.io
   * Added mend.io's Renovate to workflow
   * Added `Esi\Clock` to dependencies, updated `Esi\Utility\Dates` accordingly.
+  * Dropped deprecated `Arrays::exists`
 
 ### 2.0.0 (2024-03-04)
 

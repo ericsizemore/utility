@@ -501,7 +501,7 @@ final class Strings
      */
     public static function validEmail(string $email): bool
     {
-        return (bool) filter_var($email, FILTER_VALIDATE_EMAIL);
+        return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
     }
 
     /**

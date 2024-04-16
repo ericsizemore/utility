@@ -13,17 +13,13 @@ declare(strict_types=1);
 
 namespace Esi\Utility;
 
-use finfo;
 use InvalidArgumentException;
 use RuntimeException;
 
 use function class_exists;
-use function exif_imagetype;
 use function explode;
 use function getimagesize;
 use function image_type_to_mime_type;
-
-use const FILEINFO_MIME;
 
 /**
  * Image utilities.
@@ -225,7 +221,7 @@ final class Image
     {
         //@codeCoverageIgnoreStart
         // Ignoring code coverage as if one method is available over another, the others won't be or need to be tested
-        $imageType = @exif_imagetype($imagePath);
+        $imageType = @\exif_imagetype($imagePath);
 
         return (\is_int($imageType) ? image_type_to_mime_type($imageType) : false);
         //@codeCoverageIgnoreEnd
@@ -244,7 +240,7 @@ final class Image
     {
         //@codeCoverageIgnoreStart
         // Ignoring code coverage as if one method is available over another, the others won't be or need to be tested
-        $finfo  = new finfo(FILEINFO_MIME);
+        $finfo  = new \finfo(\FILEINFO_MIME);
         $result = $finfo->file($imagePath);
 
         if ($result === false) {

@@ -39,7 +39,7 @@ final class Dates
      *
      * @var string VALIDATE_TIMESTAMP_REGEX
      */
-    public const VALIDATE_TIMESTAMP_REGEX = '/^\d{8,11}$/';
+    public const VALIDATE_TIMESTAMP_REGEX = '/^\d{8,13}$/';
 
     /**
      * timeDifference().
@@ -142,17 +142,18 @@ final class Dates
      * Determines if a given timestamp matches the valid range that is typically
      * found in a unix timestamp (at least in PHP).
      *
-     * Typically, a timestamp for PHP can be valid if it is either 0 or between 8 and 11 digits in length.
+     * Typically, a unix timestamp can be between 8 and 13 digits in length, and considered
+     * valid if greater than 0.
      *
      * @param int $timestamp The timestamp to validate.
      */
     public static function validateTimestamp(int $timestamp): bool
     {
-        if ($timestamp === 0 || $timestamp < 0) {
+        if ($timestamp === 0 || $timestamp < 0 || $timestamp > PHP_INT_MAX) {
             return false;
         }
 
-        return (preg_match(self::VALIDATE_TIMESTAMP_REGEX, (string) $timestamp) === 1);
+        return preg_match(self::VALIDATE_TIMESTAMP_REGEX, (string) $timestamp) === 1;
     }
 
     /**

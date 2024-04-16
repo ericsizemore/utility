@@ -27,21 +27,6 @@ use stdClass;
 #[CoversClass(Arrays::class)]
 class ArraysTest extends TestCase
 {
-    public function testExistsDeprecation(): void
-    {
-        $array = ['test' => 1];
-
-        $testArrayAccess         = new TestArrayAccess();
-        $testArrayAccess['test'] = 1;
-
-        $this->expectUserDeprecationMessage(Arrays::class . '::exists is deprecated and will be removed in v2.1.0, use ' . Arrays::class . '::keyExists instead.');
-        self::assertTrue(Arrays::exists($array, 'test'));
-        self::assertFalse(Arrays::exists($array, 'this'));
-
-        self::assertTrue(Arrays::exists($testArrayAccess, 'test'));
-        self::assertFalse(Arrays::exists($testArrayAccess, 'this'));
-    }
-
     /**
      * Test Arrays::flatten().
      */

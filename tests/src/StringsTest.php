@@ -206,14 +206,11 @@ class StringsTest extends TestCase
     {
         // With no ini update.
         Strings::setEncoding('UCS-2');
-
         self::assertSame('UCS-2', Strings::getEncoding());
-
         Strings::setEncoding('UTF-8');
 
         // With ini update.
         Strings::setEncoding('UCS-2', true);
-
         self::assertSame('UCS-2', Strings::getEncoding());
         self::assertSame('UCS-2', Environment::iniGet('default_charset'));
         self::assertSame('UCS-2', Environment::iniGet('internal_encoding'));
@@ -224,20 +221,10 @@ class StringsTest extends TestCase
     /**
      * Test Strings::slugify().
      */
-    public function testSlugify(): void
+    #[DataProvider('slugifyProvider')]
+    public function testSlugify(string $expected, string $input, string $separator, string $language): void
     {
-        self::assertSame('a-simple-title', Strings::slugify('A simple title'));
-        self::assertSame('this-post-it-has-a-dash', Strings::slugify('This post -- it has a dash'));
-        self::assertSame('123-1251251', Strings::slugify('123----1251251'));
-
-        self::assertSame('a_simple_title', Strings::slugify('A simple title', '_'));
-        self::assertSame('this_post_it_has_a_dash', Strings::slugify('This post -- it has a dash', '_'));
-        self::assertSame('123_1251251', Strings::slugify('123----1251251', '_'));
-
-        self::assertSame('a-simple-title', Strings::slugify('a-simple-title'));
-        self::assertSame('', Strings::slugify(' '));
-
-        self::assertSame('this-is-a-simple-title', Strings::slugify('Țhîș îș ă șîmple țîțle', '-', 'ro'));
+        self::assertSame($expected, Strings::slugify($input, $separator, $language));
     }
 
     /**
@@ -248,15 +235,12 @@ class StringsTest extends TestCase
         // Returns -1 if string1 is less than string2; 1 if string1 is greater than string2, and 0 if they are equal.
         $str1 = 'test';
         $str2 = 'Test';
-
         self::assertSame(0, Strings::strcasecmp($str1, $str2));
 
         $str1 = 'tes';
-
         self::assertSame(-1, Strings::strcasecmp($str1, $str2));
 
         $str1 = 'testing';
-
         self::assertSame(1, Strings::strcasecmp($str1, $str2));
     }
 
@@ -317,47 +301,44 @@ class StringsTest extends TestCase
     /**
      * Provides data for testCamelCase().
      *
-     * Shoutout to Daniel St. Jules (https://github.com/danielstjules/Stringy/) for
-     * inspiration for this function. This function is based on Stringy/Test/camelizeProvider().
+     * Shoutout to Daniel St. Jules (https://github.com/danielstjules/Stringy/). The data for
+     * this provider is based on Stringy/Test/camelizeProvider().
+     *
+     * @see https://github.com/danielstjules/Stringy/blob/master/tests/StringyTest.php#L372
      */
     public static function camelCaseProvider(): Iterator
     {
         yield ['camelCase', 'CamelCase'];
-
         yield ['camelCase', 'Camel-Case'];
-
         yield ['camelCase', 'camel case'];
-
         yield ['camelCase', 'camel -case'];
-
         yield ['camelCase', 'camel - case'];
-
         yield ['camelCase', 'camel_case'];
-
         yield ['camelCTest', 'camel c test'];
-
         yield ['stringWith1Number', 'string_with1number'];
-
         yield ['stringWith22Numbers', 'string-with-2-2 numbers'];
-
         yield ['dataRate', 'data_rate'];
-
         yield ['backgroundColor', 'background-color'];
-
         yield ['yesWeCan', 'yes_we_can'];
-
         yield ['mozSomething', '-moz-something'];
-
         yield ['carSpeed', '_car_speed_'];
-
         yield ['serveHTTP', 'ServeHTTP'];
-
         yield ['1Camel2Case', '1camel2case'];
-
         yield ['camelΣase', 'camel σase', 'UTF-8'];
-
         yield ['στανιλCase', 'Στανιλ case', 'UTF-8'];
-
         yield ['σamelCase', 'σamel  Case', 'UTF-8'];
+    }
+
+    public static function slugifyProvider(): Iterator
+    {
+        yield ['a-simple-title', 'A simple title', '-', 'en'];
+        yield ['this-post-it-has-a-dash', 'This post -- it has a dash', '-', 'en'];
+        yield ['123-1251251', '123----1251251', '-', 'en'];
+        yield ['a_simple_title', 'A simple title', '_', 'en'];
+        yield ['this_post_it_has_a_dash', 'This post -- it has a dash', '_', 'en'];
+        yield ['123_1251251', '123----1251251', '_', 'en'];
+        yield ['a-simple-title', 'a-simple-title', '-', 'en'];
+        yield ['', ' ', '-', 'en'];
+        yield ['this-is-a-simple-title', 'Țhîș îș ă șîmple țîțle', '-', 'ro'];
     }
 }
