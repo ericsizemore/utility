@@ -15,7 +15,7 @@ Simply replace the version numbers depending on which set of changes you wish to
   * Updated `tests` github workflow to add uploading coverage data to Codecov.io
   * Added mend.io's Renovate to workflow
   * Added `Esi\Clock` to dependencies, updated `Esi\Utility\Dates` accordingly.
-  * Dropped deprecated `Arrays::exists`
+  * Removed deprecated `Arrays::exists`
   * Made all utility classes `abstract` as they never need instantiation.
 
 ### 2.0.0 (2024-03-04)
