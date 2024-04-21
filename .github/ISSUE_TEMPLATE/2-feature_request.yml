@@ -8,11 +8,9 @@ body:
         Before requesting a new feature, make sure your version of Utility is up-to-date.
 
         > [!NOTE]
-        > While it is not required to first use [discussions](https://github.com/ericsizemore/utility/discussions/categories/ideas),
-        > before creating a request, it is preferable.
+        > While it is not required to first create a [discussion](https://github.com/ericsizemore/utility/discussions/categories/ideas) before creating a request, it is preferable.
 
-        By first using [discussions](https://github.com/ericsizemore/utility/discussions/categories/ideas) to discuss a feature request
-        or idea, it allows the scope of the request to be fleshed out and established before the actual issue is created.
+        By first using [discussions](https://github.com/ericsizemore/utility/discussions/categories/ideas) to discuss a feature request or idea, it allows the scope of the request to be fleshed out and established before the actual issue is created.
   - type: textarea
     id: feature-request
     attributes:
