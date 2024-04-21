@@ -65,7 +65,7 @@ abstract class Dates
         }
 
         // Create FrozenClock with timezone
-        static $frozenClock = (new SystemClock(new \DateTimeZone($timezone)))->freeze();
+        $frozenClock = (new SystemClock(new \DateTimeZone($timezone)))->freeze();
 
         // Normalize timestamps
         $timestampTo   = (Dates::validateTimestamp($timestampTo)) ? $timestampTo : $frozenClock->now()->getTimestamp();
