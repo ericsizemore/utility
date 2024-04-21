@@ -17,6 +17,8 @@ Simply replace the version numbers depending on which set of changes you wish to
   * Added `Esi\Clock` to dependencies, updated `Esi\Utility\Dates` accordingly.
   * Removed deprecated `Arrays::exists`
   * Made all utility classes `abstract` as they never need instantiation.
+  * Separate contributing information into its own file.
+  * Create a code of conduct.
 
 ### 2.0.0 (2024-03-04)
 
