@@ -59,9 +59,7 @@ class DatesTest extends TestCase
      */
     public function testTimeDifference(): void
     {
-        static $clock;
-
-        $clock ??= FrozenClock::fromUtc()->now();
+        $clock = FrozenClock::fromUtc()->now();
 
         $modifyClock = static function (int $minus) use ($clock): int {
             return $clock->getTimestamp() - $minus;
