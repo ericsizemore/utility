@@ -27,7 +27,7 @@ use function image_type_to_mime_type;
  * @since 2.0.0
  * @see Tests\ImageTest
  */
-final class Image
+abstract class Image
 {
     /**
      * Image type/mime strings to determine image type.

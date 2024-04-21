@@ -26,7 +26,7 @@ use function sqrt;
  *
  * @see Tests\ConversionTest
  */
-final class Conversion
+abstract class Conversion
 {
     /**
      * @var int EARTH_RADIUS          Earth's radius, in meters.

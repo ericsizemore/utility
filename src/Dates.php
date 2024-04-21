@@ -27,7 +27,7 @@ use function time;
  *
  * @see Tests\DatesTest
  */
-final class Dates
+abstract class Dates
 {
     /**
      * Timezone default when one isn't provided.
@@ -64,9 +64,12 @@ final class Dates
             throw new RuntimeException('$timezone appears to be invalid.');
         }
 
+        // Create FrozenClock with timezone
+        static $frozenClock = (new SystemClock(new \DateTimeZone($timezone)))->freeze();
+
         // Normalize timestamps
-        $timestampTo   = (Dates::validateTimestamp($timestampTo)) ? $timestampTo : time();
-        $timestampFrom = (Dates::validateTimestamp($timestampFrom)) ? $timestampFrom : time();
+        $timestampTo   = (Dates::validateTimestamp($timestampTo)) ? $timestampTo : $frozenClock->now()->getTimestamp();
+        $timestampFrom = (Dates::validateTimestamp($timestampFrom)) ? $timestampFrom : $frozenClock->now()->getTimestamp();
 
         // This will generally only happen if the $timestampFrom was 0, or if it's invalid, as it is set to time();
         // as is $timestampTo if left at 0
@@ -74,12 +77,10 @@ final class Dates
             throw new InvalidArgumentException('$timestampFrom needs to be less than $timestampTo.');
         }
 
-        // Create FrozenClock objects with timezone
-        $timestampFrom = new FrozenClock(new \DateTimeImmutable('@' . $timestampFrom, new \DateTimeZone($timezone)));
-        $timestampTo   = new FrozenClock(new \DateTimeImmutable('@' . $timestampTo, new \DateTimeZone($timezone)));
-
         // Calculate difference
-        $difference = $timestampFrom->now()->diff($timestampTo->now());
+        $timestampFrom = $frozenClock->now()->setTimestamp($timestampFrom);
+        $timestampTo   = $frozenClock->now()->setTimestamp($timestampTo);
+        $difference    = $timestampFrom->diff($timestampTo);
 
         // Format the difference
         $string = match (true) {

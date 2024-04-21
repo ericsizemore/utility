@@ -53,7 +53,7 @@ use const MB_CASE_UPPER;
  *
  * @see Tests\StringsTest
  */
-final class Strings
+abstract class Strings
 {
     /**
      * Encoding to use for multibyte-based functions.

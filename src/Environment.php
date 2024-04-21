@@ -37,7 +37,7 @@ use const FILTER_VALIDATE_IP;
  *
  * @see Tests\EnvironmentTest
  */
-final class Environment
+abstract class Environment
 {
     /**
      * Maps values to their boolean equivalent for Environment::iniGet(standardize: true).

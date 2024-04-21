@@ -2,7 +2,7 @@
 A not so exhaustive list of changes for each release.
 
 For a more detailed listing of changes between each version, 
-you can use the following url: https://github.com/ericsizemore/utility/compare/v1.3.0...v2.0.0. 
+you can use the following url: https://github.com/ericsizemore/utility/compare/v1.3.0...v2.1.0. 
 
 Simply replace the version numbers depending on which set of changes you wish to see.
 
@@ -16,6 +16,7 @@ Simply replace the version numbers depending on which set of changes you wish to
   * Added mend.io's Renovate to workflow
   * Added `Esi\Clock` to dependencies, updated `Esi\Utility\Dates` accordingly.
   * Dropped deprecated `Arrays::exists`
+  * Made all utility classes `abstract` as they never need instantiation.
 
 ### 2.0.0 (2024-03-04)
 

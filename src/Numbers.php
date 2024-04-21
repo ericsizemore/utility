@@ -27,7 +27,7 @@ use function sprintf;
  *
  * @see Tests\NumbersTest
  */
-final class Numbers
+abstract class Numbers
 {
     /**
      * Constants for Numbers::sizeFormat(). Sets bases and modifier for the conversion.

@@ -26,7 +26,7 @@ use function get_object_vars;
  *
  * @see Tests\ArraysTest
  */
-final class Arrays
+abstract class Arrays
 {
     /**
      * flatten().

@@ -50,7 +50,7 @@ use const PHP_OS_FAMILY;
  *
  * @see Tests\FilesystemTest
  */
-final class Filesystem
+abstract class Filesystem
 {
     /**
      * directoryList().

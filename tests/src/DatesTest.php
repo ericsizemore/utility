@@ -48,19 +48,39 @@ class DatesTest extends TestCase
      */
     public function testInvalidTimezoneTimeDifference(): void
     {
+        $clock = FrozenClock::fromUtc()->now();
+
         self::expectException(RuntimeException::class);
-        Dates::timeDifference(FrozenClock::fromUtc()->now()->getTimestamp() - 30, timezone: 'INVALID');
+        Dates::timeDifference($clock->modify('-30 seconds')->getTimestamp(), timezone: 'INVALID');
     }
 
     /**
      * Test Dates::timeDifference().
-     *
-     * @param array{0: int, 1?: int, 2?: string} $args
      */
-    #[DataProvider('timeDifferenceProvider')]
-    public function testTimeDifference(string $expected, array $args): void
+    public function testTimeDifference(): void
     {
-        self::assertSame($expected, Dates::timeDifference(...$args));
+        static $clock = FrozenClock::fromUtc()->now();
+
+        $modifyClock = static function (int $minus) use ($clock): int {
+            return $clock->getTimestamp() - $minus;
+        };
+
+        self::assertSame('1 second(s) old', Dates::timeDifference($modifyClock(1)));
+        self::assertSame('15 second(s) old', Dates::timeDifference($modifyClock(15), 0, ''));
+        self::assertSame('30 second(s) old', Dates::timeDifference($modifyClock(30)));
+        self::assertSame('1 minute(s) old', Dates::timeDifference($modifyClock(60)));
+        self::assertSame('5 minute(s) old', Dates::timeDifference($modifyClock(60 * 5)));
+        self::assertSame('1 hour(s) old', Dates::timeDifference($modifyClock(3_600)));
+        self::assertSame('2 hour(s) old', Dates::timeDifference($modifyClock(3_600 * 2)));
+        self::assertSame('1 day(s) old', Dates::timeDifference($modifyClock(3_600 * 24)));
+        self::assertSame('5 day(s) old', Dates::timeDifference($modifyClock(3_600 * 24 * 5)));
+        self::assertSame('1 week(s) old', Dates::timeDifference($modifyClock(3_600 * 24 * 7)));
+        self::assertSame('2 week(s) old', Dates::timeDifference($modifyClock(3_600 * 24 * 14)));
+        self::assertSame('1 month(s) old', Dates::timeDifference($modifyClock(604_800 * 5)));
+        self::assertSame('2 month(s) old', Dates::timeDifference($modifyClock(604_800 * 10)));
+        self::assertSame('1 year(s) old', Dates::timeDifference($modifyClock(2_592_000 * 15)));
+        self::assertSame('2 year(s) old', Dates::timeDifference($modifyClock(2_592_000 * 36)));
+        self::assertSame('11 year(s) old', Dates::timeDifference($modifyClock(2_592_000 * 140)));
     }
 
     /**
@@ -100,29 +120,5 @@ class DatesTest extends TestCase
         yield [1_234_567, 0];
         yield [0, PHP_INT_MAX];
         yield [PHP_INT_MAX, 0];
-    }
-
-    public static function timeDifferenceProvider(): Iterator
-    {
-        static $frozenTimestamp;
-
-        $frozenTimestamp ??= FrozenClock::fromUtc()->now()->getTimestamp();
-
-        yield ['1 second(s) old', [($frozenTimestamp - 1)]];
-        yield ['30 second(s) old', [($frozenTimestamp - 30)]];
-        yield ['1 minute(s) old', [($frozenTimestamp - 60)]];
-        yield ['5 minute(s) old', [($frozenTimestamp - (60 * 5))]];
-        yield ['1 hour(s) old', [($frozenTimestamp - (3_600))]];
-        yield ['2 hour(s) old', [($frozenTimestamp - (3_600 * 2))]];
-        yield ['1 day(s) old', [($frozenTimestamp - (3_600 * 24))]];
-        yield ['5 day(s) old', [($frozenTimestamp - (3_600 * 24 * 5))]];
-        yield ['1 week(s) old', [($frozenTimestamp - (3_600 * 24 * 7))]];
-        yield ['2 week(s) old', [($frozenTimestamp - (3_600 * 24 * 14))]];
-        yield ['1 month(s) old', [($frozenTimestamp - (604_800 * 5))]];
-        yield ['2 month(s) old', [($frozenTimestamp - (604_800 * 10))]];
-        yield ['1 year(s) old', [($frozenTimestamp - (2_592_000 * 15))]];
-        yield ['2 year(s) old', [($frozenTimestamp - (2_592_000 * 36))]];
-        yield ['11 year(s) old', [($frozenTimestamp - (2_592_000 * 140))]];
-        yield ['1 second(s) old', [($frozenTimestamp - 1), 0, '']];
     }
 }
