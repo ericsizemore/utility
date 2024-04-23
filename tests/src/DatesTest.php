@@ -61,9 +61,7 @@ class DatesTest extends TestCase
     {
         $clock = FrozenClock::fromUtc()->now();
 
-        $modifyClock = static function (int $minus) use ($clock): int {
-            return $clock->getTimestamp() - $minus;
-        };
+        $modifyClock = static fn (int $minus): int => $clock->getTimestamp() - $minus;
 
         self::assertSame('1 second(s) old', Dates::timeDifference($modifyClock(1)));
         self::assertSame('15 second(s) old', Dates::timeDifference($modifyClock(15), 0, ''));

@@ -60,9 +60,9 @@ abstract class Filesystem
      * @param string        $directory Directory to parse.
      * @param array<string> $ignore    Subdirectories of $directory you wish to not include.
      *
-     * @return array<mixed>
-     *
      * @throws InvalidArgumentException
+     *
+     * @return array<mixed>
      */
     public static function directoryList(string $directory, array $ignore = []): array
     {
@@ -135,11 +135,11 @@ abstract class Filesystem
      *
      * @param string $file Filename.
      *
-     * @return string|false
-     *
      * @throws InvalidArgumentException
+     *
+     * @return false|string
      */
-    public static function fileRead(string $file): string | false
+    public static function fileRead(string $file): false|string
     {
         // Sanity check
         if (!Filesystem::isFile($file)) {
@@ -160,9 +160,9 @@ abstract class Filesystem
      *                      more of FILE_USE_INCLUDE_PATH, FILE_APPEND, LOCK_EX.
      *                      {@link http://php.net/file_put_contents}
      *
-     * @return int<0, max>|false
-     *
      * @throws InvalidArgumentException|RandomException
+     *
+     * @return false|int<0, max>
      */
     public static function fileWrite(string $file, string $data = '', int $flags = 0): false | int
     {
@@ -265,9 +265,9 @@ abstract class Filesystem
      * @param bool          $onlyLineCount If set to true, only returns an array
      *                                     of line counts without directory/filenames.
      *
-     * @return array<string, array<string, int>>|array<int>
-     *
      * @throws InvalidArgumentException
+     *
+     * @return array<int>|array<string, array<string, int>>
      */
     public static function lineCounter(string $directory, array $ignore = [], array $extensions = [], bool $onlyLineCount = false): array
     {

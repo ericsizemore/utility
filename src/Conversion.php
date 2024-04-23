@@ -150,19 +150,19 @@ abstract class Conversion
      * @see https://en.wikipedia.org/wiki/Haversine_formula#Formulation
      * @since 2.0.0
      *
-     * @param int|float $startingLatitude  The latitude of the first point.
-     * @param int|float $startingLongitude The longitude of the first point.
-     * @param int|float $endingLatitude    The latitude of the second point.
-     * @param int|float $endingLongitude   The longitude of the second point.
+     * @param float|int $startingLatitude  The latitude of the first point.
+     * @param float|int $startingLongitude The longitude of the first point.
+     * @param float|int $endingLatitude    The latitude of the second point.
+     * @param float|int $endingLongitude   The longitude of the second point.
      * @param int       $precision         Sets the number of decimal digits.
      *
-     * @return array<string, int|float|string>
+     * @return array<string, float|int|string>
      */
     public static function haversineDistance(
-        int | float $startingLatitude,
-        int | float $startingLongitude,
-        int | float $endingLatitude,
-        int | float $endingLongitude,
+        float|int $startingLatitude,
+        float|int $startingLongitude,
+        float|int $endingLatitude,
+        float|int $endingLongitude,
         int $precision = 0
     ): array {
         // Radians

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7dfe4ecc829894750f4806e5c734781a",
+    "content-hash": "bf419d45931853e463bca057a1cfbfec",
     "packages": [
         {
             "name": "esi/clock",
@@ -1061,12 +1061,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "aced8be9263840f10eadba63cfb2de2473706377"
+                "reference": "3b03bac1068a585926a14e97692baef8642c2a1b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/aced8be9263840f10eadba63cfb2de2473706377",
-                "reference": "aced8be9263840f10eadba63cfb2de2473706377",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/3b03bac1068a585926a14e97692baef8642c2a1b",
+                "reference": "3b03bac1068a585926a14e97692baef8642c2a1b",
                 "shasum": ""
             },
             "require": {
@@ -1112,7 +1112,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-04-20T21:06:39+00:00"
+            "time": "2024-04-22T13:39:03+00:00"
         },
         {
             "name": "phpstan/phpstan-phpunit",

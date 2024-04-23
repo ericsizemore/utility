@@ -47,9 +47,9 @@ abstract class Image
      *
      * @param string $imagePath File path to the image.
      *
-     * @return string|false Returns the image type string on success, false on any failure.
+     * @return false|string Returns the image type string on success, false on any failure.
      */
-    public static function guessImageType(string $imagePath): string | false
+    public static function guessImageType(string $imagePath): false|string
     {
         static $hasFinfo;
 
@@ -215,13 +215,13 @@ abstract class Image
      *
      * @param string $imagePath File path to the image.
      *
-     * @return string|false Returns the image type string on success, false on any failure.
+     * @return false|string Returns the image type string on success, false on any failure.
      */
-    private static function guessImageTypeExif(string $imagePath): string | false
+    private static function guessImageTypeExif(string $imagePath): false|string
     {
         //@codeCoverageIgnoreStart
         // Ignoring code coverage as if one method is available over another, the others won't be or need to be tested
-        $imageType = @\exif_imagetype($imagePath);
+        $imageType = @exif_imagetype($imagePath);
 
         return (\is_int($imageType) ? image_type_to_mime_type($imageType) : false);
         //@codeCoverageIgnoreEnd
@@ -234,13 +234,13 @@ abstract class Image
      *
      * @param string $imagePath File path to the image.
      *
-     * @return string|false Returns the image type string on success, false on any failure.
+     * @return false|string Returns the image type string on success, false on any failure.
      */
-    private static function guessImageTypeFinfo(string $imagePath): string | false
+    private static function guessImageTypeFinfo(string $imagePath): false|string
     {
         //@codeCoverageIgnoreStart
         // Ignoring code coverage as if one method is available over another, the others won't be or need to be tested
-        $finfo  = new \finfo(\FILEINFO_MIME);
+        $finfo  = new \finfo(FILEINFO_MIME);
         $result = $finfo->file($imagePath);
 
         if ($result === false) {
@@ -265,9 +265,9 @@ abstract class Image
      *
      * @param string $imagePath File path to the image.
      *
-     * @return string|false Returns the image type string on success, false on any failure.
+     * @return false|string Returns the image type string on success, false on any failure.
      */
-    private static function guessImageTypeGetImageSize(string $imagePath): string | false
+    private static function guessImageTypeGetImageSize(string $imagePath): false|string
     {
         //@codeCoverageIgnoreStart
         // Ignoring code coverage as if one method is available over another, the others won't be or need to be tested

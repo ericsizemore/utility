@@ -52,7 +52,7 @@ abstract class Dates
      *                              http://www.php.net/manual/en/timezones.php
      * @param string $append        The string to append to the difference.
      *
-     * @throws InvalidArgumentException|RuntimeException|Exception
+     * @throws Exception|InvalidArgumentException|RuntimeException
      */
     public static function timeDifference(int $timestampFrom, int $timestampTo = 0, string $timezone = Dates::DEFAULT_TIMEZONE, string $append = ' old'): string
     {
@@ -108,9 +108,9 @@ abstract class Dates
      *
      * @param string $timezone The timezone to return information for.
      *
-     * @return array<string, bool|float|int|string|null>
+     * @throws Exception|InvalidArgumentException|RuntimeException
      *
-     * @throws InvalidArgumentException|RuntimeException|Exception
+     * @return array<string, null|bool|float|int|string>
      */
     public static function timezoneInfo(string $timezone = Dates::DEFAULT_TIMEZONE): array
     {

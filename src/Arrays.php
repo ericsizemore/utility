@@ -64,12 +64,12 @@ abstract class Arrays
      * Retrieve a value from an array.
      *
      * @param array<mixed>|ArrayAccess<mixed, mixed> $array   Array to retrieve value from.
-     * @param string|int                             $key     Key to retrieve
+     * @param int|string                             $key     Key to retrieve
      * @param mixed                                  $default A default value to return if $key does not exist
      *
      * @throws RuntimeException If $array is not accessible
      */
-    public static function get(array | ArrayAccess $array, string | int $key, mixed $default = null): mixed
+    public static function get(array | ArrayAccess $array, int|string $key, mixed $default = null): mixed
     {
         if (Arrays::keyExists($array, $key)) {
             return $array[$key];
@@ -185,9 +185,9 @@ abstract class Arrays
      * Checks if a key exists in an array.
      *
      * @param array<mixed>|ArrayAccess<mixed, mixed> $array Array to check
-     * @param string|int                             $key   Key to check
+     * @param int|string                             $key   Key to check
      */
-    public static function keyExists(array | ArrayAccess $array, string | int $key): bool
+    public static function keyExists(array | ArrayAccess $array, int|string $key): bool
     {
         if ($array instanceof ArrayAccess) {
             return $array->offsetExists($key);
@@ -231,12 +231,12 @@ abstract class Arrays
      * Add a value to an array.
      *
      * @param array<mixed>|ArrayAccess<mixed, mixed> &$array Array to add value to.
-     * @param string|int|null                        $key    Key to add
+     * @param null|int|string                        $key    Key to add
      * @param mixed                                  $value  Value to add
      *
      * @throws RuntimeException If $array is not accessible
      */
-    public static function set(array | ArrayAccess &$array, string | int | null $key, mixed $value): void
+    public static function set(array | ArrayAccess &$array, null|int|string $key, mixed $value): void
     {
         if ($key === null) {
             $array = $value; // @phpstan-ignore-line
@@ -249,9 +249,9 @@ abstract class Arrays
      * Checks if a value exists in an array.
      *
      * @param array<mixed> $array Array to check
-     * @param string|int   $value Value to check
+     * @param int|string   $value Value to check
      */
-    public static function valueExists(array $array, string | int $value): bool
+    public static function valueExists(array $array, int|string $value): bool
     {
         return \in_array($value, $array, true);
     }

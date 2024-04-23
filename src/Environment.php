@@ -179,7 +179,7 @@ abstract class Environment
      * @param string $option      The configuration option name.
      * @param bool   $standardize Standardize returned values to 1 or 0?
      *
-     * @throws RuntimeException|ArgumentCountError
+     * @throws ArgumentCountError|RuntimeException
      */
     public static function iniGet(string $option, bool $standardize = false): string
     {
@@ -215,13 +215,13 @@ abstract class Environment
      * Safe ini_set taking into account its availability.
      *
      * @param string                     $option The configuration option name.
-     * @param string|int|float|bool|null $value  The new value for the option.
+     * @param null|bool|float|int|string $value  The new value for the option.
      *
-     * @return string|false
+     * @throws ArgumentCountError|RuntimeException
      *
-     * @throws RuntimeException|ArgumentCountError
+     * @return false|string
      */
-    public static function iniSet(string $option, string | int | float | bool | null $value): string | false
+    public static function iniSet(string $option, null|bool|float|int|string $value): false|string
     {
         static $iniSetAvailable;
 
@@ -438,11 +438,11 @@ abstract class Environment
      * Gets a variable from $_SERVER using $default if not provided.
      *
      * @param string          $var     Variable name.
-     * @param string|int|null $default Default value to substitute.
+     * @param null|int|string $default Default value to substitute.
      */
-    public static function var(string $var, string | int | null $default = ''): string | int | null
+    public static function var(string $var, null|int|string $default = ''): null|int|string
     {
-        /** @var string|int|null $value */
+        /** @var null|int|string $value */
         $value = Arrays::get($_SERVER, $var) ?? $default;
 
         return $value;

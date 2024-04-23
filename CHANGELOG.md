@@ -18,7 +18,9 @@ Simply replace the version numbers depending on which set of changes you wish to
   * Removed deprecated `Arrays::exists`
   * Made all utility classes `abstract` as they never need instantiation.
   * Separate contributing information into its own file.
+    * Updated contributing information and guidelines.
   * Create a code of conduct.
+  * Create a backwards compatibility promise.
 
 ### 2.0.0 (2024-03-04)
 

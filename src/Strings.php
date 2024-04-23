@@ -223,9 +223,9 @@ abstract class Strings
      *
      * Generate a Globally/Universally Unique Identifier (version 4).
      *
-     * @return string Random GUID.
-     *
      * @throws RandomException
+     *
+     * @return string Random GUID.
      */
     public static function guid(): string
     {
@@ -294,9 +294,9 @@ abstract class Strings
      *
      * @param string $email Email address to obscure.
      *
-     * @return string Obscured email address.
-     *
      * @throws InvalidArgumentException
+     *
+     * @return string Obscured email address.
      */
     public static function obscureEmail(string $email): string
     {
@@ -322,10 +322,10 @@ abstract class Strings
      *
      * @param int<1, max> $length Length of the random string that should be returned in bytes.
      *
-     * @return string Random bytes of $length length.
-     *
      * @throws RandomException
      * @throws ValueError
+     *
+     * @return string Random bytes of $length length.
      */
     public static function randomBytes(int $length): string
     {
@@ -346,9 +346,9 @@ abstract class Strings
      *
      * @param int<min, max> $length Length the random string should be.
      *
-     * @return string Random string of $length length.
+     * @throws RandomException|ValueError
      *
-     * @throws RandomException | ValueError
+     * @return string Random string of $length length.
      */
     public static function randomString(int $length = 8): string
     {
@@ -437,7 +437,7 @@ abstract class Strings
      *
      * @param string   $string The input string.
      * @param int      $start  Start position.
-     * @param int|null $length Characters from $start.
+     * @param null|int $length Characters from $start.
      *
      * @return string Extracted part of the string.
      */

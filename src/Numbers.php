@@ -117,9 +117,9 @@ abstract class Numbers
      * @param int<min, max> $min The lowest value to be returned, which must be PHP_INT_MIN or higher.
      * @param int<min, max> $max The highest value to be returned, which must be less than or equal to PHP_INT_MAX.
      *
-     * @return int<min, max>
+     * @throws RandomException|ValueError
      *
-     * @throws RandomException | ValueError
+     * @return int<min, max>
      */
     public static function random(int $min, int $max): int
     {
