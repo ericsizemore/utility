@@ -209,7 +209,7 @@ class FilesystemTest extends TestCase
         $result = Filesystem::lineCounter(directory: self::$testDir);
 
         self::assertArrayHasKey(self::$testDir, $result);
-        self::assertArrayHasKey('file1', $result[self::$testDir]); // @phpstan-ignore-line
+        self::assertArrayHasKey('file1', $result[self::$testDir]);
         self::assertArrayHasKey('file2', $result[self::$testDir]);
         self::assertArrayHasKey('file3.txt', $result[self::$testDir]);
         self::assertSame(5, $result[self::$testDir]['file1']);

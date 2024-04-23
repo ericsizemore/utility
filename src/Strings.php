@@ -330,7 +330,6 @@ abstract class Strings
     public static function randomBytes(int $length): string
     {
         // Sanity check
-        // @phpstan-ignore-next-line
         if ($length < 1) {
             throw new RandomException('$length must be greater than 1.');
         }
@@ -509,7 +508,7 @@ abstract class Strings
      *
      * Determines if a string is valid JSON.
      *
-     * @deprecated as of 2.0.0
+     * @deprecated as of 2.0.0 and will be removed in v3.0
      *
      * @param string $data The string to validate as JSON.
      *

@@ -7,11 +7,13 @@ docs_dir: docs/
 repo_name: 'ericsizemore/utility'
 repo_url: 'https://github.com/ericsizemore/utility'
 theme: readthedocs
+validation:
+  anchors: warn
 nav:
   - Home: index.md
   - Installing: installation.md
   - Basic Usage: basic-usage.md
-  - Utilities:
+  - Classes:
     - Array: arrays.md
     - Conversion: conversion.md
     - Date: dates.md
@@ -20,3 +22,9 @@ nav:
     - Image: image.md
     - Number: numbers.md
     - String: strings.md
+  - Development:
+    - 'Backward Compatibility': backward-compatibility.md
+    - 'Code of Conduct': code-of-conduct.md
+    - Contributing: contributing.md
+    - License: license.md
+    - Security: security.md

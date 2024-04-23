@@ -1,0 +1,46 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Parameter &\\$array by\\-ref type of method Esi\\\\Utility\\\\Arrays\\:\\:set\\(\\) expects array\\|ArrayAccess\\<mixed, mixed\\>, mixed given\\.$#"
+			count: 1
+			path: src/Arrays.php
+
+		-
+			message: "#^Variable property access on object\\.$#"
+			count: 1
+			path: src/Arrays.php
+
+		-
+			message: "#^Variable \\$i might not be defined\\.$#"
+			count: 1
+			path: src/Numbers.php
+
+		-
+			message: "#^Comparison operation \"\\<\" between int\\<1, max\\> and 1 is always false\\.$#"
+			count: 1
+			path: src/Strings.php
+
+		-
+			message: "#^Static method Esi\\\\Utility\\\\Environment\\:\\:iniSet\\(\\) invoked with 1 parameter, 2 required\\.$#"
+			count: 1
+			path: tests/src/EnvironmentTest.php
+
+		-
+			message: "#^Call to function array_sum\\(\\) on a separate line has no effect\\.$#"
+			count: 2
+			path: tests/src/FilesystemTest.php
+
+		-
+			message: "#^Call to function count\\(\\) on a separate line has no effect\\.$#"
+			count: 2
+			path: tests/src/FilesystemTest.php
+
+		-
+			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\<string, int\\>\\|int given\\.$#"
+			count: 1
+			path: tests/src/FilesystemTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$length of static method Esi\\\\Utility\\\\Strings\\:\\:randomBytes\\(\\) expects int\\<1, max\\>, \\-10 given\\.$#"
+			count: 1
+			path: tests/src/StringsTest.php

@@ -45,7 +45,10 @@ abstract class Numbers
     /**
      * Standards units.
      *
-     * @var array<string, array<string>> SIZE_FORMAT_UNITS
+     * @var array{
+     *     binary: array<string>,
+     *     metric: array<string>
+     * } SIZE_FORMAT_UNITS
      */
     public const SIZE_FORMAT_UNITS = [
         'binary' => ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'],
@@ -138,7 +141,14 @@ abstract class Numbers
      */
     public static function sizeFormat(int $bytes, int $precision = 0, string $standard = 'binary'): string
     {
-        // The units/labels for each 'system'
+        /**
+         * The units/labels for each 'system'.
+         *
+         * @var array{
+         *     binary: array{base: int, units: array<string>},
+         *     metric: array{base: int, units: array<string>},
+         * } $standards
+         */
         static $standards = [
             'binary' => ['base' => Numbers::BINARY_STANDARD_BASE, 'units' => self::SIZE_FORMAT_UNITS['binary']],
             'metric' => ['base' => Numbers::METRIC_STANDARD_BASE, 'units' => self::SIZE_FORMAT_UNITS['metric']],
@@ -160,10 +170,12 @@ abstract class Numbers
 
         // Perform the conversion
         for ($i = 0; ($bytes / $base) > Numbers::CONVERSION_MODIFIER && ($i < \count($units) - 1); ++$i) {
+            /**
+             * @var float $bytes
+             */
             $bytes /= $base;
         }
 
-        // @phpstan-ignore-next-line
         return number_format($bytes, $precision, '.', '') . ' ' . $units[$i];
     }
 }

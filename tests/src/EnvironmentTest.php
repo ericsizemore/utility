@@ -97,7 +97,7 @@ class EnvironmentTest extends TestCase
         self::assertSame($oldValue, Environment::iniSet('display_errors', $oldValue));
 
         self::expectException(ArgumentCountError::class);
-        // @phpstan-ignore-next-line
+
         Environment::iniSet('');
 
         self::expectException(InvalidArgumentException::class);

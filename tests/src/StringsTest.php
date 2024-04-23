@@ -184,7 +184,7 @@ class StringsTest extends TestCase
         self::assertNotEmpty($bytes);
 
         self::expectException(RandomException::class);
-        Strings::randomBytes(-10); // @phpstan-ignore-line
+        Strings::randomBytes(-10);
     }
 
     /**
