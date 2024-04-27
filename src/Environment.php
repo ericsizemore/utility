@@ -164,8 +164,10 @@ abstract class Environment
         $host = Strings::lower($host);
 
         // Strip 'www.'
+        $strippedHost = null;
+
         if ($stripWww) {
-            $strippedHost = preg_replace('#^www\.#', '', $host);
+            $strippedHost = preg_replace('#^www\.#', '', $host) ?? $host;
         }
 
         return ($strippedHost ?? $host);
@@ -183,11 +185,14 @@ abstract class Environment
      */
     public static function iniGet(string $option, bool $standardize = false): string
     {
-        static $iniGetAvailable;
+        /**
+         * @var null|bool
+         */
+        static $iniGetAvailable = null;
 
         $iniGetAvailable ??= \function_exists('ini_get');
 
-        if (!$iniGetAvailable) {
+        if ($iniGetAvailable === false) {
             // disabled_functions?
             // @codeCoverageIgnoreStart
             throw new RuntimeException('Native ini_get function not available.');
@@ -223,11 +228,14 @@ abstract class Environment
      */
     public static function iniSet(string $option, null|bool|float|int|string $value): false|string
     {
-        static $iniSetAvailable;
+        /**
+         * @var null|bool
+         */
+        static $iniSetAvailable = null;
 
         $iniSetAvailable ??= \function_exists('ini_set');
 
-        if (!$iniSetAvailable) {
+        if ($iniSetAvailable === false) {
             // disabled_functions?
             // @codeCoverageIgnoreStart
             throw new RuntimeException('Native ini_set function not available.');
@@ -243,6 +251,8 @@ abstract class Environment
      * Return the visitor's IP address.
      *
      * @param bool $trustProxy Whether to trust HTTP_CLIENT_IP and HTTP_X_FORWARDED_FOR.
+     *
+     * @psalm-suppress UnusedClosureParam
      */
     public static function ipAddress(bool $trustProxy = false): string
     {
@@ -250,7 +260,7 @@ abstract class Environment
         $cloudflare = Environment::var(self::IP_ADDRESS_HEADERS['cloudflare']);
 
         // cloudflare connecting ip found, update REMOTE_ADDR
-        if ($cloudflare !== '') {
+        if ($cloudflare !== '' && $_SERVER !== []) {
             Arrays::set($_SERVER, self::IP_ADDRESS_HEADERS['default'], $cloudflare);
         }
 
@@ -312,10 +322,19 @@ abstract class Environment
      */
     public static function isHttps(): bool
     {
+        /**
+         * @psalm-var array<string> $headers
+         */
         $headers = getallheaders();
 
-        $server    = Environment::var(self::HTTPS_HEADERS['default']);
-        $frontEnd  = Arrays::get($headers, self::HTTPS_HEADERS['forwarded'], '');
+        $server = Environment::var(self::HTTPS_HEADERS['default']);
+        /**
+         * @psalm-var string $frontEnd
+         */
+        $frontEnd = Arrays::get($headers, self::HTTPS_HEADERS['forwarded'], '');
+        /**
+         * @psalm-var string $forwarded
+         */
         $forwarded = Arrays::get($headers, self::HTTPS_HEADERS['frontend'], '');
 
         if ($server !== 'off' && $server !== '') {
@@ -401,9 +420,15 @@ abstract class Environment
         $scheme = (Environment::isHttps()) ? 'https://' : 'http://';
 
         // Auth
-        $authUser = Environment::var(self::URL_HEADERS['authuser']);
-        $authPwd  = Environment::var(self::URL_HEADERS['authpw']);
-        $auth     = ($authUser !== '' ? $authUser . ($authPwd !== '' ? ':' . $authPwd : '') . '@' : '');
+        /**
+         * @psalm-var string $authUser
+         */
+        $authUser = Environment::var(self::URL_HEADERS['authuser'], '');
+        /**
+         * @psalm-var string $authPwd
+         */
+        $authPwd = Environment::var(self::URL_HEADERS['authpw'], '');
+        $auth    = ($authUser !== '' ? $authUser . ($authPwd !== '' ? ':' . $authPwd : '') . '@' : '');
 
         // Host and port
         $host = Environment::host();
@@ -413,16 +438,15 @@ abstract class Environment
         $port = ($port === (Environment::isHttps() ? Environment::PORT_SECURE : Environment::PORT_UNSECURE) || $port === 0) ? '' : ':' . $port;
 
         // Path
-        /** @var string $self */
+        /** @phpstan-var string $self */
         $self = Environment::var(self::URL_HEADERS['self']);
 
-        /** @var string $query */
+        /** @phpstan-var string $query */
         $query = Environment::var(self::URL_HEADERS['query']);
 
-        /** @var string $request */
+        /** @phpstan-var string $request */
         $request = Environment::var(self::URL_HEADERS['request']);
 
-        /** @var string $path */
         $path = ($request === '' ? $self . ($query !== '' ? '?' . $query : '') : $request);
 
         // Put it all together

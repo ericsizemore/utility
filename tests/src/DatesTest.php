@@ -28,6 +28,8 @@ use RuntimeException;
  * Date utility tests.
  *
  * @internal
+ *
+ * @psalm-api
  */
 #[CoversClass(Dates::class)]
 #[CoversMethod(Arrays::class, 'valueExists')]
@@ -63,22 +65,40 @@ class DatesTest extends TestCase
 
         $modifyClock = static fn (int $minus): int => $clock->getTimestamp() - $minus;
 
-        self::assertSame('1 second(s) old', Dates::timeDifference($modifyClock(1)));
-        self::assertSame('15 second(s) old', Dates::timeDifference($modifyClock(15), 0, ''));
-        self::assertSame('30 second(s) old', Dates::timeDifference($modifyClock(30)));
-        self::assertSame('1 minute(s) old', Dates::timeDifference($modifyClock(60)));
-        self::assertSame('5 minute(s) old', Dates::timeDifference($modifyClock(60 * 5)));
-        self::assertSame('1 hour(s) old', Dates::timeDifference($modifyClock(3_600)));
-        self::assertSame('2 hour(s) old', Dates::timeDifference($modifyClock(3_600 * 2)));
-        self::assertSame('1 day(s) old', Dates::timeDifference($modifyClock(3_600 * 24)));
-        self::assertSame('5 day(s) old', Dates::timeDifference($modifyClock(3_600 * 24 * 5)));
-        self::assertSame('1 week(s) old', Dates::timeDifference($modifyClock(3_600 * 24 * 7)));
-        self::assertSame('2 week(s) old', Dates::timeDifference($modifyClock(3_600 * 24 * 14)));
-        self::assertSame('1 month(s) old', Dates::timeDifference($modifyClock(604_800 * 5)));
-        self::assertSame('2 month(s) old', Dates::timeDifference($modifyClock(604_800 * 10)));
-        self::assertSame('1 year(s) old', Dates::timeDifference($modifyClock(2_592_000 * 15)));
-        self::assertSame('2 year(s) old', Dates::timeDifference($modifyClock(2_592_000 * 36)));
-        self::assertSame('11 year(s) old', Dates::timeDifference($modifyClock(2_592_000 * 140)));
+        self::assertSame('1 second old', Dates::timeDifference($modifyClock(1)));
+        self::assertSame('15 seconds old', Dates::timeDifference($modifyClock(15), 0, ''));
+        self::assertSame('30 seconds old', Dates::timeDifference($modifyClock(30)));
+        self::assertSame('1 minute old', Dates::timeDifference($modifyClock(60)));
+        self::assertSame('5 minutes old', Dates::timeDifference($modifyClock(60 * 5)));
+        self::assertSame('1 hour old', Dates::timeDifference($modifyClock(3_600)));
+        self::assertSame('2 hours old', Dates::timeDifference($modifyClock(3_600 * 2)));
+        self::assertSame('1 day old', Dates::timeDifference($modifyClock(3_600 * 24)));
+        self::assertSame('5 days old', Dates::timeDifference($modifyClock(3_600 * 24 * 5)));
+        self::assertSame('1 week old', Dates::timeDifference($modifyClock(3_600 * 24 * 7)));
+        self::assertSame('2 weeks old', Dates::timeDifference($modifyClock(3_600 * 24 * 14)));
+        self::assertSame('1 month old', Dates::timeDifference($modifyClock(604_800 * 5)));
+        self::assertSame('2 months old', Dates::timeDifference($modifyClock(604_800 * 10)));
+        self::assertSame('1 year old', Dates::timeDifference($modifyClock(2_592_000 * 15)));
+        self::assertSame('2 years old', Dates::timeDifference($modifyClock(2_592_000 * 36)));
+        self::assertSame('11 years old', Dates::timeDifference($modifyClock(2_592_000 * 140)));
+
+        // With $extendedOutput
+        self::assertSame('1 second old', Dates::timeDifference($modifyClock(1), extendedOutput: true));
+        self::assertSame('15 seconds old', Dates::timeDifference($modifyClock(15), 0, '', extendedOutput: true));
+        self::assertSame('30 seconds old', Dates::timeDifference($modifyClock(30), extendedOutput: true));
+        self::assertSame('1 minute old', Dates::timeDifference($modifyClock(60), extendedOutput: true));
+        self::assertSame('5 minutes old', Dates::timeDifference($modifyClock(60 * 5), extendedOutput: true));
+        self::assertSame('1 hour old', Dates::timeDifference($modifyClock(3_600), extendedOutput: true));
+        self::assertSame('2 hours old', Dates::timeDifference($modifyClock(3_600 * 2), extendedOutput: true));
+        self::assertSame('1 day old', Dates::timeDifference($modifyClock(3_600 * 24), extendedOutput: true));
+        self::assertSame('5 days old', Dates::timeDifference($modifyClock(3_600 * 24 * 5), extendedOutput: true));
+        self::assertSame('1 week old', Dates::timeDifference($modifyClock(3_600 * 24 * 7), extendedOutput: true));
+        self::assertSame('2 weeks old', Dates::timeDifference($modifyClock(3_600 * 24 * 14), extendedOutput: true));
+        self::assertSame('1 month 4 days old', Dates::timeDifference($modifyClock(604_800 * 5), extendedOutput: true));
+        self::assertSame('2 months 2 weeks old', Dates::timeDifference($modifyClock(604_800 * 10), extendedOutput: true));
+        self::assertSame('1 year 2 months 4 weeks old', Dates::timeDifference($modifyClock(2_592_000 * 15), extendedOutput: true));
+        self::assertSame('2 years 11 months 2 weeks old', Dates::timeDifference($modifyClock(2_592_000 * 36), extendedOutput: true));
+        self::assertSame('11 years 6 months old', Dates::timeDifference($modifyClock(2_592_000 * 140), extendedOutput: true));
     }
 
     /**
@@ -103,12 +123,42 @@ class DatesTest extends TestCase
     }
 
     /**
+     * @param array{
+     *     offset: int<-10, 2>,
+     *     country: 'N/A',
+     *     latitude: 'N/A',
+     *     longitude: 'N/A',
+     *     'dst': null
+     * } $expected
+     */
+    #[DataProvider('falseForLocationProvider')]
+    public function testTimezoneInfoLocationReturnsFalse(array $expected, string $timezone): void
+    {
+        self::assertSame($expected, Dates::timezoneInfo($timezone, true));
+    }
+
+    /**
      * Test Dates::validTimezone().
      */
     public function testValidTimezone(): void
     {
         self::assertFalse(Dates::validTimezone('InvalidTimezone'));
         self::assertTrue(Dates::validTimezone('America/New_York'));
+    }
+
+    public static function falseForLocationProvider(): Iterator
+    {
+        yield [['offset' => 1, 'country' => 'N/A', 'latitude' => 'N/A', 'longitude' => 'N/A', 'dst' => null], 'CET'];
+        yield [['offset' => 2, 'country' => 'N/A', 'latitude' => 'N/A', 'longitude' => 'N/A', 'dst' => null], 'EET'];
+        yield [['offset' => -5, 'country' => 'N/A', 'latitude' => 'N/A', 'longitude' => 'N/A', 'dst' => null], 'EST'];
+        yield [['offset' => 0, 'country' => 'N/A', 'latitude' => 'N/A', 'longitude' => 'N/A', 'dst' => null], 'GMT'];
+        yield [['offset' => 0, 'country' => 'N/A', 'latitude' => 'N/A', 'longitude' => 'N/A', 'dst' => null], 'GMT+0'];
+        yield [['offset' => 0, 'country' => 'N/A', 'latitude' => 'N/A', 'longitude' => 'N/A', 'dst' => null], 'GMT-0'];
+        yield [['offset' => -10, 'country' => 'N/A', 'latitude' => 'N/A', 'longitude' => 'N/A', 'dst' => null], 'HST'];
+        yield [['offset' => 1, 'country' => 'N/A', 'latitude' => 'N/A', 'longitude' => 'N/A', 'dst' => null], 'MET'];
+        yield [['offset' => -7, 'country' => 'N/A', 'latitude' => 'N/A', 'longitude' => 'N/A', 'dst' => null], 'MST'];
+        yield [['offset' => 0, 'country' => 'N/A', 'latitude' => 'N/A', 'longitude' => 'N/A', 'dst' => null], 'UCT'];
+        yield [['offset' => 0, 'country' => 'N/A', 'latitude' => 'N/A', 'longitude' => 'N/A', 'dst' => null], 'WET'];
     }
 
     public static function invalidTimestampProvider(): Iterator

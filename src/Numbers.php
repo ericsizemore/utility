@@ -87,13 +87,13 @@ abstract class Numbers
      */
     public static function ordinal(int $number): string
     {
-        static $suffixes = self::SUFFIXES;
+        $absNumber     = abs($number);
+        $lastTwoDigits = $absNumber % 100;
+        $lastDigit     = $absNumber % 10;
 
-        $absNumber = abs($number);
-
-        $suffix = ($absNumber % 100 >= 11 && $absNumber % 100 <= 13)
-                  ? $suffixes[0]
-                  : $suffixes[$absNumber % 10] ?? $suffixes[0];
+        $suffix = ($lastTwoDigits >= 11 && $lastTwoDigits <= 13)
+                  ? self::SUFFIXES[0]
+                  : self::SUFFIXES[$lastDigit] ?? self::SUFFIXES[0];
 
         return $number . $suffix;
     }
@@ -147,7 +147,7 @@ abstract class Numbers
          * @var array{
          *     binary: array{base: int, units: array<string>},
          *     metric: array{base: int, units: array<string>},
-         * } $standards
+         * }
          */
         static $standards = [
             'binary' => ['base' => Numbers::BINARY_STANDARD_BASE, 'units' => self::SIZE_FORMAT_UNITS['binary']],

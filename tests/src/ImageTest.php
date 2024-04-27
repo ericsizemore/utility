@@ -29,6 +29,10 @@ use const DIRECTORY_SEPARATOR;
  * Image utility test.
  *
  * @internal
+ *
+ * @psalm-api
+ *
+ * @psalm-suppress PropertyNotSetInConstructor
  */
 #[CoversClass(Image::class)]
 #[CoversMethod(Arrays::class, 'valueExists')]
@@ -88,6 +92,20 @@ class ImageTest extends TestCase
     {
         $this->expectException(RuntimeException::class);
         Image::isGif($this->resourceDir . 'notAnImage.txt');
+    }
+
+    public function testIsImageExtensionsAvailable(): void
+    {
+        $isAvailable = [
+            Image::isGdAvailable(),
+            Image::isExifAvailable(),
+            Image::isGmagickAvailable(),
+            Image::isImagickAvailable(),
+        ];
+
+        foreach ($isAvailable as $status) {
+            self::assertIsBool($status);
+        }
     }
 
     public function testIsJpg(): void

@@ -29,6 +29,10 @@ use function sprintf;
  * Environment utility tests.
  *
  * @internal
+ *
+ * @psalm-api
+ *
+ * @psalm-suppress NullReference
  */
 #[CoversClass(Environment::class)]
 #[CoversMethod(Arrays::class, 'get')]
@@ -88,6 +92,8 @@ class EnvironmentTest extends TestCase
 
     /**
      * Test Environment::iniSet().
+     *
+     * @psalm-suppress TooFewArguments
      */
     public function testIniSet(): void
     {

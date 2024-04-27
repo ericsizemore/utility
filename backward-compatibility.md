@@ -94,7 +94,7 @@ In very rare cases I may delete a tag in order to remove a broken release. The n
 
 ### Branches
 
-Branches in this project's Git repository are private implementation details. For example, I delete branches for versions of PHPUnit Coverage Check that are no longer supported. In general:
+Branches in this project's Git repository are private implementation details. For example, I delete branches for versions of Utility that are no longer supported. In general:
 
 * The `master` branch will contain the currently released major version (and `<minor>` or `<patch>` versions that fall under it).
 * Previous major versions will be under a `<major>.x` branch.

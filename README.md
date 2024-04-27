@@ -118,4 +118,4 @@ Utility is licensed under the MIT License - see the `LICENSE` file for details
 
 ### Acknowledgements
 
-This library is inspired by Brandon Wamboldt's [utilphp](http://brandonwamboldt.github.com/utilphp/) library.
+This library is inspired by Brandon Wamboldt's [utilphp](https://brandonwamboldt.github.io/utilphp/) library.

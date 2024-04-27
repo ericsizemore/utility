@@ -78,7 +78,10 @@ abstract class Filesystem
         $ignore = Filesystem::buildIgnore($ignore);
 
         // Build the actual contents of the directory
-        /** @var RecursiveDirectoryIterator $fileInfo */
+        /**
+         * @var string                     $key
+         * @var RecursiveDirectoryIterator $fileInfo
+         */
         foreach (Filesystem::getIterator($directory, true) as $key => $fileInfo) {
             if (Filesystem::checkIgnore($fileInfo->getPath(), $ignore)) {
                 continue;
@@ -267,7 +270,7 @@ abstract class Filesystem
      *
      * @throws InvalidArgumentException
      *
-     * @return array<int>|array<string, array<string, int>>
+     * @return array<array-key, int>|array<string, array<string, int>>
      */
     public static function lineCounter(string $directory, array $ignore = [], array $extensions = [], bool $onlyLineCount = false): array
     {
@@ -306,7 +309,7 @@ abstract class Filesystem
                 /** @var array<string, array<string, int>> $lines */
                 $lines[$file->getPath()][$file->getFilename()] = $lineCount;
             } else {
-                /** @var array<int> $lines */
+                /** @var array<array-key, int> $lines */
                 $lines[] = $lineCount;
             }
         }
@@ -347,7 +350,10 @@ abstract class Filesystem
             return $tmp;
         }, []);
 
-        // Put it all together.
+        /**
+         * @psalm-var array<string> $filtered
+         */
+
         return ($separator !== '\\' ? $separator : '') . implode($separator, $filtered);
     }
 
@@ -405,7 +411,10 @@ abstract class Filesystem
      */
     private static function getIterator(string $forDirectory, bool $keyAsPath = false): RecursiveIteratorIterator
     {
-        static $options = FilesystemIterator::CURRENT_AS_FILEINFO | FilesystemIterator::SKIP_DOTS;
+        /**
+         * @psalm-var int-mask<0, 4096> $options
+         */
+        $options = FilesystemIterator::CURRENT_AS_FILEINFO | FilesystemIterator::SKIP_DOTS;
 
         if ($keyAsPath) {
             $options |= FilesystemIterator::KEY_AS_PATHNAME;

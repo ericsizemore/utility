@@ -44,6 +44,8 @@ use const DIRECTORY_SEPARATOR;
  * File system utility tests.
  *
  * @internal
+ *
+ * @psalm-api
  */
 #[CoversClass(Filesystem::class)]
 #[CoversMethod(Arrays::class, 'valueExists')]
@@ -56,7 +58,7 @@ class FilesystemTest extends TestCase
     protected static string $testDir;
 
     /**
-     * @var array<string>
+     * @var array<string, string>
      */
     protected static array $testFiles;
 
@@ -206,6 +208,9 @@ class FilesystemTest extends TestCase
         self::assertSame(0, array_sum(Filesystem::lineCounter(directory: self::$testDir, ignore: ['dir1'], onlyLineCount: true)));
         self::assertSame(0, array_sum(Filesystem::lineCounter(self::$testDir, extensions: ['.txt'], onlyLineCount: true)));
 
+        /**
+         * @psalm-var array<string, array<string, int>> $result
+         */
         $result = Filesystem::lineCounter(directory: self::$testDir);
 
         self::assertArrayHasKey(self::$testDir, $result);
@@ -222,16 +227,16 @@ class FilesystemTest extends TestCase
         Filesystem::fileWrite(self::$testFiles['file1']);
 
         self::expectException(InvalidArgumentException::class);
-        array_sum(Filesystem::lineCounter('/this/should/not/exist', onlyLineCount: true));
+        Filesystem::lineCounter('/this/should/not/exist', onlyLineCount: true);
 
         self::expectException(InvalidArgumentException::class);
-        \count(Filesystem::lineCounter('/this/should/not/exist'));
+        Filesystem::lineCounter('/this/should/not/exist');
 
         self::expectException(InvalidArgumentException::class);
-        array_sum(Filesystem::lineCounter('/this/should/not/exist', ignore: ['dir1'], onlyLineCount: true));
+        Filesystem::lineCounter('/this/should/not/exist', ignore: ['dir1'], onlyLineCount: true);
 
         self::expectException(InvalidArgumentException::class);
-        \count(Filesystem::lineCounter('/this/should/not/exist', ignore: ['dir1']));
+        Filesystem::lineCounter('/this/should/not/exist', ignore: ['dir1']);
     }
 
     /**

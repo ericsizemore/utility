@@ -26,6 +26,8 @@ use function image_type_to_mime_type;
  *
  * @since 2.0.0
  * @see Tests\ImageTest
+ *
+ * @psalm-api
  */
 abstract class Image
 {
@@ -51,7 +53,12 @@ abstract class Image
      */
     public static function guessImageType(string $imagePath): false|string
     {
-        static $hasFinfo;
+        /**
+         * @var null|bool
+         */
+        static $hasFinfo = null;
+
+        $hasFinfo ??= class_exists('finfo');
 
         if (!Filesystem::isFile($imagePath)) {
             throw new InvalidArgumentException('$imagePath not found or is not a file.');
@@ -63,9 +70,7 @@ abstract class Image
             return self::guessImageTypeExif($imagePath);
         }
 
-        $hasFinfo ??= class_exists('finfo');
-
-        if ($hasFinfo) {
+        if ($hasFinfo === true) {
             // Next, let's try finfo
             return self::guessImageTypeFinfo($imagePath);
         }
@@ -81,13 +86,17 @@ abstract class Image
      */
     public static function isExifAvailable(): bool
     {
-        //@codeCoverageIgnoreStart
-        static $hasExif;
+        /**
+         * @var null|bool
+         */
+        static $hasExif = null;
 
         $hasExif ??= \extension_loaded('exif');
 
+        /**
+         * @psalm-var bool $hasExif
+         */
         return $hasExif;
-        //@codeCoverageIgnoreEnd
     }
 
     /**
@@ -95,13 +104,17 @@ abstract class Image
      */
     public static function isGdAvailable(): bool
     {
-        //@codeCoverageIgnoreStart
-        static $hasGd;
+        /**
+         * @var null|bool
+         */
+        static $hasGd = null;
 
         $hasGd ??= \extension_loaded('gd');
 
+        /**
+         * @psalm-var bool $hasGd
+         */
         return $hasGd;
-        //@codeCoverageIgnoreEnd
     }
 
     /**
@@ -128,13 +141,17 @@ abstract class Image
      */
     public static function isGmagickAvailable(): bool
     {
-        //@codeCoverageIgnoreStart
-        static $hasGmagick;
+        /**
+         * @var null|bool
+         */
+        static $hasGmagick = null;
 
         $hasGmagick ??= \extension_loaded('gmagick');
 
+        /**
+         * @psalm-var bool $hasGmagick
+         */
         return $hasGmagick;
-        //@codeCoverageIgnoreEnd
     }
 
     /**
@@ -142,13 +159,17 @@ abstract class Image
      */
     public static function isImagickAvailable(): bool
     {
-        //@codeCoverageIgnoreStart
-        static $hasImagick;
+        /**
+         * @var null|bool
+         */
+        static $hasImagick = null;
 
         $hasImagick ??= \extension_loaded('imagick');
 
+        /**
+         * @psalm-var bool $hasImagick
+         */
         return $hasImagick;
-        //@codeCoverageIgnoreEnd
     }
 
     /**

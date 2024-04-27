@@ -21,6 +21,8 @@ use PHPUnit\Framework\TestCase;
  * Conversion utility tests.
  *
  * @internal
+ *
+ * @psalm-api
  */
 #[CoversClass(Conversion::class)]
 class ConversionTest extends TestCase
@@ -51,6 +53,7 @@ class ConversionTest extends TestCase
         self::assertSame(545.67, Conversion::celsiusToRankine(30));
         self::assertSame(545.670_000_000_000_1, Conversion::celsiusToRankine(30, false));
     }
+
     /**
      * Test Conversion::fahrenheitToCelsius().
      */

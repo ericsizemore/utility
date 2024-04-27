@@ -21,7 +21,7 @@ jobs:
         uses: shivammathur/setup-php@master
         with:
            php-version: ${{ matrix.php }}
-           extensions: mbstring
+           extensions: mbstring, exif, imagick, gmagick,
            tools: composer:v2
 
       - name: Validate composer.json and composer.lock

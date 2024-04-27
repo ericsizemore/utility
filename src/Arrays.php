@@ -40,7 +40,8 @@ abstract class Arrays
      * @param string       $prepend   A string to prepend to resulting array keys.
      *
      * @since 1.2.0
-     * @deprecated current signature and functionality as of 2.1.0, will be changed in 3.0
+     *
+     * @todo current signature and functionality as of 2.1.0, will be changed in 3.0
      *
      * @return array<mixed> The flattened array.
      */
@@ -204,7 +205,8 @@ abstract class Arrays
      *
      * @since 1.2.0 - updated with inspiration from the WordPress map_deep() function.
      *      @see https://developer.wordpress.org/reference/functions/map_deep/
-     * @deprecated current signature and functionality as of 2.1.0, will be changed in 3.0
+     *
+     * @todo current signature and functionality as of 2.1.0, will be changed in 3.0
      *
      * @param mixed    $array    The array to apply $callback to.
      * @param callable $callback The callback function to apply.

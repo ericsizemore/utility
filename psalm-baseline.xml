@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<files psalm-version="dev-master@08afc45a81d1f7c5145341ddf4c3c2c8b1985ed2">
+  <file src="src/Arrays.php">
+    <MixedArrayOffset>
+      <code><![CDATA[$result[$groupKey]]]></code>
+      <code><![CDATA[$result[$groupKey]]]></code>
+      <code><![CDATA[$result[$groupKey]]]></code>
+    </MixedArrayOffset>
+    <MixedAssignment>
+      <code><![CDATA[$array]]></code>
+      <code><![CDATA[$array]]></code>
+      <code><![CDATA[$array[$key]]]></code>
+      <code><![CDATA[$array[$key]]]></code>
+      <code><![CDATA[$groupKey]]></code>
+      <code><![CDATA[$newArray[]]]></code>
+      <code><![CDATA[$result[$prepend . $key]]]></code>
+      <code><![CDATA[$value]]></code>
+      <code><![CDATA[$value]]></code>
+      <code><![CDATA[$value]]></code>
+    </MixedAssignment>
+  </file>
+  <file src="tests/src/ImageTest.php">
+    <RedundantCondition>
+      <code><![CDATA[assertIsBool]]></code>
+    </RedundantCondition>
+  </file>
+  <file src="tests/src/StringsTest.php">
+    <InvalidArgument>
+      <code><![CDATA['em']]></code>
+    </InvalidArgument>
+  </file>
+</files>

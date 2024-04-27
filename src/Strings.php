@@ -22,8 +22,6 @@ use function array_map;
 use function bin2hex;
 use function filter_var;
 use function implode;
-use function json_decode;
-use function json_last_error;
 use function ltrim;
 use function mb_convert_case;
 use function mb_strlen;
@@ -43,7 +41,6 @@ use function strcmp;
 use function trim;
 
 use const FILTER_VALIDATE_EMAIL;
-use const JSON_ERROR_NONE;
 use const MB_CASE_LOWER;
 use const MB_CASE_TITLE;
 use const MB_CASE_UPPER;
@@ -56,6 +53,75 @@ use const MB_CASE_UPPER;
 abstract class Strings
 {
     /**
+     * Map of language code => \voku\helper\ASCII constant, of the
+     * language codes supported by it.
+     *
+     * @var array<string, string>
+     */
+    private const LANGUAGE_MAP = [
+        'uz'                => ASCII::UZBEK_LANGUAGE_CODE,
+        'tk'                => ASCII::TURKMEN_LANGUAGE_CODE,
+        'th'                => ASCII::THAI_LANGUAGE_CODE,
+        'ps'                => ASCII::PASHTO_LANGUAGE_CODE,
+        'or'                => ASCII::ORIYA_LANGUAGE_CODE,
+        'mn'                => ASCII::MONGOLIAN_LANGUAGE_CODE,
+        'ko'                => ASCII::KOREAN_LANGUAGE_CODE,
+        'ky'                => ASCII::KIRGHIZ_LANGUAGE_CODE,
+        'hy'                => ASCII::ARMENIAN_LANGUAGE_CODE,
+        'bn'                => ASCII::BENGALI_LANGUAGE_CODE,
+        'be'                => ASCII::BELARUSIAN_LANGUAGE_CODE,
+        'am'                => ASCII::AMHARIC_LANGUAGE_CODE,
+        'ja'                => ASCII::JAPANESE_LANGUAGE_CODE,
+        'zh'                => ASCII::CHINESE_LANGUAGE_CODE,
+        'nl'                => ASCII::DUTCH_LANGUAGE_CODE,
+        'it'                => ASCII::ITALIAN_LANGUAGE_CODE,
+        'mk'                => ASCII::MACEDONIAN_LANGUAGE_CODE,
+        'pt'                => ASCII::PORTUGUESE_LANGUAGE_CODE,
+        'el__greeklish'     => ASCII::GREEKLISH_LANGUAGE_CODE,
+        'el'                => ASCII::GREEK_LANGUAGE_CODE,
+        'hi'                => ASCII::HINDI_LANGUAGE_CODE,
+        'sv'                => ASCII::SWEDISH_LANGUAGE_CODE,
+        'tr'                => ASCII::TURKISH_LANGUAGE_CODE,
+        'bg'                => ASCII::BULGARIAN_LANGUAGE_CODE,
+        'hu'                => ASCII::HUNGARIAN_LANGUAGE_CODE,
+        'my'                => ASCII::MYANMAR_LANGUAGE_CODE,
+        'hr'                => ASCII::CROATIAN_LANGUAGE_CODE,
+        'fi'                => ASCII::FINNISH_LANGUAGE_CODE,
+        'ka'                => ASCII::GEORGIAN_LANGUAGE_CODE,
+        'ru'                => ASCII::RUSSIAN_LANGUAGE_CODE,
+        'ru__passport_2013' => ASCII::RUSSIAN_PASSPORT_2013_LANGUAGE_CODE,
+        'ru__gost_2000_b'   => ASCII::RUSSIAN_GOST_2000_B_LANGUAGE_CODE,
+        'uk'                => ASCII::UKRAINIAN_LANGUAGE_CODE,
+        'kk'                => ASCII::KAZAKH_LANGUAGE_CODE,
+        'cs'                => ASCII::CZECH_LANGUAGE_CODE,
+        'da'                => ASCII::DANISH_LANGUAGE_CODE,
+        'pl'                => ASCII::POLISH_LANGUAGE_CODE,
+        'ro'                => ASCII::ROMANIAN_LANGUAGE_CODE,
+        'eo'                => ASCII::ESPERANTO_LANGUAGE_CODE,
+        'et'                => ASCII::ESTONIAN_LANGUAGE_CODE,
+        'lv'                => ASCII::LATVIAN_LANGUAGE_CODE,
+        'lt'                => ASCII::LITHUANIAN_LANGUAGE_CODE,
+        'no'                => ASCII::NORWEGIAN_LANGUAGE_CODE,
+        'vi'                => ASCII::VIETNAMESE_LANGUAGE_CODE,
+        'ar'                => ASCII::ARABIC_LANGUAGE_CODE,
+        'fa'                => ASCII::PERSIAN_LANGUAGE_CODE,
+        'sr'                => ASCII::SERBIAN_LANGUAGE_CODE,
+        'sr__cyr'           => ASCII::SERBIAN_CYRILLIC_LANGUAGE_CODE,
+        'sr__lat'           => ASCII::SERBIAN_LATIN_LANGUAGE_CODE,
+        'az'                => ASCII::AZERBAIJANI_LANGUAGE_CODE,
+        'sk'                => ASCII::SLOVAK_LANGUAGE_CODE,
+        'fr'                => ASCII::FRENCH_LANGUAGE_CODE,
+        'fr_at'             => ASCII::FRENCH_AUSTRIAN_LANGUAGE_CODE,
+        'fr_ch'             => ASCII::FRENCH_SWITZERLAND_LANGUAGE_CODE,
+        'de'                => ASCII::GERMAN_LANGUAGE_CODE,
+        'de_at'             => ASCII::GERMAN_AUSTRIAN_LANGUAGE_CODE,
+        'de_ch'             => ASCII::GERMAN_SWITZERLAND_LANGUAGE_CODE,
+        'en'                => ASCII::ENGLISH_LANGUAGE_CODE,
+        'latin'             => ASCII::EXTRA_LATIN_CHARS_LANGUAGE_CODE,
+        'msword'            => ASCII::EXTRA_MSWORD_CHARS_LANGUAGE_CODE,
+    ];
+
+    /**
      * Encoding to use for multibyte-based functions.
      *
      * @var string Encoding
@@ -67,14 +133,19 @@ abstract class Strings
      *
      * Transliterate a UTF-8 value to ASCII.
      *
-     * @param string $value    Value to transliterate.
-     * @param string $language Language code (2 characters, eg: en). {@see ASCII}
+     * @param string                        $value    Value to transliterate.
+     * @param key-of<Strings::LANGUAGE_MAP> $language Language code (2 characters, eg: en). {@see ASCII}
      *
      * @return string Value as ASCII.
      */
     public static function ascii(string $value, string $language = 'en'): string
     {
-        /** @var ASCII::*_LANGUAGE_CODE $language */
+        if (!Arrays::keyExists(Strings::LANGUAGE_MAP, $language)) {
+            $language = Strings::LANGUAGE_MAP['en'];
+        } else {
+            $language = Strings::LANGUAGE_MAP[$language];
+        }
+
         return ASCII::to_ascii($value, $language);
     }
 
@@ -284,7 +355,7 @@ abstract class Strings
      */
     public static function lower(string $value): string
     {
-        return mb_convert_case($value, MB_CASE_LOWER, (self::$encoding ?? null));
+        return mb_convert_case($value, MB_CASE_LOWER, self::$encoding);
     }
 
     /**
@@ -320,7 +391,7 @@ abstract class Strings
      *
      * Generate cryptographically secure pseudo-random bytes.
      *
-     * @param int<1, max> $length Length of the random string that should be returned in bytes.
+     * @param int<0, max> $length Length of the random string that should be returned in bytes.
      *
      * @throws RandomException
      * @throws ValueError
@@ -442,7 +513,7 @@ abstract class Strings
      */
     public static function substr(string $string, int $start, ?int $length = null): string
     {
-        return mb_substr($string, $start, $length, (self::$encoding ?? null));
+        return mb_substr($string, $start, $length, self::$encoding);
     }
 
     /**
@@ -456,7 +527,7 @@ abstract class Strings
      */
     public static function title(string $value): string
     {
-        return mb_convert_case($value, MB_CASE_TITLE, (self::$encoding ?? null));
+        return mb_convert_case($value, MB_CASE_TITLE, self::$encoding);
     }
 
     /**
@@ -486,7 +557,7 @@ abstract class Strings
      */
     public static function upper(string $value): string
     {
-        return mb_convert_case($value, MB_CASE_UPPER, (self::$encoding ?? null));
+        return mb_convert_case($value, MB_CASE_UPPER, self::$encoding);
     }
 
     /**
@@ -501,24 +572,5 @@ abstract class Strings
     public static function validEmail(string $email): bool
     {
         return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
-    }
-
-    /**
-     * validJson().
-     *
-     * Determines if a string is valid JSON.
-     *
-     * @deprecated as of 2.0.0 and will be removed in v3.0
-     *
-     * @param string $data The string to validate as JSON.
-     *
-     * @return bool True if the json appears to be valid, false otherwise.
-     */
-    public static function validJson(string $data): bool
-    {
-        $data = trim($data);
-        json_decode($data);
-
-        return (json_last_error() === JSON_ERROR_NONE);
     }
 }

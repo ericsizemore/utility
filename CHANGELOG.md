@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+  * `Dates::formatDifferenceOutput()` a private function to handle formatting the output for `Dates::timeDifference()`
+  * `Dates::INTERVAL_UNITS` constant.
+  * `vimeo/psalm` as a dev dependency.
+  * Added new parameter `$includeBcZones` to `Dates::timezoneInfo()` and `Dates::validTimezone()`
+    * If true, includes all backwards compatible (and outdated) timezones.
+
+### Changed
+
+  * `Dates::timeDifference()` logic was changed and a new parameter `$extendedOutput` added.
+    * If this parameter is `false` (default), it returns the same output as usual.
+    * If this parameter is `true`, it formats the output with available non-zero `DateInterval` units. For example: 2 day(s) 2 hour(s) 20 minute(s) old .
+  * `Dates::timeDifference()` output no longer uses '(s)'. Will add 's' if greater than one.
+  * Updated code throughout to fix issues reported by Psalm.
+
+### Removed
+
 
 ## [2.1.0] - 2024-04-23
 

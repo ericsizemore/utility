@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Esi\Utility\Tests;
 
+use Esi\Utility\Arrays;
 use Esi\Utility\Environment;
 use Esi\Utility\Numbers;
 use Esi\Utility\Strings;
@@ -28,8 +29,11 @@ use Random\RandomException;
  * String utility tests.
  *
  * @internal
+ *
+ * @psalm-api
  */
 #[CoversClass(Strings::class)]
+#[CoversMethod(Arrays::class, 'keyExists')]
 #[CoversMethod(Environment::class, 'iniGet')]
 #[CoversMethod(Environment::class, 'iniSet')]
 #[CoversMethod(Numbers::class, 'random')]
@@ -49,6 +53,11 @@ class StringsTest extends TestCase
     public function testAsciiWithLanguage(): void
     {
         self::assertSame('aaistAAIST', Strings::ascii('ăâîșțĂÂÎȘȚ', 'ro'));
+    }
+
+    public function testAsciiWithNonExistingLanguageInLanguageMap(): void
+    {
+        self::assertSame('AA ', Strings::ascii("ǍǺ\xE2\x80\x87", 'em'));
     }
 
     /**
@@ -184,6 +193,9 @@ class StringsTest extends TestCase
         self::assertNotEmpty($bytes);
 
         self::expectException(RandomException::class);
+        /**
+         * @psalm-suppress InvalidArgument
+         */
         Strings::randomBytes(-10);
     }
 
@@ -287,15 +299,6 @@ class StringsTest extends TestCase
         self::assertTrue(Strings::validEmail('john.smith+label@gmail.com'));
         self::assertTrue(Strings::validEmail('john.smith@gmail.co.uk'));
         self::assertFalse(Strings::validEmail('j@'));
-    }
-
-    /**
-     * Test Strings::validJson().
-     */
-    public function testValidJson(): void
-    {
-        self::assertTrue(Strings::validJson('{ "test": { "foo": "bar" } }'));
-        self::assertFalse(Strings::validJson('{ "": "": "" } }'));
     }
 
     /**

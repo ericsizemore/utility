@@ -26,6 +26,8 @@ use const PHP_INT_MIN;
  * Number utility tests.
  *
  * @internal
+ *
+ * @psalm-api
  */
 #[CoversClass(Numbers::class)]
 class NumbersTest extends TestCase
