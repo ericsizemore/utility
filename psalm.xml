@@ -9,7 +9,6 @@
     findUnusedPsalmSuppress="true"
     findUnusedCode="true"
     limitMethodComplexity="true"
-    errorBaseline="./psalm-baseline.xml"
 >
     <projectFiles>
         <directory name="src"/>

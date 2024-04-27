@@ -74,9 +74,9 @@
         "cs:fix": "vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php",
         "cs:check": "vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php --dry-run --diff",
         "phpstan": "vendor/bin/phpstan analyse -c phpstan.neon",
-        "psalm": "vendor/bin/psalm --no-diff",
-        "psalm:ci": "vendor/bin/psalm --no-diff --long-progress --output-format=github",
-        "psalm:stats": "vendor/bin/psalm --no-diff --stats",
+        "psalm": "vendor/bin/psalm --no-diff --use-baseline=psalm-baseline.xml",
+        "psalm:ci": "vendor/bin/psalm --no-diff --long-progress --output-format=github --use-baseline=psalm-baseline.xml",
+        "psalm:stats": "vendor/bin/psalm --no-diff --stats --use-baseline=psalm-baseline.xml",
         "test": "phpunit"
     }
 }
