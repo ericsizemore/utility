@@ -22,14 +22,6 @@ jobs:
         with:
            php-version: ${{ matrix.php }}
            extensions: mbstring, exif, imagick, gmagick,
-           coverage: xdebug,
-           tools: composer:v2
-
-      - name: Install PHP ${{ matrix.php }}
-        uses: shivammathur/setup-php@master
-        with:
-           php-version: ${{ matrix.php }}
-           extensions: mbstring, exif, imagick, gmagick,
            tools: composer:v2
 
       - name: Validate composer.json and composer.lock
