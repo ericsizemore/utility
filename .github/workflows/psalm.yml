@@ -8,13 +8,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Install PHP ${{ matrix.php }}
-        uses: shivammathur/setup-php@master
-        with:
-           php-version: ${{ matrix.php }}
-           extensions: mbstring, exif, imagick, gmagick,
-           coverage: xdebug,
-           tools: composer:v2
       - name: Psalm
         uses: docker://vimeo/psalm-github-actions:latest
         with:

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e08fab70d2a759d8432714e1386bf7ef",
+    "content-hash": "d4cd7e882779fce6f4e7243d83534417",
     "packages": [
         {
             "name": "esi/clock",
@@ -5342,7 +5342,7 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "^8.3 <8.5",
+        "php": "^8.2 <8.5",
         "ext-json": "*",
         "ext-mbstring": "*"
     },
