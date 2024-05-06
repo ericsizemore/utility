@@ -62,6 +62,7 @@ class DatesTest extends TestCase
     public function testTimeDifference(): void
     {
         $clock = FrozenClock::fromUtc()->now();
+        $clock->setTimestamp(1714966746);
 
         $modifyClock = static fn (int $minus): int => $clock->getTimestamp() - $minus;
 
@@ -94,11 +95,11 @@ class DatesTest extends TestCase
         self::assertSame('5 days old', Dates::timeDifference($modifyClock(3_600 * 24 * 5), extendedOutput: true));
         self::assertSame('1 week old', Dates::timeDifference($modifyClock(3_600 * 24 * 7), extendedOutput: true));
         self::assertSame('2 weeks old', Dates::timeDifference($modifyClock(3_600 * 24 * 14), extendedOutput: true));
-        self::assertSame('1 month 4 days old', Dates::timeDifference($modifyClock(604_800 * 5), extendedOutput: true));
+        self::assertSame('1 month 5 days old', Dates::timeDifference($modifyClock(604_800 * 5), extendedOutput: true));
         self::assertSame('2 months 2 weeks old', Dates::timeDifference($modifyClock(604_800 * 10), extendedOutput: true));
         self::assertSame('1 year 2 months 4 weeks old', Dates::timeDifference($modifyClock(2_592_000 * 15), extendedOutput: true));
         self::assertSame('2 years 11 months 2 weeks old', Dates::timeDifference($modifyClock(2_592_000 * 36), extendedOutput: true));
-        self::assertSame('11 years 6 months old', Dates::timeDifference($modifyClock(2_592_000 * 140), extendedOutput: true));
+        self::assertSame('11 years 6 months 1 day old', Dates::timeDifference($modifyClock(2_592_000 * 140), extendedOutput: true));
     }
 
     /**
