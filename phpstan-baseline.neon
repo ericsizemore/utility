@@ -11,6 +11,14 @@ parameters:
 			path: src/Arrays.php
 
 		-
+			message: """
+				#^Call to deprecated method mapDeep\\(\\) of class Esi\\\\Utility\\\\Arrays\\:
+				current signature and functionality as of 2\\.1\\.0, will be changed in 3\\.0$#
+			"""
+			count: 1
+			path: src/Environment.php
+
+		-
 			message: "#^Variable \\$i might not be defined\\.$#"
 			count: 1
 			path: src/Numbers.php
@@ -19,6 +27,118 @@ parameters:
 			message: "#^Comparison operation \"\\<\" between int\\<1, max\\> and 1 is always false\\.$#"
 			count: 1
 			path: src/Strings.php
+
+		-
+			message: """
+				#^Call to deprecated method flatten\\(\\) of class Esi\\\\Utility\\\\Arrays\\:
+				current signature and functionality as of 2\\.1\\.0, will be changed in 3\\.0$#
+			"""
+			count: 3
+			path: tests/src/ArraysTest.php
+
+		-
+			message: """
+				#^Call to deprecated method mapDeep\\(\\) of class Esi\\\\Utility\\\\Arrays\\:
+				current signature and functionality as of 2\\.1\\.0, will be changed in 3\\.0$#
+			"""
+			count: 2
+			path: tests/src/ArraysTest.php
+
+		-
+			message: """
+				#^Call to deprecated method celsiusToFahrenheit\\(\\) of class Esi\\\\Utility\\\\Conversion\\:
+				current signature and functionality as of 2\\.1\\.0, will be changed in 3\\.0$#
+			"""
+			count: 2
+			path: tests/src/ConversionTest.php
+
+		-
+			message: """
+				#^Call to deprecated method celsiusToKelvin\\(\\) of class Esi\\\\Utility\\\\Conversion\\:
+				current signature and functionality as of 2\\.1\\.0, will be changed in 3\\.0$#
+			"""
+			count: 2
+			path: tests/src/ConversionTest.php
+
+		-
+			message: """
+				#^Call to deprecated method celsiusToRankine\\(\\) of class Esi\\\\Utility\\\\Conversion\\:
+				current signature and functionality as of 2\\.1\\.0, will be changed in 3\\.0$#
+			"""
+			count: 2
+			path: tests/src/ConversionTest.php
+
+		-
+			message: """
+				#^Call to deprecated method fahrenheitToCelsius\\(\\) of class Esi\\\\Utility\\\\Conversion\\:
+				current signature and functionality as of 2\\.1\\.0, will be changed in 3\\.0$#
+			"""
+			count: 2
+			path: tests/src/ConversionTest.php
+
+		-
+			message: """
+				#^Call to deprecated method fahrenheitToKelvin\\(\\) of class Esi\\\\Utility\\\\Conversion\\:
+				current signature and functionality as of 2\\.1\\.0, will be changed in 3\\.0$#
+			"""
+			count: 2
+			path: tests/src/ConversionTest.php
+
+		-
+			message: """
+				#^Call to deprecated method fahrenheitToRankine\\(\\) of class Esi\\\\Utility\\\\Conversion\\:
+				current signature and functionality as of 2\\.1\\.0, will be changed in 3\\.0$#
+			"""
+			count: 2
+			path: tests/src/ConversionTest.php
+
+		-
+			message: """
+				#^Call to deprecated method kelvinToCelsius\\(\\) of class Esi\\\\Utility\\\\Conversion\\:
+				current signature and functionality as of 2\\.1\\.0, will be changed in 3\\.0$#
+			"""
+			count: 2
+			path: tests/src/ConversionTest.php
+
+		-
+			message: """
+				#^Call to deprecated method kelvinToFahrenheit\\(\\) of class Esi\\\\Utility\\\\Conversion\\:
+				current signature and functionality as of 2\\.1\\.0, will be changed in 3\\.0$#
+			"""
+			count: 2
+			path: tests/src/ConversionTest.php
+
+		-
+			message: """
+				#^Call to deprecated method kelvinToRankine\\(\\) of class Esi\\\\Utility\\\\Conversion\\:
+				current signature and functionality as of 2\\.1\\.0, will be changed in 3\\.0$#
+			"""
+			count: 2
+			path: tests/src/ConversionTest.php
+
+		-
+			message: """
+				#^Call to deprecated method rankineToCelsius\\(\\) of class Esi\\\\Utility\\\\Conversion\\:
+				current signature and functionality as of 2\\.1\\.0, will be changed in 3\\.0$#
+			"""
+			count: 2
+			path: tests/src/ConversionTest.php
+
+		-
+			message: """
+				#^Call to deprecated method rankineToFahrenheit\\(\\) of class Esi\\\\Utility\\\\Conversion\\:
+				current signature and functionality as of 2\\.1\\.0, will be changed in 3\\.0$#
+			"""
+			count: 2
+			path: tests/src/ConversionTest.php
+
+		-
+			message: """
+				#^Call to deprecated method rankineToKelvin\\(\\) of class Esi\\\\Utility\\\\Conversion\\:
+				current signature and functionality as of 2\\.1\\.0, will be changed in 3\\.0$#
+			"""
+			count: 2
+			path: tests/src/ConversionTest.php
 
 		-
 			message: "#^Static method Esi\\\\Utility\\\\Environment\\:\\:iniSet\\(\\) invoked with 1 parameter, 2 required\\.$#"
@@ -39,6 +159,14 @@ parameters:
 			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\<string, int\\>\\|int given\\.$#"
 			count: 1
 			path: tests/src/FilesystemTest.php
+
+		-
+			message: """
+				#^Call to deprecated method validJson\\(\\) of class Esi\\\\Utility\\\\Strings\\:
+				as of 2\\.0\\.0 and will be removed in v3\\.0$#
+			"""
+			count: 2
+			path: tests/src/StringsTest.php
 
 		-
 			message: "#^Parameter \\#1 \\$length of static method Esi\\\\Utility\\\\Strings\\:\\:randomBytes\\(\\) expects int\\<1, max\\>, \\-10 given\\.$#"
