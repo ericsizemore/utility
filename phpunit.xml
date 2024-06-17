@@ -3,7 +3,7 @@
 		 xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
          backupGlobals="true"
          executionOrder="depends,defects"
-		 bootstrap="tests/bootstrap.php"
+		 bootstrap="vendor/autoload.php"
          cacheDirectory="build/phpunit/cache"
          displayDetailsOnTestsThatTriggerDeprecations="true"
          displayDetailsOnTestsThatTriggerErrors="true"
@@ -24,7 +24,7 @@
 			<directory>src</directory>
 		</include>
 	</source>
-    <coverage cacheDirectory="build/phpunit/cache">
+    <coverage>
         <report>
             <clover outputFile="build/logs/clover.xml"/>
             <html outputDirectory="build/logs/coverage" />

@@ -61,45 +61,47 @@ class DatesTest extends TestCase
      */
     public function testTimeDifference(): void
     {
-        $clock = FrozenClock::fromUtc()->now();
-        $clock->setTimestamp(1714966746);
+        $timestampFrom = FrozenClock::fromUtc()->now();
+        $timestampTo = FrozenClock::fromUtc()->now();
 
-        $modifyClock = static fn (int $minus): int => $clock->getTimestamp() - $minus;
+        $modifyClock = static function (int $minus) use ($timestampFrom): int {
+            return $timestampFrom->getTimestamp() - $minus;
+        };
 
-        self::assertSame('1 second old', Dates::timeDifference($modifyClock(1)));
-        self::assertSame('15 seconds old', Dates::timeDifference($modifyClock(15), 0, ''));
-        self::assertSame('30 seconds old', Dates::timeDifference($modifyClock(30)));
-        self::assertSame('1 minute old', Dates::timeDifference($modifyClock(60)));
-        self::assertSame('5 minutes old', Dates::timeDifference($modifyClock(60 * 5)));
-        self::assertSame('1 hour old', Dates::timeDifference($modifyClock(3_600)));
-        self::assertSame('2 hours old', Dates::timeDifference($modifyClock(3_600 * 2)));
-        self::assertSame('1 day old', Dates::timeDifference($modifyClock(3_600 * 24)));
-        self::assertSame('5 days old', Dates::timeDifference($modifyClock(3_600 * 24 * 5)));
-        self::assertSame('1 week old', Dates::timeDifference($modifyClock(3_600 * 24 * 7)));
-        self::assertSame('2 weeks old', Dates::timeDifference($modifyClock(3_600 * 24 * 14)));
-        self::assertSame('1 month old', Dates::timeDifference($modifyClock(604_800 * 5)));
-        self::assertSame('2 months old', Dates::timeDifference($modifyClock(604_800 * 10)));
-        self::assertSame('1 year old', Dates::timeDifference($modifyClock(2_592_000 * 15)));
-        self::assertSame('2 years old', Dates::timeDifference($modifyClock(2_592_000 * 36)));
-        self::assertSame('11 years old', Dates::timeDifference($modifyClock(2_592_000 * 140)));
+        self::assertSame('1 second old', Dates::timeDifference($modifyClock(1), $timestampTo->getTimestamp()));
+        self::assertSame('15 seconds old', Dates::timeDifference($modifyClock(15), $timestampTo->getTimestamp(), ''));
+        self::assertSame('30 seconds old', Dates::timeDifference($modifyClock(30), $timestampTo->getTimestamp()));
+        self::assertSame('1 minute old', Dates::timeDifference($modifyClock(60), $timestampTo->getTimestamp()));
+        self::assertSame('5 minutes old', Dates::timeDifference($modifyClock(60 * 5), $timestampTo->getTimestamp()));
+        self::assertSame('1 hour old', Dates::timeDifference($modifyClock(3_600), $timestampTo->getTimestamp()));
+        self::assertSame('2 hours old', Dates::timeDifference($modifyClock(3_600 * 2), $timestampTo->getTimestamp()));
+        self::assertSame('1 day old', Dates::timeDifference($modifyClock(3_600 * 24), $timestampTo->getTimestamp()));
+        self::assertSame('5 days old', Dates::timeDifference($modifyClock(3_600 * 24 * 5), $timestampTo->getTimestamp()));
+        self::assertSame('1 week old', Dates::timeDifference($modifyClock(3_600 * 24 * 7), $timestampTo->getTimestamp()));
+        self::assertSame('2 weeks old', Dates::timeDifference($modifyClock(3_600 * 24 * 14), $timestampTo->getTimestamp()));
+        self::assertSame('1 month old', Dates::timeDifference($modifyClock(604_800 * 5), $timestampTo->getTimestamp()));
+        self::assertSame('2 months old', Dates::timeDifference($modifyClock(604_800 * 10), $timestampTo->getTimestamp()));
+        self::assertSame('1 year old', Dates::timeDifference($modifyClock(2_592_000 * 15), $timestampTo->getTimestamp()));
+        self::assertSame('2 years old', Dates::timeDifference($modifyClock(2_592_000 * 36), $timestampTo->getTimestamp()));
+        self::assertSame('11 years old', Dates::timeDifference($modifyClock(2_592_000 * 140), $timestampTo->getTimestamp()));
 
         // With $extendedOutput
-        self::assertSame('1 second old', Dates::timeDifference($modifyClock(1), extendedOutput: true));
-        self::assertSame('15 seconds old', Dates::timeDifference($modifyClock(15), 0, '', extendedOutput: true));
-        self::assertSame('30 seconds old', Dates::timeDifference($modifyClock(30), extendedOutput: true));
-        self::assertSame('1 minute old', Dates::timeDifference($modifyClock(60), extendedOutput: true));
-        self::assertSame('5 minutes old', Dates::timeDifference($modifyClock(60 * 5), extendedOutput: true));
-        self::assertSame('1 hour old', Dates::timeDifference($modifyClock(3_600), extendedOutput: true));
-        self::assertSame('2 hours old', Dates::timeDifference($modifyClock(3_600 * 2), extendedOutput: true));
-        self::assertSame('1 day old', Dates::timeDifference($modifyClock(3_600 * 24), extendedOutput: true));
-        self::assertSame('5 days old', Dates::timeDifference($modifyClock(3_600 * 24 * 5), extendedOutput: true));
-        self::assertSame('1 week old', Dates::timeDifference($modifyClock(3_600 * 24 * 7), extendedOutput: true));
-        self::assertSame('2 weeks old', Dates::timeDifference($modifyClock(3_600 * 24 * 14), extendedOutput: true));
-        self::assertSame('1 month 5 days old', Dates::timeDifference($modifyClock(604_800 * 5), extendedOutput: true));
-        self::assertSame('2 months 2 weeks old', Dates::timeDifference($modifyClock(604_800 * 10), extendedOutput: true));
-        self::assertSame('1 year 2 months 4 weeks old', Dates::timeDifference($modifyClock(2_592_000 * 15), extendedOutput: true));
-        self::assertSame('2 years 11 months 2 weeks old', Dates::timeDifference($modifyClock(2_592_000 * 36), extendedOutput: true));
-        self::assertSame('11 years 6 months 1 day old', Dates::timeDifference($modifyClock(2_592_000 * 140), extendedOutput: true));
+        self::assertSame('1 second old', Dates::timeDifference($modifyClock(1), $timestampTo->getTimestamp(), extendedOutput: true));
+        self::assertSame('15 seconds old', Dates::timeDifference($modifyClock(15), $timestampTo->getTimestamp(), extendedOutput: true));
+        self::assertSame('30 seconds old', Dates::timeDifference($modifyClock(30), $timestampTo->getTimestamp(), extendedOutput: true));
+        self::assertSame('1 minute old', Dates::timeDifference($modifyClock(60), $timestampTo->getTimestamp(), extendedOutput: true));
+        self::assertSame('5 minutes old', Dates::timeDifference($modifyClock(60 * 5), $timestampTo->getTimestamp(), extendedOutput: true));
+        self::assertSame('1 hour old', Dates::timeDifference($modifyClock(3_600), $timestampTo->getTimestamp(), extendedOutput: true));
+        self::assertSame('2 hours old', Dates::timeDifference($modifyClock(3_600 * 2), $timestampTo->getTimestamp(), extendedOutput: true));
+        self::assertSame('1 day old', Dates::timeDifference($modifyClock(3_600 * 24), $timestampTo->getTimestamp(), extendedOutput: true));
+        self::assertSame('5 days old', Dates::timeDifference($modifyClock(3_600 * 24 * 5), $timestampTo->getTimestamp(), extendedOutput: true));
+        self::assertSame('1 week old', Dates::timeDifference($modifyClock(3_600 * 24 * 7), $timestampTo->getTimestamp(), extendedOutput: true));
+        self::assertSame('2 weeks old', Dates::timeDifference($modifyClock(3_600 * 24 * 14), $timestampTo->getTimestamp(), extendedOutput: true));
+        self::assertSame('1 month 4 days old', Dates::timeDifference($modifyClock(604_800 * 5), $timestampTo->getTimestamp(), extendedOutput: true));
+        self::assertSame('2 months 2 weeks old', Dates::timeDifference($modifyClock(604_800 * 10), $timestampTo->getTimestamp(), extendedOutput: true));
+        self::assertSame('1 year 2 months 4 weeks old', Dates::timeDifference($modifyClock(2_592_000 * 15), $timestampTo->getTimestamp(), extendedOutput: true));
+        self::assertSame('2 years 11 months 2 weeks old', Dates::timeDifference($modifyClock(2_592_000 * 36), $timestampTo->getTimestamp(), extendedOutput: true));
+        self::assertSame('11 years 6 months old', Dates::timeDifference($modifyClock(2_592_000 * 140), $timestampTo->getTimestamp(), extendedOutput: true));
     }
 
     /**
