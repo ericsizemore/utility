@@ -3,9 +3,7 @@
 [![Build Status](https://scrutinizer-ci.com/g/ericsizemore/utility/badges/build.png?b=master)](https://scrutinizer-ci.com/g/ericsizemore/utility/build-status/master)
 [![Code Coverage](https://scrutinizer-ci.com/g/ericsizemore/utility/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/ericsizemore/utility/?branch=master)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/ericsizemore/utility/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/ericsizemore/utility/?branch=master)
-[![Tests](https://github.com/ericsizemore/utility/actions/workflows/tests.yml/badge.svg)](https://github.com/ericsizemore/utility/actions/workflows/tests.yml)
-[![PHPStan](https://github.com/ericsizemore/utility/actions/workflows/main.yml/badge.svg)](https://github.com/ericsizemore/utility/actions/workflows/main.yml)
-
+[![Continuous Integration](https://github.com/ericsizemore/utility/actions/workflows/continuous-integration.yml/badge.svg)](https://github.com/ericsizemore/utility/actions/workflows/continuous-integration.yml)
 [![Latest Stable Version](https://img.shields.io/packagist/v/esi/utility.svg)](https://packagist.org/packages/esi/utility)
 [![Downloads per Month](https://img.shields.io/packagist/dm/esi/utility.svg)](https://packagist.org/packages/esi/utility)
 [![License](https://img.shields.io/packagist/l/esi/utility.svg)](https://packagist.org/packages/esi/utility)
