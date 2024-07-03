@@ -91,7 +91,9 @@ abstract class Dates
             $difference->h > 0  => $difference->h . ' hour(s)',
             $difference->i > 0  => $difference->i . ' minute(s)',
             $difference->s > 0  => $difference->s . ' second(s)',
+            //@codeCoverageIgnoreStart
             default             => ''
+            //@codeCoverageIgnoreEnd
         };
 
         return $string . $append;
