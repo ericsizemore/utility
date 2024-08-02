@@ -156,7 +156,7 @@ parameters:
 			path: tests/src/FilesystemTest.php
 
 		-
-			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\<string, int\\>\\|int given\\.$#"
+			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess\\<\\(int\\|string\\), mixed\\>, array\\<string, int\\>\\|int given\\.$#"
 			count: 1
 			path: tests/src/FilesystemTest.php
 
