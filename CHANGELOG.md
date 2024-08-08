@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [Unreleased]
+
+Initially, in the previous `2.1.0` release, several functions were deprecated (see `Deprecated` [below](CHANGELOG.md#2.1.0)).
+After much thought on the direction I want this library to move in, I am reversing my decision to deprecate the Array and Temperature functions mentioned.
+
+### Changed
+
+  * `Arrays::flatten()`, `Arrays::mapDeep()`, and all the temperature related functions in `Conversions` are no longer deprecated.
+
+
 ## [2.1.0] - 2024-04-23
 
 This release focuses on setting up the future of the library. No new features or functionality has been added in this release.
@@ -37,7 +47,7 @@ The next major release, v3, will move to PHP 8.3 as a minimum requirement.
   * `Arrays::mapDeep()`'s current signature and functionality will change in the next major release (v3.0)
     * The functionality of mapping the properties of an object will likely be moved to its own utility class/function.
   * `Arrays::validJson()` will be removed in the next major release (v3.0)
-  * All of the temperature related functions in `Conversions`:
+  * All the temperature related functions in `Conversions`:
     * Current signature and functionality deprecated, will be changed in 3.0
 
 ### Removed
