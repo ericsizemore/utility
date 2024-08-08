@@ -33,7 +33,6 @@ use function preg_quote;
 use function preg_replace;
 use function preg_replace_callback;
 use function random_bytes;
-use function sprintf;
 use function str_contains;
 use function str_ends_with;
 use function str_replace;
@@ -229,7 +228,7 @@ abstract class Strings
      */
     public static function guid(): string
     {
-        return sprintf(
+        return \sprintf(
             '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
             Numbers::random(0, 0xff_ff),
             Numbers::random(0, 0xff_ff),

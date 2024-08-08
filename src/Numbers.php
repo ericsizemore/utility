@@ -20,7 +20,6 @@ use ValueError;
 use function abs;
 use function number_format;
 use function random_int;
-use function sprintf;
 
 /**
  * Number utilities.
@@ -165,7 +164,7 @@ abstract class Numbers
 
         // If $bytes is less than our base, there is no need for any conversion
         if ($bytes < $base) {
-            return sprintf('%s %s', $bytes, $units[0]);
+            return \sprintf('%s %s', $bytes, $units[0]);
         }
 
         // Perform the conversion

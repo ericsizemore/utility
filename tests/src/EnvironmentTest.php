@@ -23,8 +23,6 @@ use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
-use function sprintf;
-
 /**
  * Environment utility tests.
  *
@@ -210,8 +208,8 @@ class EnvironmentTest extends TestCase
     {
         $expected      = 'http://test.dev/test.php?foo=bar';
         $expectedAuth  = 'http://admin:123@test.dev/test.php?foo=bar';
-        $expectedPort  = sprintf('http://test.dev:%d/test.php?foo=bar', Environment::PORT_SECURE);
-        $expectedPort2 = sprintf('https://test.dev:%d/test.php?foo=bar', Environment::PORT_UNSECURE);
+        $expectedPort  = \sprintf('http://test.dev:%d/test.php?foo=bar', Environment::PORT_SECURE);
+        $expectedPort2 = \sprintf('https://test.dev:%d/test.php?foo=bar', Environment::PORT_UNSECURE);
         $expectedSSL   = 'https://test.dev/test.php?foo=bar';
 
         Arrays::set($_SERVER, 'HTTP_HOST', 'test.dev');

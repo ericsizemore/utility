@@ -38,7 +38,6 @@ use function natsort;
 use function preg_match;
 use function preg_quote;
 use function rtrim;
-use function sprintf;
 use function unlink;
 
 use const DIRECTORY_SEPARATOR;
@@ -143,7 +142,7 @@ abstract class Filesystem
     {
         // Sanity check
         if (!Filesystem::isFile($file)) {
-            throw new InvalidArgumentException(sprintf("File '%s' does not exist or is not readable.", $file));
+            throw new InvalidArgumentException(\sprintf("File '%s' does not exist or is not readable.", $file));
         }
 
         return file_get_contents($file);
@@ -168,12 +167,12 @@ abstract class Filesystem
     {
         // Sanity checks
         if (!Filesystem::isFile($file)) {
-            throw new InvalidArgumentException(sprintf("File '%s' does not exist or is not readable.", $file));
+            throw new InvalidArgumentException(\sprintf("File '%s' does not exist or is not readable.", $file));
         }
 
         // @codeCoverageIgnoreStart
         if (!Filesystem::isReallyWritable($file)) {
-            throw new InvalidArgumentException(sprintf("File '%s' is not writable.", $file));
+            throw new InvalidArgumentException(\sprintf("File '%s' is not writable.", $file));
         }
 
         // @codeCoverageIgnoreEnd
@@ -390,7 +389,7 @@ abstract class Filesystem
      */
     private static function checkIgnore(string $path, string $ignore): bool
     {
-        return $ignore !== '' && preg_match(sprintf('#(%s)#i', $ignore), $path) === 1;
+        return $ignore !== '' && preg_match(\sprintf('#(%s)#i', $ignore), $path) === 1;
     }
 
     /**

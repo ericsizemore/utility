@@ -3,6 +3,18 @@
     "description": "Utility - Collection of various PHP utility functions.",
     "license": "MIT",
     "type": "library",
+    "keywords": [
+        "tools",
+        "utilities",
+        "utility",
+        "arrays",
+        "dates",
+        "environment",
+        "filesystem",
+        "strings",
+        "numbers",
+        "images"
+    ],
     "authors": [
         {
             "name": "Eric Sizemore",
@@ -14,6 +26,8 @@
         "issues": "https://github.com/ericsizemore/utility/issues",
         "forum": "https://github.com/ericsizemore/utility/discussions",
         "source": "https://github.com/ericsizemore/utility/tree/master",
+        "docs": "https://github.com/ericsizemore/utility/tree/master/docs",
+        "rss": "https://github.com/ericsizemore/utility/releases.atom",
         "security": "https://github.com/ericsizemore/utility/security/policy"
     },
     "funding": [
@@ -31,7 +45,7 @@
         }
     ],
     "require": {
-        "php": "^8.2 <8.5",
+        "php": ">=8.2",
         "esi/clock": "^1.0",
         "ext-json": "*",
         "ext-mbstring": "*",
@@ -40,13 +54,13 @@
     },
     "require-dev": {
         "esi/phpunit-coverage-check": "^2.0",
-        "friendsofphp/php-cs-fixer": "^3.59",
+        "friendsofphp/php-cs-fixer": "^3.62",
         "phpstan/extension-installer": "^1.4",
         "phpstan/phpstan": "^1.11",
         "phpstan/phpstan-deprecation-rules": "^1.2",
         "phpstan/phpstan-phpunit": "^1.4",
         "phpstan/phpstan-strict-rules": "^1.6",
-        "phpunit/phpunit": "^11.1"
+        "phpunit/phpunit": "^11.3"
     },
     "suggest": {
         "ext-exif": "To be able to use Exif for guessing image types with Utility\\Image",
@@ -75,10 +89,19 @@
         }
     },
     "scripts": {
+        "analyze": [
+            "@clear-build",
+            "@composer validate",
+            "@test",
+            "@coverage",
+            "@phpstan"
+        ],
+        "clear-build": "rm -rf ./build/*",
         "coverage": "vendor/bin/coverage-check build/logs/clover.xml 100",
-        "cs:fix": "vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php",
         "cs:check": "vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php --dry-run --diff",
-        "phpstan": "vendor/bin/phpstan analyse -c phpstan.neon",
-        "test": "phpunit"
+        "cs:fix": "vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php",
+        "phpstan": "vendor/bin/phpstan analyse -c phpstan.neon -vvv",
+        "test": "vendor/bin/phpunit",
+        "test:migrate": "@test --migrate-configuration"
     }
 }

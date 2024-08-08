@@ -92,7 +92,7 @@ abstract class Dates
             $difference->i > 0  => $difference->i . ' minute(s)',
             $difference->s > 0  => $difference->s . ' second(s)',
             //@codeCoverageIgnoreStart
-            default             => ''
+            default => ''
             //@codeCoverageIgnoreEnd
         };
 

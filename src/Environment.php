@@ -23,7 +23,6 @@ use function ini_get;
 use function ini_set;
 use function preg_match;
 use function preg_replace;
-use function sprintf;
 use function trim;
 
 use const FILTER_FLAG_IPV4;
@@ -427,7 +426,7 @@ abstract class Environment
 
         // Put it all together
         /** @var non-falsy-string $url */
-        $url = sprintf('%s%s%s%s%s', $scheme, $auth, $host, $port, $path);
+        $url = \sprintf('%s%s%s%s%s', $scheme, $auth, $host, $port, $path);
 
         return $url;
     }
