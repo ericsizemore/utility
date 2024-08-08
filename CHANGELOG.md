@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-Initially, in the previous `2.1.0` release, several functions were deprecated (see `Deprecated` [below](CHANGELOG.md#2.1.0)).
+Initially, in the previous `2.1.0` release, several functions were deprecated (see `Deprecated` under `2.1.0` [below](CHANGELOG.md#deprecated)).
 After much thought on the direction I want this library to move in, I am reversing my decision to deprecate the Array and Temperature functions mentioned.
 
 ### Changed
@@ -251,11 +251,12 @@ Utility has undergone a complete restructuring, wherein it is no longer a single
   * Initial release
 
 
-https://github.com/ericsizemore/utility/releases/tag/v2.1.0
-https://github.com/ericsizemore/utility/releases/tag/v2.0.0
-https://github.com/ericsizemore/utility/releases/tag/v1.3.0
-https://github.com/ericsizemore/utility/releases/tag/v1.2.0
-https://github.com/ericsizemore/utility/releases/tag/v1.1.2
-https://github.com/ericsizemore/utility/releases/tag/v1.1.1
-https://github.com/ericsizemore/utility/releases/tag/v1.1.0
-https://github.com/ericsizemore/utility/releases/tag/v1.0.3
+[unreleased]: https://github.com/ericsizemore/utility/tree/master
+[2.1.0]: https://github.com/ericsizemore/utility/releases/tag/v2.1.0
+[2.0.0]: https://github.com/ericsizemore/utility/releases/tag/v2.0.0
+[1.3.0]: https://github.com/ericsizemore/utility/releases/tag/v1.3.0
+[1.2.0]: https://github.com/ericsizemore/utility/releases/tag/v1.2.0
+[1.1.2]: https://github.com/ericsizemore/utility/releases/tag/v1.1.2
+[1.1.1]: https://github.com/ericsizemore/utility/releases/tag/v1.1.1
+[1.1.0]: https://github.com/ericsizemore/utility/releases/tag/v1.1.0
+[1.0.3]: https://github.com/ericsizemore/utility/releases/tag/v1.0.3
