@@ -40,14 +40,13 @@ abstract class Conversion
     public const METERS_TO_MILES = 1_609.344;
 
     /**
-     * @todo The temperature conversion functions are approximate, lose some accuracy.
+     * @todo The temperature conversion functions are approximate, loses some accuracy.
      */
 
     /**
      * Convert Celsius (Cº) To Fahrenheit (Fº).
      *
      * @since  1.2.0
-     * @deprecated current signature and functionality as of 2.1.0, will be changed in 3.0
      *
      * @param float $celsius   Value in Celsius
      * @param bool  $rounded   Whether to round the result.
@@ -64,7 +63,6 @@ abstract class Conversion
      * Convert Celsius (Cº) To Kelvin (K).
      *
      * @since  1.2.0
-     * @deprecated current signature and functionality as of 2.1.0, will be changed in 3.0
      *
      * @param float $celsius   Value in Celsius
      * @param bool  $rounded   Whether to round the result.
@@ -81,7 +79,6 @@ abstract class Conversion
      * Convert Celsius (Cº) To Rankine (ºR).
      *
      * @since  1.2.0
-     * @deprecated current signature and functionality as of 2.1.0, will be changed in 3.0
      *
      * @param float $celsius   Value in Celsius
      * @param bool  $rounded   Whether to round the result.
@@ -98,7 +95,6 @@ abstract class Conversion
      * Convert Fahrenheit (Fº) To Celsius (Cº).
      *
      * @since  1.2.0
-     * @deprecated current signature and functionality as of 2.1.0, will be changed in 3.0
      *
      * @param float $fahrenheit Value in Fahrenheit
      * @param bool  $rounded    Whether to round the result.
@@ -115,7 +111,6 @@ abstract class Conversion
      * Convert Fahrenheit (Fº) To Kelvin (K).
      *
      * @since  1.2.0
-     * @deprecated current signature and functionality as of 2.1.0, will be changed in 3.0
      *
      * @param float $fahrenheit Value in Fahrenheit
      * @param bool  $rounded    Whether to round the result.
@@ -132,7 +127,6 @@ abstract class Conversion
      * Convert Fahrenheit (Fº) To Rankine (ºR).
      *
      * @since  1.2.0
-     * @deprecated current signature and functionality as of 2.1.0, will be changed in 3.0
      *
      * @param float $fahrenheit Value in Fahrenheit
      * @param bool  $rounded    Whether to round the result.
@@ -206,7 +200,6 @@ abstract class Conversion
      * Convert Kelvin (K) To Celsius (Cº).
      *
      * @since  1.2.0
-     * @deprecated current signature and functionality as of 2.1.0, will be changed in 3.0
      *
      * @param float $kelvin    Value in Kelvin
      * @param bool  $rounded   Whether to round the result.
@@ -223,7 +216,6 @@ abstract class Conversion
      * Convert Kelvin (K) To Fahrenheit (Fº).
      *
      * @since  1.2.0
-     * @deprecated current signature and functionality as of 2.1.0, will be changed in 3.0
      *
      * @param float $kelvin    Value in Kelvin
      * @param bool  $rounded   Whether to round the result.
@@ -240,7 +232,6 @@ abstract class Conversion
      * Convert Kelvin (K) To Rankine (ºR).
      *
      * @since  1.2.0
-     * @deprecated current signature and functionality as of 2.1.0, will be changed in 3.0
      *
      * @param float $kelvin    Value in Kelvin
      * @param bool  $rounded   Whether to round the result.
@@ -257,7 +248,6 @@ abstract class Conversion
      * Convert Rankine (ºR) To Celsius (Cº).
      *
      * @since  1.2.0
-     * @deprecated current signature and functionality as of 2.1.0, will be changed in 3.0
      *
      * @param float $rankine   Value in Rankine
      * @param bool  $rounded   Whether to round the result.
@@ -274,7 +264,6 @@ abstract class Conversion
      * Convert Rankine (ºR) To Fahrenheit (Fº).
      *
      * @since  1.2.0
-     * @deprecated current signature and functionality as of 2.1.0, will be changed in 3.0
      *
      * @param float $rankine   Value in Rankine
      * @param bool  $rounded   Whether to round the result.
@@ -291,7 +280,6 @@ abstract class Conversion
      * Convert Rankine (ºR) To Kelvin (K).
      *
      * @since  1.2.0
-     * @deprecated current signature and functionality as of 2.1.0, will be changed in 3.0
      *
      * @param float $rankine   Value in Rankine
      * @param bool  $rounded   Whether to round the result.
