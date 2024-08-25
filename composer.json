@@ -46,9 +46,9 @@
     ],
     "require": {
         "php": ">=8.2",
-        "esi/clock": "^1.0",
         "ext-json": "*",
         "ext-mbstring": "*",
+        "esi/clock": "^1.0",
         "ralouphie/getallheaders": "^3.0",
         "voku/portable-ascii": "^2.0"
     },
@@ -78,14 +78,14 @@
             "Esi\\Utility\\Tests\\": "tests/src/"
         }
     },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "2.0-dev"
-        }
-    },
     "config": {
         "allow-plugins": {
             "phpstan/extension-installer": true
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.0-dev"
         }
     },
     "scripts": {
