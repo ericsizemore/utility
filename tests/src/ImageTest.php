@@ -20,6 +20,7 @@ use Esi\Utility\Strings;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\RequiresPhpExtension;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
@@ -67,10 +68,28 @@ class ImageTest extends TestCase
         }
     }
 
+    #[RequiresPhpExtension('fileinfo')]
+    public function testGuessImageTypeFinfo(): void
+    {
+        $this->testGuessImageType();
+    }
+
     public function testGuessImageTypeInvalidFile(): void
     {
         $this->expectException(InvalidArgumentException::class);
         Image::guessImageType('');
+    }
+
+    #[RequiresPhpExtension('exif')]
+    public function testIsExifAvailable(): void
+    {
+        self::assertTrue(Image::isExifAvailable());
+    }
+
+    #[RequiresPhpExtension('gd')]
+    public function testIsGdAvailable(): void
+    {
+        self::assertTrue(Image::isGdAvailable());
     }
 
     public function testIsGif(): void
@@ -88,6 +107,18 @@ class ImageTest extends TestCase
     {
         $this->expectException(RuntimeException::class);
         Image::isGif($this->resourceDir . 'notAnImage.txt');
+    }
+
+    #[RequiresPhpExtension('gmagick')]
+    public function testIsGmagickAvailable(): void
+    {
+        self::assertTrue(Image::isGmagickAvailable());
+    }
+
+    #[RequiresPhpExtension('imagick')]
+    public function testIsImagickAvailable(): void
+    {
+        self::assertTrue(Image::isImagickAvailable());
     }
 
     public function testIsJpg(): void

@@ -14,6 +14,7 @@ After much thought on the direction I want this library to move in, I am reversi
 ### Changed
 
   * `Arrays::flatten()`, `Arrays::mapDeep()`, and all the temperature related functions in `Conversions` are no longer deprecated.
+  * New tests added for the `Image` class. Still a work in progress; working toward no 'codeCoverageIgnore'.
 
 
 ## [2.1.0] - 2024-04-23
