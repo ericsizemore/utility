@@ -322,7 +322,6 @@ abstract class Strings
      * @param int<1, max> $length Length of the random string that should be returned in bytes.
      *
      * @throws RandomException
-     * @throws ValueError
      *
      * @return string Random bytes of $length length.
      */
