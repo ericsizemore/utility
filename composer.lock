@@ -8,35 +8,36 @@
     "packages": [
         {
             "name": "esi/clock",
-            "version": "1.0.0",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ericsizemore/clock.git",
-                "reference": "06e1669e63bb02576f0e1b7672f6401c1f087e22"
+                "reference": "bc7452c35486dc36a4bc868bda640571284f4248"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ericsizemore/clock/zipball/06e1669e63bb02576f0e1b7672f6401c1f087e22",
-                "reference": "06e1669e63bb02576f0e1b7672f6401c1f087e22",
+                "url": "https://api.github.com/repos/ericsizemore/clock/zipball/bc7452c35486dc36a4bc868bda640571284f4248",
+                "reference": "bc7452c35486dc36a4bc868bda640571284f4248",
                 "shasum": ""
             },
             "require": {
                 "php": "^8.2 <8.5",
                 "psr/clock": "^1.0",
-                "symfony/polyfill-php83": "^1.29"
+                "symfony/polyfill-php83": "^1.31"
             },
             "provide": {
                 "psr/clock-implementation": "1.0"
             },
             "require-dev": {
-                "esi/phpunit-coverage-check": "^1.0",
-                "friendsofphp/php-cs-fixer": "^3.53",
-                "infection/infection": "^0.28",
-                "phpstan/phpstan": "^1.11",
-                "phpstan/phpstan-deprecation-rules": "^1.2",
-                "phpstan/phpstan-phpunit": "^1.4",
-                "phpstan/phpstan-strict-rules": "^1.6",
-                "phpunit/phpunit": "^11.0",
+                "esi/phpunit-coverage-check": "^2.0",
+                "friendsofphp/php-cs-fixer": "^3.64",
+                "infection/infection": "^0.29",
+                "phpstan/extension-installer": "^1.4",
+                "phpstan/phpstan": "^2.0",
+                "phpstan/phpstan-deprecation-rules": "^2.0",
+                "phpstan/phpstan-phpunit": "^2.0",
+                "phpstan/phpstan-strict-rules": "^2.0",
+                "phpunit/phpunit": "^11.4",
                 "psalm/plugin-phpunit": "^0.19.0",
                 "vimeo/psalm": "dev-master"
             },
@@ -90,7 +91,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-04-11T03:13:03+00:00"
+            "time": "2024-11-17T09:41:53+00:00"
         },
         {
             "name": "psr/clock",
