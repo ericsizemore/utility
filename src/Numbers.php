@@ -15,7 +15,6 @@ namespace Esi\Utility;
 
 use InvalidArgumentException;
 use Random\RandomException;
-use ValueError;
 
 use function abs;
 use function number_format;
