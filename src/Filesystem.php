@@ -404,6 +404,9 @@ abstract class Filesystem
      */
     private static function getIterator(string $forDirectory, bool $keyAsPath = false): RecursiveIteratorIterator
     {
+        /**
+         * @var int $options
+         */
         static $options = FilesystemIterator::CURRENT_AS_FILEINFO | FilesystemIterator::SKIP_DOTS;
 
         if ($keyAsPath) {

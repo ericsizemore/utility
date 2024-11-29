@@ -56,7 +56,7 @@ abstract class Numbers
     /**
      * Ordinal suffixes.
      *
-     * @var array<string> SUFFIXES
+     * @var string[] SUFFIXES
      */
     public const SUFFIXES = ['th', 'st', 'nd', 'rd'];
 
@@ -85,7 +85,7 @@ abstract class Numbers
      */
     public static function ordinal(int $number): string
     {
-        static $suffixes = self::SUFFIXES;
+        $suffixes = self::SUFFIXES;
 
         $absNumber = abs($number);
 

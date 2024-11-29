@@ -167,6 +167,9 @@ abstract class Dates
      */
     public static function validTimezone(string $timezone): bool
     {
+        /**
+         * @var null|array<mixed> $validTimezones
+         */
         static $validTimezones;
 
         $validTimezones ??= \DateTimeZone::listIdentifiers();

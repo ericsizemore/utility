@@ -81,6 +81,9 @@ abstract class Image
      */
     public static function isExifAvailable(): bool
     {
+        /**
+         * @var null|bool $hasExif
+         */
         //@codeCoverageIgnoreStart
         static $hasExif;
 
@@ -95,6 +98,9 @@ abstract class Image
      */
     public static function isGdAvailable(): bool
     {
+        /**
+         * @var null|bool $hasGd
+         */
         //@codeCoverageIgnoreStart
         static $hasGd;
 
@@ -128,6 +134,9 @@ abstract class Image
      */
     public static function isGmagickAvailable(): bool
     {
+        /**
+         * @var null|bool $hasGmagick
+         */
         //@codeCoverageIgnoreStart
         static $hasGmagick;
 
@@ -142,6 +151,9 @@ abstract class Image
      */
     public static function isImagickAvailable(): bool
     {
+        /**
+         * @var null|bool $hasImagick
+         */
         //@codeCoverageIgnoreStart
         static $hasImagick;
 

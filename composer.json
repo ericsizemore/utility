@@ -48,13 +48,13 @@
         "php": ">=8.2",
         "ext-json": "*",
         "ext-mbstring": "*",
-        "esi/clock": "^1.0",
+        "esi/clock": "^1.1",
         "ralouphie/getallheaders": "^3.0",
         "voku/portable-ascii": "^2.0"
     },
     "require-dev": {
         "esi/phpunit-coverage-check": "^2.0",
-        "friendsofphp/php-cs-fixer": "^3.64",
+        "friendsofphp/php-cs-fixer": "^3.65",
         "phpstan/extension-installer": "^1.4",
         "phpstan/phpstan": "^2.0",
         "phpstan/phpstan-deprecation-rules": "^2.0",
