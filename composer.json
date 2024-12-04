@@ -46,6 +46,7 @@
     ],
     "require": {
         "php": ">=8.2",
+        "ext-filter": "*",
         "ext-json": "*",
         "ext-mbstring": "*",
         "esi/clock": "^1.1",

@@ -64,7 +64,6 @@ class ImageTest extends TestCase
 
             self::assertIsString($result);
             self::assertSame($key, $result);
-
         }
     }
 

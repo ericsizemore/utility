@@ -150,7 +150,7 @@ class FilesystemTest extends TestCase
      */
     public function testFileRead(): void
     {
-        Filesystem::fileWrite(self::$testFiles['file1'], "This is a test.");
+        Filesystem::fileWrite(self::$testFiles['file1'], 'This is a test.');
 
         /** @var string $data */
         $data = Filesystem::fileRead(self::$testFiles['file1']);
@@ -169,11 +169,11 @@ class FilesystemTest extends TestCase
      */
     public function testFileWrite(): void
     {
-        self::assertSame(15, Filesystem::fileWrite(self::$testFiles['file1'], "This is a test."));
+        self::assertSame(15, Filesystem::fileWrite(self::$testFiles['file1'], 'This is a test.'));
 
         Filesystem::fileWrite(self::$testFiles['file1']);
 
-        self::assertSame(15, Filesystem::fileWrite(self::$testFiles['file1'], "This is a test.", -1));
+        self::assertSame(15, Filesystem::fileWrite(self::$testFiles['file1'], 'This is a test.', -1));
 
         self::expectException(InvalidArgumentException::class);
         Filesystem::fileWrite(self::$testFiles['file1'] . '.php');

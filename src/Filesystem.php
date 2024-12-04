@@ -163,7 +163,7 @@ abstract class Filesystem
      *
      * @return false|int<0, max>
      */
-    public static function fileWrite(string $file, string $data = '', int $flags = 0): false | int
+    public static function fileWrite(string $file, string $data = '', int $flags = 0): false|int
     {
         // Sanity checks
         if (!Filesystem::isFile($file)) {

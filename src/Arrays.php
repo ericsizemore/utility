@@ -69,7 +69,7 @@ abstract class Arrays
      *
      * @throws RuntimeException If $array is not accessible
      */
-    public static function get(array | ArrayAccess $array, int|string $key, mixed $default = null): mixed
+    public static function get(array|ArrayAccess $array, int|string $key, mixed $default = null): mixed
     {
         if (Arrays::keyExists($array, $key)) {
             return $array[$key];
@@ -143,7 +143,7 @@ abstract class Arrays
      *
      * @return array<mixed>|false
      */
-    public static function interlace(array ...$args): array | false
+    public static function interlace(array ...$args): array|false
     {
         $numArgs = \count($args);
 
@@ -187,7 +187,7 @@ abstract class Arrays
      * @param array<mixed>|ArrayAccess<mixed, mixed> $array Array to check
      * @param int|string                             $key   Key to check
      */
-    public static function keyExists(array | ArrayAccess $array, int|string $key): bool
+    public static function keyExists(array|ArrayAccess $array, int|string $key): bool
     {
         if ($array instanceof ArrayAccess) {
             return $array->offsetExists($key);
@@ -235,7 +235,7 @@ abstract class Arrays
      *
      * @throws RuntimeException If $array is not accessible
      */
-    public static function set(array | ArrayAccess &$array, null|int|string $key, mixed $value): void
+    public static function set(array|ArrayAccess &$array, null|int|string $key, mixed $value): void
     {
         if ($key === null) {
             $array = $value;

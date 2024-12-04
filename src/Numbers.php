@@ -69,7 +69,7 @@ abstract class Numbers
      * @param float|int $min    The minimum.
      * @param float|int $max    The maximum.
      */
-    public static function inside(float | int $number, float | int $min, float | int $max): bool
+    public static function inside(float|int $number, float|int $min, float|int $max): bool
     {
         return ($number >= $min && $number <= $max);
     }
@@ -105,7 +105,7 @@ abstract class Numbers
      * @param float|int $min    The minimum.
      * @param float|int $max    The maximum.
      */
-    public static function outside(float | int $number, float | int $min, float | int $max): bool
+    public static function outside(float|int $number, float|int $min, float|int $max): bool
     {
         return ($number < $min || $number > $max);
     }
