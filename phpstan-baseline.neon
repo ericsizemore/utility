@@ -1,16 +1,16 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Parameter &\$array by\-ref type of method Esi\\Utility\\Arrays\:\:set\(\) expects array\<mixed\>\|ArrayAccess\<mixed, mixed\>, mixed given\.$#'
-			identifier: parameterByRef.type
-			count: 1
-			path: src/Arrays.php
-
-		-
 			message: '#^Variable property access on object\.$#'
 			identifier: property.dynamicName
 			count: 1
 			path: src/Arrays.php
+
+		-
+			message: '#^Variable property access on DateInterval\.$#'
+			identifier: property.dynamicName
+			count: 1
+			path: src/Dates.php
 
 		-
 			message: '#^Variable \$i might not be defined\.$#'

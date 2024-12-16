@@ -4,5 +4,5 @@
     "config:recommended"
   ],
   "labels": ["dependency"],
-  "commitMessagePrefix": "chore(deps)"
+  "commitMessagePrefix": "chore(deps): "
 }

@@ -11,10 +11,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Initially, in the previous `2.1.0` release, several functions were deprecated (see `Deprecated` under `2.1.0` [below](CHANGELOG.md#deprecated)).
 After much thought on the direction I want this library to move in, I am reversing my decision to deprecate the Array and Temperature functions mentioned.
 
+
+### Added
+
+  * `Dates::formatDifferenceOutput()` a private function to handle formatting the output for `Dates::timeDifference()`
+  * `Dates::INTERVAL_UNITS` constant.
+  * Added new parameter `$includeBcZones` to `Dates::timezoneInfo()` and `Dates::validTimezone()`
+      * If true, includes all backwards compatible (and outdated) timezones.
+
 ### Changed
 
   * `Arrays::flatten()`, `Arrays::mapDeep()`, and all the temperature related functions in `Conversions` are no longer deprecated.
   * New tests added for the `Image` class. Still a work in progress; working toward no 'codeCoverageIgnore'.
+  * `Dates::timeDifference()` logic was changed and a new parameter `$extendedOutput` added.
+    * If this parameter is `false` (default), it returns the same output as usual.
+    * If this parameter is `true`, it formats the output with available non-zero `DateInterval` units. For example: 2 days 2 hours 20 minutes old.
+  * BC BREAK: `Dates::timeDifference()` output no longer uses '(s)'. Will add 's' if greater than one.
 
 
 ## [2.1.0] - 2024-04-23

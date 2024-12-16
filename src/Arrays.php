@@ -233,6 +233,8 @@ abstract class Arrays
      * @param null|int|string                        $key    Key to add
      * @param mixed                                  $value  Value to add
      *
+     * @param-out mixed|array<mixed>|ArrayAccess<mixed, mixed> $array
+     *
      * @throws RuntimeException If $array is not accessible
      */
     public static function set(array|ArrayAccess &$array, null|int|string $key, mixed $value): void

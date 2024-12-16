@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php: [ '8.2', '8.3', '8.4' ]
+        php: [ '8.2', '8.3', '8.4', '8.5' ]
     steps:
       - uses: actions/checkout@v4
 
@@ -49,7 +49,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php: [ '8.2', '8.3', '8.4' ]
+        php: [ '8.2', '8.3', '8.4', '8.5' ]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -72,16 +72,16 @@ jobs:
            require-lock-file: "true"
 
       - name: "Run test suite"
-        run: composer run-script test
+        run: composer run-script phpunit
 
       - name: "Coverage check"
-        run: composer run-script coverage
+        run: composer run-script code-coverage
 
       - uses: sudo-bot/action-scrutinizer@latest
         with:
            cli-args: "--format=php-clover build/logs/clover.xml"
 
-      - name: Upload coverage reports to Codecov
+      - name: "Upload coverage reports to Codecov"
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}

@@ -13,14 +13,13 @@ declare(strict_types=1);
 
 namespace Esi\Utility;
 
-use Esi\Clock\FrozenClock;
 use Esi\Clock\SystemClock;
 use Exception;
 use InvalidArgumentException;
 use RuntimeException;
 
 use function ceil;
-use function time;
+use function rtrim;
 
 /**
  * Date utilities.
@@ -35,6 +34,18 @@ abstract class Dates
     public const DEFAULT_TIMEZONE = 'UTC';
 
     /**
+     * The interval units we use from \DateInterval when determining time difference.
+     */
+    public const INTERVAL_UNITS = [
+        'y' => 'year',
+        'm' => 'month',
+        'd' => 'day',
+        'h' => 'hour',
+        'i' => 'minute',
+        's' => 'second',
+    ];
+
+    /**
      * Regex used to validate a given timestamp.
      *
      * @var string VALIDATE_TIMESTAMP_REGEX
@@ -46,16 +57,24 @@ abstract class Dates
      *
      * Formats the difference between two timestamps to be human-readable.
      *
-     * @param int    $timestampFrom Starting unix timestamp.
-     * @param int    $timestampTo   Ending unix timestamp.
-     * @param string $timezone      The timezone to use. Must be a valid timezone:
-     *                              http://www.php.net/manual/en/timezones.php
-     * @param string $append        The string to append to the difference.
+     * @param int    $timestampFrom  Starting unix timestamp.
+     * @param int    $timestampTo    Ending unix timestamp.
+     * @param string $timezone       The timezone to use. Must be a valid timezone:
+     *                               http://www.php.net/manual/en/timezones.php
+     * @param string $append         The string to append to the difference.
+     * @param bool   $extendedOutput By default, the time difference will be the first non-zero unit.
+     *                               Set this option to true and it will display the full output considering
+     *                               all units. For example: 2 day(s) 2 hour(s) 20 minute(s) old
      *
      * @throws Exception|InvalidArgumentException|RuntimeException
      */
-    public static function timeDifference(int $timestampFrom, int $timestampTo = 0, string $timezone = Dates::DEFAULT_TIMEZONE, string $append = ' old'): string
-    {
+    public static function timeDifference(
+        int $timestampFrom,
+        int $timestampTo = 0,
+        string $timezone = Dates::DEFAULT_TIMEZONE,
+        string $append = ' old',
+        bool $extendedOutput = false
+    ): string {
         if ($timezone === '') {
             $timezone = Dates::DEFAULT_TIMEZONE;
         }
@@ -83,18 +102,7 @@ abstract class Dates
         $difference    = $timestampFrom->diff($timestampTo);
 
         // Format the difference
-        $string = match (true) {
-            $difference->y > 0  => $difference->y . ' year(s)',
-            $difference->m > 0  => $difference->m . ' month(s)',
-            $difference->d >= 7 => ceil($difference->d / 7) . ' week(s)',
-            $difference->d > 0  => $difference->d . ' day(s)',
-            $difference->h > 0  => $difference->h . ' hour(s)',
-            $difference->i > 0  => $difference->i . ' minute(s)',
-            $difference->s > 0  => $difference->s . ' second(s)',
-            //@codeCoverageIgnoreStart
-            default => ''
-            //@codeCoverageIgnoreEnd
-        };
+        $string = Dates::formatDifferenceOutput($difference, $extendedOutput);
 
         return $string . $append;
     }
@@ -112,28 +120,48 @@ abstract class Dates
      *
      * @throws Exception|InvalidArgumentException|RuntimeException
      *
-     * @return array<string, null|bool|float|int|string>
+     * @return array{
+     *     offset: float|int,
+     *     country: string,
+     *     latitude: float|string,
+     *     longitude: float|string,
+     *     dst: null|bool
+     * }
      */
-    public static function timezoneInfo(string $timezone = Dates::DEFAULT_TIMEZONE): array
+    public static function timezoneInfo(string $timezone = Dates::DEFAULT_TIMEZONE, bool $includeBcZones = false): array
     {
         if ($timezone === '') {
             $timezone = Dates::DEFAULT_TIMEZONE;
         }
 
-        if (!Dates::validTimezone($timezone)) {
+        if (!Dates::validTimezone($timezone, $includeBcZones)) {
             throw new RuntimeException('$timezone appears to be invalid.');
         }
 
-        $clock = (new SystemClock($timezone))->freeze();
+        $frozenClock = (new SystemClock($timezone))->freeze();
 
-        $location    = $clock->now()->getTimezone()->getLocation();
-        $transitions = $clock->now()->getTimezone()->getTransitions(
-            $clock->now()->getTimestamp(),
-            $clock->now()->getTimestamp()
+        $location = $frozenClock->now()->getTimezone()->getLocation();
+
+        // If getting the location fails
+        if ($location === false) {
+            $location = [
+                'country_code' => 'N/A',
+                'latitude'     => 'N/A',
+                'longitude'    => 'N/A',
+            ];
+        }
+
+        $transitions = $frozenClock->now()->getTimezone()->getTransitions(
+            $frozenClock->now()->getTimestamp(),
+            $frozenClock->now()->getTimestamp()
         );
 
+        /**
+         * @var array{country_code?: string, latitude?: float|string, longitude?: float|string} $location
+         */
+
         return [
-            'offset'    => $clock->now()->getOffset() / 3_600,
+            'offset'    => $frozenClock->now()->getOffset() / 3_600,
             'country'   => $location['country_code'] ?? 'N/A',
             'latitude'  => $location['latitude'] ?? 'N/A',
             'longitude' => $location['longitude'] ?? 'N/A',
@@ -165,15 +193,68 @@ abstract class Dates
      *
      * @param string $timezone The timezone to validate.
      */
-    public static function validTimezone(string $timezone): bool
+    public static function validTimezone(string $timezone, bool $includeBcZones = false): bool
     {
         /**
-         * @var null|array<mixed> $validTimezones
+         * @var null|list<string>
          */
-        static $validTimezones;
+        static $validTimezones = null;
+        /**
+         * @var null|list<string>
+         */
+        static $validTimezonesBc = null;
 
         $validTimezones ??= \DateTimeZone::listIdentifiers();
 
+        if ($includeBcZones) {
+            $validTimezonesBc ??= \DateTimeZone::listIdentifiers(\DateTimeZone::ALL_WITH_BC);
+
+            /**
+             * @var list<string> $validTimezonesBc
+             */
+            return Arrays::valueExists($validTimezonesBc, $timezone);
+        }
+
+        /**
+         * @var list<string> $validTimezones
+         */
         return Arrays::valueExists($validTimezones, $timezone);
+    }
+
+    /**
+     * Helper function for timeDifference.
+     *
+     * @see self::timeDifference()
+     */
+    private static function formatDifferenceOutput(\DateInterval $dateInterval, bool $extendedOutput): string
+    {
+        $string = '';
+
+        foreach (Dates::INTERVAL_UNITS as $unit => $unitName) {
+            /**
+             * @var int $property
+             */
+            $property = $dateInterval->$unit;
+
+            if ($property === 0) {
+                continue;
+            }
+
+            if ($unit === 'd' && $property >= 7) {
+                $property = ceil($property / 7);
+                $unitName = 'week';
+            }
+
+            $unitName .= ($property > 1) ? 's' : '';
+
+            if ($extendedOutput) {
+                $string .= \sprintf('%d %s ', $property, $unitName);
+            } else {
+                $string = \sprintf('%d %s ', $property, $unitName);
+                break;
+            }
+        }
+
+        return rtrim($string);
     }
 }

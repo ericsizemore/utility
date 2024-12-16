@@ -73,7 +73,7 @@ This project comes with configuration files for various tools that are used with
 No configuration is needed for [PHPUnit Coverage Check](https://github.com/ericsizemore/phpunit-coverage-check). You can use PHPUnit Coverage Check to check the coverage percentage in the codebase after your changes. I try to stick to 100% line coverage.
 
 ```bash
-$ composer run-script coverage
+$ composer run-script code-coverage
 ```
 
 #### PHPStan
@@ -89,7 +89,7 @@ $ composer run-script phpstan
 The configuration file can be found at `.php-cs-fixer.dist.php`, in the repository, for [PHP-CS-Fixer](https://github.com/PHP-CS-Fixer/PHP-CS-Fixer). You can use PHP-CS-Fixer to (re)format your source code for compliance with this project's coding guidelines:
 
 ```bash
-$ composer run-script cs:fix
+$ composer run-script phpcs:fix
 ```
 
 #### Unit tests (via PHPUnit)
@@ -97,7 +97,7 @@ $ composer run-script cs:fix
 The configuration file can be found at `phpunit.xml`, in the repository, for [PHPUnit](https://phpunit.de/index.html). You can run the test suite with:
 
 ```bash
-$ composer run-script test
+$ composer run-script phpunit
 ```
 
 ### Documentation
