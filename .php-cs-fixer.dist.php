@@ -56,7 +56,7 @@ $config
             'strict' => true,
         ],
         'native_constant_invocation' => [
-            'fix_built_in' => false,
+            'fix_built_in' => true,
             'include'      => [
                 'DIRECTORY_SEPARATOR',
                 'PHP_INT_SIZE',

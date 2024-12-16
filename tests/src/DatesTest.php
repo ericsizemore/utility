@@ -167,7 +167,7 @@ class DatesTest extends TestCase
         yield [0, 0];
         yield [0, 1_234_567];
         yield [1_234_567, 0];
-        yield [0, PHP_INT_MAX];
-        yield [PHP_INT_MAX, 0];
+        yield [0, \PHP_INT_MAX];
+        yield [\PHP_INT_MAX, 0];
     }
 }

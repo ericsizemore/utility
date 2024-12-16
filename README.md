@@ -93,27 +93,35 @@ Please see [docs](/docs) or view [online](https://www.secondversion.com/docs/uti
 
 - Utility works with PHP 8.2.0 or above.
 
-### Submitting bugs and feature requests
+### Credits
 
-Bugs and feature requests are tracked on [GitHub](https://github.com/ericsizemore/utility/issues)
-
-Issues are the quickest way to report a bug. If you find a bug or documentation error, please check the following first:
-
-* That there is not an Issue already open concerning the bug
-* That the issue has not already been addressed (within closed Issues, for example)
+- [Eric Sizemore](https://github.com/ericsizemore)
+- [All Contributors](https://github.com/ericsizemore/utility/contributors)
+- Special thanks to [JetBrains](https://www.jetbrains.com/?from=esi-utility) for their Licenses for Open Source Development.
+- Special thanks to Brandon Wamboldt and their [utilphp](https://brandonwamboldt.github.io/utilphp/) library for the inspiration for `Esi\Utility`.
 
 ### Contributing
 
-See [CONTRIBUTING](CONTRIBUTING.md).
+See [CONTRIBUTING](./CONTRIBUTING.md).
 
-### Author
+Bugs and feature requests are tracked on [GitHub](https://github.com/ericsizemore/utility/issues).
 
-Eric Sizemore - <admin@secondversion.com> - <https://www.secondversion.com>
+### Contributor Covenant Code of Conduct
+
+See [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md)
+
+### Backward Compatibility Promise
+
+See [backward-compatibility.md](./backward-compatibility.md) for more information on Backwards Compatibility.
+
+### Changelog
+
+See the [CHANGELOG](./CHANGELOG.md) for more information on what has changed recently.
 
 ### License
 
-Utility is licensed under the MIT License - see the `LICENSE` file for details
+See the [LICENSE](./LICENSE.md) for more information on the license that applies to this project.
 
-### Acknowledgements
+### Security
 
-This library is inspired by Brandon Wamboldt's [utilphp](http://brandonwamboldt.github.com/utilphp/) library.
+See [SECURITY](./SECURITY.md) for more information on the security disclosure process.

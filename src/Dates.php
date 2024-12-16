@@ -180,7 +180,7 @@ abstract class Dates
      */
     public static function validateTimestamp(int $timestamp): bool
     {
-        if ($timestamp === 0 || $timestamp < 0 || $timestamp > PHP_INT_MAX) {
+        if ($timestamp === 0 || $timestamp < 0 || $timestamp > \PHP_INT_MAX) {
             return false;
         }
 

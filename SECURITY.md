@@ -15,9 +15,9 @@
 
 If there are any vulnerabilities discovered within **Utility**, please do not hesitate to _report them_. 
 
-To report a security issue, please use the GitHub Security Advisory ["Report a Vulnerability"](https://github.com/ericsizemore/utility/security/advisories/new) tab. If you have a fix for the issue, that is most welcome -- please attach or summarize it in your message!
+To report a security issue, please use the GitHub Security Advisory ["Report a Vulnerability"](https://github.com/ericsizemore/utility/security/advisories/new) tab. If you have a fix for the issue, that is most welcome — please attach or summarize it in your message!
 
-I will evaluate the vulnerability and, if necessary, release a fix or mitigating steps to address it. I will contact you to let you know the outcome, and will credit you in the report.
+I will evaluate the vulnerability and, if necessary, release a fix or mitigating steps to address it. I will reach out to you to let you know the outcome, and will credit you in the report.
 
    Please **do not disclose the vulnerability publicly** until a fix is released!
 

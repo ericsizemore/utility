@@ -252,7 +252,7 @@ abstract class Image
     {
         //@codeCoverageIgnoreStart
         // Ignoring code coverage as if one method is available over another, the others won't be or need to be tested
-        $finfo  = new \finfo(FILEINFO_MIME);
+        $finfo  = new \finfo(\FILEINFO_MIME);
         $result = $finfo->file($imagePath);
 
         if ($result === false) {

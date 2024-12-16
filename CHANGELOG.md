@@ -8,8 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-Initially, in the previous `2.1.0` release, several functions were deprecated (see `Deprecated` under `2.1.0` [below](CHANGELOG.md#deprecated)).
-After much thought on the direction I want this library to move in, I am reversing my decision to deprecate the Array and Temperature functions mentioned.
+> [!IMPORTANT]
+> Initially, in the previous `2.1.0` release, several functions were deprecated (see `Deprecated` under `2.1.0` [below](CHANGELOG.md#deprecated)).
+> After much thought on the direction I want this library to move in, I am reversing my decision to deprecate the Array and Temperature functions mentioned.
 
 
 ### Added
