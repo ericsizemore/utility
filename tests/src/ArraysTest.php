@@ -254,6 +254,24 @@ class ArraysTest extends TestCase
 
         Arrays::set($array, null, $newArray);
         self::assertSame(4, Arrays::get($array, 'that'));
+
+        $testArrayAccess         = new TestArrayAccess();
+        $testArrayAccess['this'] = 1;
+        $testArrayAccess['is']   = 2;
+        $testArrayAccess['a']    = 3;
+        $testArrayAccess['test'] = 4;
+
+        $newTestArrayAccess         = new TestArrayAccess();
+        $newTestArrayAccess['that'] = 4;
+        $newTestArrayAccess['was']  = 3;
+        $newTestArrayAccess['a']    = 2;
+        $newTestArrayAccess['test'] = 1;
+
+        Arrays::set($testArrayAccess, 'test', 5);
+        self::assertSame(5, Arrays::get($testArrayAccess, 'test'));
+
+        Arrays::set($array, null, $newTestArrayAccess);
+        self::assertSame(4, Arrays::get($array, 'that'));
     }
 
     /**
