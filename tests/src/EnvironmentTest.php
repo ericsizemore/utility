@@ -227,6 +227,11 @@ class EnvironmentTest extends TestCase
 
         Arrays::set($_SERVER, 'PHP_AUTH_USER', null);
         Arrays::set($_SERVER, 'PHP_AUTH_PW', null);
+        self::assertSame($expected, Environment::url());
+
+        Arrays::set($_SERVER, 'PHP_AUTH_USER', '');
+        Arrays::set($_SERVER, 'PHP_AUTH_PW', '');
+        self::assertSame($expected, Environment::url());
 
         // Test port.
         Arrays::set($_SERVER, 'SERVER_PORT', Environment::PORT_SECURE);

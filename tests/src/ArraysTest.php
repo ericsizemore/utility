@@ -188,6 +188,59 @@ class ArraysTest extends TestCase
         self::assertEquals($var2, Arrays::mapDeep($var, 'htmlentities'));
     }
 
+    public function testMapDeepBasicArrayInput(): void
+    {
+        self::assertSame([2, 3, 4], Arrays::mapDeep([1, 2, 3], static fn (int $x): int => $x + 1));
+    }
+
+    public function testMapDeepBasicObjectInput(): void
+    {
+        $object        = new stdClass();
+        $object->value = 'test';
+
+        $expected        = new stdClass();
+        $expected->value = 'TEST';
+
+        self::assertEquals($expected, Arrays::mapDeep($object, static fn (string $x): string => strtoupper($x)));
+    }
+
+    public function testMapDeepCircularReference(): void
+    {
+        $object1      = new stdClass();
+        $object2      = new stdClass();
+        $object1->ref = $object2;
+        $object2->ref = $object1;
+
+        // Test circular reference prevention
+        self::assertSame($object1, Arrays::mapDeep($object1, static fn ($x) => $x));
+    }
+
+    public function testMapDeepNestedArrayInput(): void
+    {
+        self::assertSame([2, [3, 4], 5], Arrays::mapDeep([1, [2, 3], 4], static fn (int $x): int => $x + 1));
+    }
+
+    public function testMapDeepNestedObjectInput(): void
+    {
+        $object                = new stdClass();
+        $object->nested        = new stdClass();
+        $object->nested->value = 'test';
+
+        $expected                = new stdClass();
+        $expected->nested        = new stdClass();
+        $expected->nested->value = 'TEST';
+
+        self::assertEquals($expected, Arrays::mapDeep($object, static fn (string $x): string => strtoupper($x)));
+    }
+
+    public function testMapDeepNonIterableElements(): void
+    {
+        $array    = [1, 'test', 3.14];
+        $callback = static fn (float|int|string $item): float|int|string => is_numeric($item) ? $item * 2 : strtoupper($item);
+
+        self::assertSame([2, 'TEST', 6.28], Arrays::mapDeep($array, $callback));
+    }
+
     /**
      * Test Arrays::set().
      */

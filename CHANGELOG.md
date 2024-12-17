@@ -28,6 +28,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     * If this parameter is `false` (default), it returns the same output as usual.
     * If this parameter is `true`, it formats the output with available non-zero `DateInterval` units. For example: 2 days 2 hours 20 minutes old.
   * BC BREAK: `Dates::timeDifference()` output no longer uses '(s)'. Will add 's' if greater than one.
+  * `Arrays::mapDeep()` updated to avoid circular references when dealing with objects.
+    * New PHPUnit tests added to cover `mapDeep()` as well.
+  * Updated the `Arrays` class for phpstan templates/generics.
+    * Still something I am admittedly new to, so it may look/feel a little wonky. Going to improve it as I can. 
 
 
 ## [2.1.0] - 2024-04-23

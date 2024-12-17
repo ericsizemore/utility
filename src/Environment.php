@@ -19,7 +19,6 @@ use RuntimeException;
 use function explode;
 use function filter_var;
 use function getallheaders;
-use function ini_get;
 use function ini_set;
 use function preg_match;
 use function preg_replace;
@@ -259,8 +258,7 @@ abstract class Environment
             return Environment::var(self::IP_ADDRESS_HEADERS['default']);
         }
 
-        $ip  = '';
-        $ips = [];
+        $ip = '';
 
         /** @var string $forwarded */
         $forwarded = Environment::var(self::IP_ADDRESS_HEADERS['forwarded']);
@@ -268,13 +266,12 @@ abstract class Environment
         /** @var string $realip */
         $realip = Environment::var(self::IP_ADDRESS_HEADERS['realip']);
 
-        if ($forwarded !== '') {
-            /** @var list<string> $ips */
-            $ips = explode(',', $forwarded);
-        } elseif ($realip !== '') {
-            /** @var list<string> $ips */
-            $ips = explode(',', $realip);
-        }
+        /** @var list<string> $ips */
+        $ips = match (true) {
+            $forwarded !== '' => explode(',', $forwarded),
+            $realip !== ''    => explode(',', $realip),
+            default           => []
+        };
 
         /** @var list<string> $ips */
         $ips = Arrays::mapDeep($ips, 'trim');
@@ -402,7 +399,11 @@ abstract class Environment
         // Auth
         $authUser = Environment::var(self::URL_HEADERS['authuser']);
         $authPwd  = Environment::var(self::URL_HEADERS['authpw']);
-        $auth     = ($authUser !== '' ? $authUser . ($authPwd !== '' ? ':' . $authPwd : '') . '@' : '');
+        $auth     = \sprintf('%s:%s@', $authUser, $authPwd);
+
+        if ($auth === ':@') {
+            $auth = '';
+        }
 
         // Host and port
         $host = Environment::host();

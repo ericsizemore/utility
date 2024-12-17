@@ -15,16 +15,21 @@ namespace Esi\Utility;
 
 use ArrayAccess;
 use RuntimeException;
+use SplObjectStorage;
 
 use function array_map;
 use function array_merge;
 use function array_sum;
-use function get_object_vars;
 
 /**
  * Array utilities.
  *
  * @see Tests\ArraysTest
+ *
+ * @template TObject of SplObjectStorage
+ * @template TData
+ *
+ * @uses SplObjectStorage<TObject, TData>
  */
 abstract class Arrays
 {
@@ -35,13 +40,16 @@ abstract class Arrays
      *
      * Keys are preserved based on $separator.
      *
-     * @param array<mixed> $array     Array to flatten.
-     * @param string       $separator The new keys are a list of original keys separated by $separator.
-     * @param string       $prepend   A string to prepend to resulting array keys.
+     * @param array<TKey, TValue> $array     Array to flatten.
+     * @param string              $separator The new keys are a list of original keys separated by $separator.
+     * @param string              $prepend   A string to prepend to resulting array keys.
      *
      * @since 1.2.0
      *
-     * @return array<mixed> The flattened array.
+     * @return array<TKey, TValue> The flattened array.
+     *
+     * @template TKey
+     * @template TValue
      */
     public static function flatten(array $array, string $separator = '.', string $prepend = ''): array
     {
@@ -55,6 +63,9 @@ abstract class Arrays
             }
         }
 
+        /**
+         * @var array<TKey, TValue> $result
+         */
         return $result;
     }
 
@@ -63,11 +74,17 @@ abstract class Arrays
      *
      * Retrieve a value from an array.
      *
-     * @param array<mixed>|ArrayAccess<mixed, mixed> $array   Array to retrieve value from.
-     * @param int|string                             $key     Key to retrieve
-     * @param mixed                                  $default A default value to return if $key does not exist
+     * @param array<TKey, TValue>|ArrayAccess<TKey, TValue> $array   Array to retrieve value from.
+     * @param TKey                                          $key     Key to retrieve
+     * @param TDefault                                      $default A default value to return if $key does not exist
      *
      * @throws RuntimeException If $array is not accessible
+     *
+     * @template TKey of (int|string)
+     * @template TValue
+     * @template TDefault
+     *
+     * @uses ArrayAccess<TKey, TValue>
      */
     public static function get(array|ArrayAccess $array, int|string $key, mixed $default = null): mixed
     {
@@ -86,10 +103,12 @@ abstract class Arrays
      *
      * @since 2.0.0
      *
-     * @param array<mixed, array<mixed>> $array Input array.
-     * @param string                     $key   Key to use for grouping.
+     * @param array<TKey, array<TKey, mixed>> $array Input array.
+     * @param string                          $key   Key to use for grouping.
      *
-     * @return array<mixed, array<mixed>>
+     * @return array<mixed, non-empty-list<array<TKey, mixed>>>|array{}
+     *
+     * @template TKey
      */
     public static function groupBy(array $array, string $key): array
     {
@@ -139,9 +158,12 @@ abstract class Arrays
      *
      * @since 1.2.0
      *
-     * @param array<mixed> ...$args
+     * @param array<TKey, TValue> ...$args
      *
-     * @return array<mixed>|false
+     * @return array<TKey, TValue>|false|list<TValue>
+     *
+     * @template TKey
+     * @template TValue
      */
     public static function interlace(array ...$args): array|false
     {
@@ -184,8 +206,15 @@ abstract class Arrays
     /**
      * Checks if a key exists in an array.
      *
-     * @param array<mixed>|ArrayAccess<mixed, mixed> $array Array to check
-     * @param int|string                             $key   Key to check
+     * @param array<TKey, TValue>|ArrayAccess<TKey, TValue> $array Array to check
+     * @param TKey                                          $key   Key to check
+     *
+     * @return bool
+     *
+     * @template TKey of (int|string)
+     * @template TValue
+     *
+     * @uses ArrayAccess<TKey, TValue>
      */
     public static function keyExists(array|ArrayAccess $array, int|string $key): bool
     {
@@ -204,21 +233,39 @@ abstract class Arrays
      * @since 1.2.0 - updated with inspiration from the WordPress map_deep() function.
      * @see https://developer.wordpress.org/reference/functions/map_deep/
      *
-     * @param mixed    $array    The array to apply $callback to.
-     * @param callable $callback The callback function to apply.
+     * @param array<mixed>|mixed|object $array    The array to apply $callback to.
+     * @param callable                  $callback The callback function to apply.
      */
     public static function mapDeep(mixed $array, callable $callback): mixed
     {
+        /**
+         * @var ?SplObjectStorage<TObject, TData> $visited
+         */
+        static $visited;
+
+        $visited ??= new SplObjectStorage();
+
+        if (\is_object($array)) {
+            if ($visited->contains($array)) {
+                return $array; // Avoid circular references.
+            }
+            $visited->attach($array);
+        }
+
         if (\is_array($array)) {
             foreach ($array as $key => $value) {
                 $array[$key] = Arrays::mapDeep($value, $callback);
             }
         } elseif (\is_object($array)) {
             foreach (get_object_vars($array) as $key => $value) {
-                $array->$key = Arrays::mapDeep($value, $callback);
+                $array->{$key} = Arrays::mapDeep($value, $callback);
             }
         } else {
-            $array = \call_user_func($callback, $array);
+            $array = $callback($array);
+        }
+
+        if (\is_object($array)) {
+            $visited->detach($array);
         }
 
         return $array;
@@ -229,28 +276,40 @@ abstract class Arrays
      *
      * Add a value to an array.
      *
-     * @param array<mixed>|ArrayAccess<mixed, mixed> &$array Array to add value to.
-     * @param null|int|string                        $key    Key to add
-     * @param mixed                                  $value  Value to add
+     * @param array<TKey, TValue>|ArrayAccess<TKey, TValue> $array Array to add value to.
+     * @param TKey                                          $key   Key to add
+     * @param TValue                                        $value Value to add
      *
-     * @param-out mixed|array<mixed>|ArrayAccess<mixed, mixed> $array
+     * @param-out TValue|non-empty-array<TKey, TValue>|ArrayAccess<TKey, TValue> $array
      *
      * @throws RuntimeException If $array is not accessible
+     *
+     * @template TKey of (int|string)
+     * @template TValue
+     *
+     * @uses ArrayAccess<TKey, TValue>
      */
     public static function set(array|ArrayAccess &$array, null|int|string $key, mixed $value): void
     {
         if ($key === null) {
             $array = $value;
         } else {
-            $array[$key] = $value;
+            if ($array instanceof ArrayAccess) {
+                $array->offsetSet($key, $value);
+            } else {
+                $array[$key] = $value;
+            }
         }
     }
 
     /**
      * Checks if a value exists in an array.
      *
-     * @param array<mixed> $array Array to check
-     * @param int|string   $value Value to check
+     * @param array<TKey, TValue> $array Array to check
+     * @param TKey                $value Value to check
+     *
+     * @template TKey of (int|string)
+     * @template TValue
      */
     public static function valueExists(array $array, int|string $value): bool
     {
