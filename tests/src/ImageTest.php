@@ -5,7 +5,7 @@ declare(strict_types=1);
 /**
  * This file is part of Esi\Utility.
  *
- * (c) 2017 - 2024 Eric Sizemore <admin@secondversion.com>
+ * (c) 2017 - 2025 Eric Sizemore <admin@secondversion.com>
  *
  * For the full copyright and license information, please view
  * the LICENSE.md file that was distributed with this source code.
@@ -30,19 +30,21 @@ use const DIRECTORY_SEPARATOR;
  * Image utility test.
  *
  * @internal
+ *
+ * @psalm-api
  */
 #[CoversClass(Image::class)]
 #[CoversMethod(Arrays::class, 'valueExists')]
 #[CoversMethod(Filesystem::class, 'isFile')]
 #[CoversMethod(Strings::class, 'beginsWith')]
-class ImageTest extends TestCase
+final class ImageTest extends TestCase
 {
-    protected string $resourceDir;
+    private string $resourceDir;
 
     /**
      * @var array<string>
      */
-    protected array $resources;
+    private array $resources;
 
     #[\Override]
     protected function setUp(): void

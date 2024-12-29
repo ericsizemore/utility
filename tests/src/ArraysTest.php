@@ -5,7 +5,7 @@ declare(strict_types=1);
 /**
  * This file is part of Esi\Utility.
  *
- * (c) 2017 - 2024 Eric Sizemore <admin@secondversion.com>
+ * (c) 2017 - 2025 Eric Sizemore <admin@secondversion.com>
  *
  * For the full copyright and license information, please view
  * the LICENSE.md file that was distributed with this source code.
@@ -13,333 +13,609 @@ declare(strict_types=1);
 
 namespace Esi\Utility\Tests;
 
-use ArrayAccess;
+use ArrayObject;
 use Esi\Utility\Arrays;
+use Generator;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
 /**
- * Array utilities tests.
+ * Tests for the Arrays utility class.
+ *
+ * @psalm-type ArrayInput = array<array-key, mixed>
+ * @psalm-type GroupTestItem = array{type?: string, name: string}
+ * @psalm-type GroupTestArray = array<array-key, GroupTestItem>
+ * @psalm-type GroupTestResult = array<array-key, non-empty-list<GroupTestItem>>
+ *
+ * @final
  *
  * @internal
  */
 #[CoversClass(Arrays::class)]
-class ArraysTest extends TestCase
+final class ArraysTest extends TestCase
 {
     /**
-     * Test Arrays::flatten().
+     * Tests the flatten method with an empty array.
      */
-    public function testFlatten(): void
+    #[Test]
+    public function flattenShouldHandleEmptyArray(): void
     {
-        self::assertSame([
-            0           => 'a',
-            1           => 'b',
-            2           => 'c',
-            3           => 'd',
-            '4.first'   => 'e',
-            '4.0'       => 'f',
-            '4.second'  => 'g',
-            '4.1.0'     => 'h',
-            '4.1.third' => 'i',
-        ], Arrays::flatten([
-            'a', 'b', 'c', 'd', ['first' => 'e', 'f', 'second' => 'g', ['h', 'third' => 'i']],
-        ]));
+        $result = Arrays::flatten([]);
 
-        self::assertSame(
-            [0 => 'a', 1 => 'b', 2 => 'c', 3 => 'd', '4.0' => 'e', '4.1' => 'f', '4.2' => 'g'],
-            Arrays::flatten(['a', 'b', 'c', 'd', ['e', 'f', 'g']])
-        );
-
-        self::assertSame(
-            ['k0' => 'a', 'k1' => 'b', 'k2' => 'c', 'k3' => 'd', 'k4.0' => 'e', 'k4.1' => 'f', 'k4.2' => 'g'],
-            Arrays::flatten(['a', 'b', 'c', 'd', ['e', 'f', 'g']], '.', 'k')
-        );
+        self::assertSame([], $result);
     }
 
     /**
-     * Test Arrays::get().
+     * Tests the flatten method with nested arrays.
      */
-    public function testGet(): void
+    #[Test]
+    public function flattenShouldReturnFlattenedArray(): void
     {
-        $array = ['this' => 'is', 'a' => 'test'];
-
-        self::assertSame('is', Arrays::get($array, 'this'));
-        self::assertSame('test', Arrays::get($array, 'a'));
-        self::assertNull(Arrays::get($array, 'notexist'));
-    }
-
-    /**
-     * Test Arrays::groupBy().
-     */
-    public function testGroupBy(): void
-    {
-        $result = Arrays::groupBy([
-            ['id' => 1, 'category' => 'A', 'value' => 'foo'],
-            ['id' => 2, 'category' => 'B', 'value' => 'bar'],
-            ['id' => 3, 'category' => 'A', 'value' => 'baz'],
-            ['id' => 4, 'category' => 'B', 'value' => 'qux'],
-        ], 'category');
-
-        $expected = [
-            'A' => [
-                ['id' => 1, 'category' => 'A', 'value' => 'foo'],
-                ['id' => 3, 'category' => 'A', 'value' => 'baz'],
-            ],
-            'B' => [
-                ['id' => 2, 'category' => 'B', 'value' => 'bar'],
-                ['id' => 4, 'category' => 'B', 'value' => 'qux'],
+        /** @var array<array-key, mixed> $input */
+        $input = [
+            'a' => 1,
+            'b' => [
+                'c' => 2,
+                'd' => [
+                    'e' => 3,
+                ],
             ],
         ];
 
-        self::assertSame($expected, $result);
-    }
+        /** @var array<string, int> $expected */
+        $expected = [
+            'a'     => 1,
+            'b.c'   => 2,
+            'b.d.e' => 3,
+        ];
 
-    /**
-     * Test Arrays::groupBy() with non-existent/invalid key.
-     */
-    public function testGroupByInvalidKey(): void
-    {
-        $result = Arrays::groupBy([
-            ['id' => 1, 'category' => 'A', 'value' => 'foo'],
-            ['id' => 2, 'category' => 'B', 'value' => 'bar'],
-            ['id' => 3, 'category' => 'A', 'value' => 'baz'],
-            ['id' => 4, 'category' => 'B', 'value' => 'qux'],
-        ], 'notakey');
-
-        $expected = [];
+        $result = Arrays::flatten($input);
 
         self::assertSame($expected, $result);
     }
 
     /**
-     * Test Arrays::interlace().
+     * Tests the flatten method with a custom separator.
      */
-    public function testInterlace(): void
+    #[Test]
+    public function flattenShouldWorkWithCustomSeparator(): void
     {
-        $input  = Arrays::interlace([1, 2, 3], ['a', 'b', 'c']);
-        $expect = [1, 'a', 2, 'b', 3, 'c'];
+        /** @var array<array-key, mixed> $input */
+        $input = [
+            'a' => 1,
+            'b' => [
+                'c' => 2,
+            ],
+        ];
 
-        self::assertSame($expect, $input);
+        /** @var array<string, int> $expected */
+        $expected = [
+            'a'   => 1,
+            'b/c' => 2,
+        ];
 
-        // With one argument
-        self::assertSame([1, 2, 3], Arrays::interlace([1, 2, 3]));
+        $result = Arrays::flatten($input, '/');
 
-        // With no arguments
-        self::assertFalse(Arrays::interlace());
+        self::assertSame($expected, $result);
     }
 
     /**
-     * Test Arrays::isAssociative().
+     * Tests the get method with various inputs.
+     *
+     * @param array<string, string>|ArrayObject<string, string> $array
      */
-    public function testIsAssociative(): void
+    #[Test]
+    #[DataProvider('getDataProvider')]
+    public function getShouldReturnCorrectValue(array|ArrayObject $array, string $key, mixed $default, mixed $expected): void
     {
-        $array    = [0, 1, 2, 3, 4];
-        $arrayTwo = ['test' => 'testing', 'testing' => 'what'];
+        $result = Arrays::get($array, $key, $default);
 
-        self::assertFalse(Arrays::isAssociative($array));
-        self::assertTrue(Arrays::isAssociative($arrayTwo));
+        self::assertSame($expected, $result);
     }
 
     /**
-     * Test Arrays::keyExists().
+     * Tests the groupBy method.
+     *
+     * @param GroupTestArray   $input
+     * @param non-empty-string $key
+     * @param GroupTestResult  $expected
      */
-    public function testKeyExists(): void
+    #[Test]
+    #[DataProvider('groupByDataProvider')]
+    public function groupByShouldGroupArrayCorrectly(array $input, string $key, array $expected): void
     {
-        $array = ['test' => 1];
+        $result = Arrays::groupBy($input, $key);
 
-        $testArrayAccess         = new TestArrayAccess();
-        $testArrayAccess['test'] = 1;
-
-        self::assertTrue(Arrays::keyExists($array, 'test'));
-        self::assertFalse(Arrays::keyExists($array, 'this'));
-
-        self::assertTrue(Arrays::keyExists($testArrayAccess, 'test'));
-        self::assertFalse(Arrays::keyExists($testArrayAccess, 'this'));
+        self::assertSame($expected, $result);
     }
 
     /**
-     * Test Arrays::mapDeep().
+     * Tests the interlace method.
+     *
+     * @param array<int, array<int, int|string>> $arrays
+     * @param array<int, int|string>|false       $expected
      */
-    public function testMapDeep(): void
+    #[Test]
+    #[DataProvider('interlaceDataProvider')]
+    public function interlaceShouldWorkCorrectly(array $arrays, array|false $expected): void
     {
-        self::assertSame([
-            '&lt;',
-            'abc',
-            '&gt;',
-            'def',
-            ['&amp;', 'test', '123'],
-        ], Arrays::mapDeep([
-            '<',
-            'abc',
-            '>',
-            'def',
-            ['&', 'test', '123'],
-        ], 'htmlentities'));
+        $result = Arrays::interlace(...$arrays);
 
-        $var       = new stdClass();
-        $var->test = ['test' => '>'];
-        $var->what = '<';
-
-        $var2       = new stdClass();
-        $var2->test = ['test' => '&gt;'];
-        $var2->what = '&lt;';
-
-        self::assertEquals($var2, Arrays::mapDeep($var, 'htmlentities'));
-    }
-
-    public function testMapDeepBasicArrayInput(): void
-    {
-        self::assertSame([2, 3, 4], Arrays::mapDeep([1, 2, 3], static fn (int $x): int => $x + 1));
-    }
-
-    public function testMapDeepBasicObjectInput(): void
-    {
-        $object        = new stdClass();
-        $object->value = 'test';
-
-        $expected        = new stdClass();
-        $expected->value = 'TEST';
-
-        self::assertEquals($expected, Arrays::mapDeep($object, static fn (string $x): string => strtoupper($x)));
-    }
-
-    public function testMapDeepCircularReference(): void
-    {
-        $object1      = new stdClass();
-        $object2      = new stdClass();
-        $object1->ref = $object2;
-        $object2->ref = $object1;
-
-        // Test circular reference prevention
-        self::assertSame($object1, Arrays::mapDeep($object1, static fn ($x) => $x));
-    }
-
-    public function testMapDeepNestedArrayInput(): void
-    {
-        self::assertSame([2, [3, 4], 5], Arrays::mapDeep([1, [2, 3], 4], static fn (int $x): int => $x + 1));
-    }
-
-    public function testMapDeepNestedObjectInput(): void
-    {
-        $object                = new stdClass();
-        $object->nested        = new stdClass();
-        $object->nested->value = 'test';
-
-        $expected                = new stdClass();
-        $expected->nested        = new stdClass();
-        $expected->nested->value = 'TEST';
-
-        self::assertEquals($expected, Arrays::mapDeep($object, static fn (string $x): string => strtoupper($x)));
-    }
-
-    public function testMapDeepNonIterableElements(): void
-    {
-        $array    = [1, 'test', 3.14];
-        $callback = static fn (float|int|string $item): float|int|string => is_numeric($item) ? $item * 2 : strtoupper($item);
-
-        self::assertSame([2, 'TEST', 6.28], Arrays::mapDeep($array, $callback));
+        self::assertSame($expected, $result);
     }
 
     /**
-     * Test Arrays::set().
+     * Tests the isAssociative method.
+     *
+     * @param array<array-key, mixed> $array
      */
-    public function testSet(): void
+    #[Test]
+    #[DataProvider('isAssociativeDataProvider')]
+    public function isAssociativeShouldDetectCorrectly(array $array, bool $expected): void
     {
-        $array    = ['this' => 1, 'is' => 2, 'a' => 3, 'test' => 4];
-        $newArray = ['that' => 4, 'was' => 3, 'a' => 2, 'test' => 1];
+        $result = Arrays::isAssociative($array);
 
-        Arrays::set($array, 'test', 5);
-        self::assertSame(5, Arrays::get($array, 'test'));
-
-        Arrays::set($array, null, $newArray);
-        self::assertSame(4, Arrays::get($array, 'that'));
-
-        $testArrayAccess         = new TestArrayAccess();
-        $testArrayAccess['this'] = 1;
-        $testArrayAccess['is']   = 2;
-        $testArrayAccess['a']    = 3;
-        $testArrayAccess['test'] = 4;
-
-        $newTestArrayAccess         = new TestArrayAccess();
-        $newTestArrayAccess['that'] = 4;
-        $newTestArrayAccess['was']  = 3;
-        $newTestArrayAccess['a']    = 2;
-        $newTestArrayAccess['test'] = 1;
-
-        Arrays::set($testArrayAccess, 'test', 5);
-        self::assertSame(5, Arrays::get($testArrayAccess, 'test'));
-
-        Arrays::set($array, null, $newTestArrayAccess);
-        self::assertSame(4, Arrays::get($array, 'that'));
+        self::assertSame($expected, $result);
     }
 
     /**
-     * Test Arrays::valueExists().
+     * Tests keyExists with various scenarios.
      */
-    public function testValueExists(): void
+    #[Test]
+    public function keyExistsShouldCheckCorrectly(): void
     {
-        $array = ['test' => 1, 1 => 'foo', 'bar' => 2];
+        // Test with regular array
+        $array = ['key' => 'value'];
+        self::assertTrue(Arrays::keyExists($array, 'key'));
+        self::assertFalse(Arrays::keyExists($array, 'nonexistent'));
 
-        self::assertTrue(Arrays::valueExists($array, 1));
-        self::assertFalse(Arrays::valueExists($array, 'test'));
+        // Test with ArrayAccess
+        $arrayObject = new ArrayObject(['key' => 'value']);
+        self::assertTrue(Arrays::keyExists($arrayObject, 'key'));
+        self::assertFalse(Arrays::keyExists($arrayObject, 'nonexistent'));
 
-        self::assertTrue(Arrays::valueExists($array, 'foo'));
-        self::assertFalse(Arrays::valueExists($array, 'bar'));
-    }
-}
-
-/**
- * @implements ArrayAccess<mixed, mixed>
- */
-class TestArrayAccess implements ArrayAccess
-{
-    /**
-     * @var array<int|string, mixed>
-     */
-    public array $container = [
-        'one'   => 1,
-        'two'   => 2,
-        'three' => 3,
-    ];
-
-    /**
-     * Whether an offset exists.
-     */
-    #[\Override]
-    public function offsetExists(mixed $offset): bool
-    {
-        return isset($this->container[$offset]);
+        // Test with numeric keys
+        $numericArray = [0 => 'zero', 1 => 'one'];
+        self::assertTrue(Arrays::keyExists($numericArray, 0));
+        self::assertFalse(Arrays::keyExists($numericArray, 2));
     }
 
     /**
-     * Retrieve an offset exists.
+     * Tests the mapDeep method with circular references.
      */
-    #[\Override]
-    public function offsetGet(mixed $offset): mixed
+    #[Test]
+    public function mapDeepShouldHandleCircularReferences(): void
     {
-        return $this->container[$offset] ?? null;
+        $obj1      = new stdClass();
+        $obj2      = new stdClass();
+        $obj1->ref = $obj2;
+        $obj2->ref = $obj1;
+
+        $obj1->value = 'test';
+
+        $callback = static fn ($value): string => \is_string($value) ? strtoupper($value) : (string) $value;
+
+        /** @var stdClass $result */
+        $result = Arrays::mapDeep($obj1, $callback);
+
+        self::assertSame('TEST', $result->value);
     }
 
     /**
-     * Set an offset.
+     * Tests mapDeep with circular references.
      */
-    #[\Override]
-    public function offsetSet(mixed $offset, mixed $value): void
+    #[Test]
+    public function mapDeepShouldHandleCircularReferencesCorrectly(): void
     {
-        if (\is_null($offset)) {
-            $this->container[] = $value;
+        $obj1      = new stdClass();
+        $obj2      = new stdClass();
+        $obj1->ref = $obj2;
+        $obj2->ref = $obj1;
+
+        $obj1->value = 'test';
+        $obj2->value = 'test2';
+
+        $callback = static fn (mixed $value): string => \is_string($value) ? strtoupper($value) : (string) $value;
+
+        /** @var stdClass $result */
+        $result = Arrays::mapDeep($obj1, $callback);
+
+        /** @var stdClass $ref */
+        $ref = $result->ref;
+
+        self::assertIsString($result->value);
+        self::assertIsString($ref->value);
+        self::assertSame('TEST', $result->value);
+        self::assertSame('TEST2', $ref->value);
+        self::assertSame($result, $ref->ref);
+    }
+
+    /**
+     * Tests the mapDeep method with complex nested structures.
+     */
+    #[Test]
+    public function mapDeepShouldHandleComplexStructures(): void
+    {
+        $nested        = new stdClass();
+        $nested->value = 'nested';
+
+        $obj         = new stdClass();
+        $obj->name   = 'test';
+        $obj->nested = $nested;
+
+        /** @var array{
+         *     string: string,
+         *     array: array<int>,
+         *     object: stdClass,
+         *     nested: array{a: array{b: string}}
+         * } $input */
+        $input = [
+            'string' => 'hello',
+            'array'  => [1, 2, 3],
+            'object' => $obj,
+            'nested' => ['a' => ['b' => 'c']],
+        ];
+
+        $callback = static fn (mixed $value): string => \is_string($value) ? strtoupper($value) : (string) $value;
+
+        /** @var array{
+         *     string: string,
+         *     array: array<string>,
+         *     object: stdClass,
+         *     nested: array{a: array{b: string}}
+         * } $result */
+        $result = Arrays::mapDeep($input, $callback);
+
+        self::assertSame('HELLO', $result['string']);
+        self::assertSame(['1', '2', '3'], $result['array']);
+
+        /** @var stdClass $resultObj */
+        $resultObj = $result['object'];
+        self::assertSame('TEST', $resultObj->name);
+        self::assertInstanceOf(stdClass::class, $resultObj->nested);
+        self::assertSame('NESTED', $resultObj->nested->value);
+
+        self::assertSame(['a' => ['b' => 'C']], $result['nested']);
+    }
+
+    /**
+     * Tests mapDeep with complex nested structures.
+     *
+     * @param array<array-key, mixed> $input    The input structure to test
+     * @param callable(mixed): string $callback The callback to apply
+     * @param array<array-key, mixed> $expected The expected result
+     */
+    #[Test]
+    #[DataProvider('complexStructuresDataProvider')]
+    public function mapDeepShouldHandleComplexStructuresCorrectly(array $input, callable $callback, array $expected): void
+    {
+        $result = Arrays::mapDeep($input, $callback);
+
+        self::assertEquals($expected, $result);
+    }
+
+    /**
+     * Tests mapDeep with empty structures.
+     */
+    #[Test]
+    public function mapDeepShouldHandleEmptyStructures(): void
+    {
+        $callback = static fn ($value): string => \is_string($value) ? strtoupper($value) : (string) $value;
+
+        self::assertSame([], Arrays::mapDeep([], $callback));
+        self::assertEquals(new stdClass(), Arrays::mapDeep(new stdClass(), $callback));
+    }
+
+    /**
+     * Tests mapDeep with primitive values.
+     */
+    #[Test]
+    public function mapDeepShouldHandlePrimitiveValues(): void
+    {
+        $callback = static fn (mixed $value): string => \is_string($value) ? strtoupper($value) : (string) $value;
+
+        self::assertSame('42', Arrays::mapDeep(42, $callback));
+        self::assertSame('HELLO', Arrays::mapDeep('hello', $callback));
+        self::assertSame('1', Arrays::mapDeep(true, $callback));
+    }
+
+    /**
+     * Tests the set method.
+     *
+     * @param array<array-key, mixed>|ArrayObject<array-key, mixed> $array
+     */
+    #[Test]
+    #[DataProvider('setDataProvider')]
+    public function setShouldSetValueCorrectly(array|ArrayObject $array, ?string $key, mixed $value, mixed $expected): void
+    {
+        Arrays::set($array, $key, $value);
+
+        if ($array instanceof ArrayObject) {
+            self::assertSame($expected, $array->getArrayCopy());
         } else {
-            $this->container[$offset] = $value;
+            self::assertSame($expected, $array);
         }
     }
 
     /**
-     * Unset an offset.
+     * Tests the valueExists method with various scenarios.
+     *
+     * @param array<array-key, mixed> $array
      */
-    #[\Override]
-    public function offsetUnset(mixed $offset): void
+    #[Test]
+    #[DataProvider('valueExistsDataProvider')]
+    public function valueExistsShouldCheckCorrectly(array $array, mixed $value, bool $expected): void
     {
-        unset($this->container[$offset]);
+        $result = Arrays::valueExists($array, $value);
+
+        self::assertSame($expected, $result);
+    }
+
+    /**
+     * Provides test cases for complex nested structures.
+     *
+     * @return Generator<string, array{
+     *     input: array<string, mixed>,
+     *     callback: callable(mixed): string,
+     *     expected: array<string, mixed>
+     * }>
+     */
+    public static function complexStructuresDataProvider(): Generator
+    {
+        $callback = static fn (mixed $value): string => \is_string($value) ? strtoupper($value) : (string) $value;
+
+        $obj       = new stdClass();
+        $obj->name = 'test';
+
+        yield 'nested arrays and objects' => [
+            'input' => [
+                'string' => 'hello',
+                'array'  => [1, 2, 3],
+                'nested' => [
+                    'object' => $obj,
+                    'deep'   => ['a' => ['b' => 'c']],
+                ],
+            ],
+            'callback' => $callback,
+            'expected' => [
+                'string' => 'HELLO',
+                'array'  => ['1', '2', '3'],
+                'nested' => [
+                    'object' => (static function (): stdClass {
+                        $obj       = new stdClass();
+                        $obj->name = 'TEST';
+                        return $obj;
+                    })(),
+                    'deep' => ['a' => ['b' => 'C']],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * Data provider for get() method tests.
+     *
+     * @return Generator<string, array{
+     *     array: array<string, string>|ArrayObject<string, string>,
+     *     key: string,
+     *     default: mixed,
+     *     expected: mixed
+     * }>
+     */
+    public static function getDataProvider(): Generator
+    {
+        yield 'array with existing key' => [
+            'array'    => ['key' => 'value'],
+            'key'      => 'key',
+            'default'  => null,
+            'expected' => 'value',
+        ];
+
+        yield 'array with non-existing key' => [
+            'array'    => ['key' => 'value'],
+            'key'      => 'nonexistent',
+            'default'  => 'default',
+            'expected' => 'default',
+        ];
+
+        yield 'ArrayAccess with existing key' => [
+            'array'    => new ArrayObject(['key' => 'value']),
+            'key'      => 'key',
+            'default'  => null,
+            'expected' => 'value',
+        ];
+
+        yield 'ArrayAccess with non-existing key' => [
+            'array'    => new ArrayObject(['key' => 'value']),
+            'key'      => 'nonexistent',
+            'default'  => 'default',
+            'expected' => 'default',
+        ];
+    }
+
+    /**
+     * Data provider for groupBy() method tests.
+     *
+     * @return Generator<string, array{
+     *     input: GroupTestArray,
+     *     key: string,
+     *     expected: GroupTestResult
+     * }>
+     */
+    public static function groupByDataProvider(): Generator
+    {
+        yield 'simple grouping' => [
+            'input' => [
+                ['type' => 'fruit', 'name' => 'apple'],
+                ['type' => 'vegetable', 'name' => 'carrot'],
+                ['type' => 'fruit', 'name' => 'banana'],
+            ],
+            'key'      => 'type',
+            'expected' => [
+                'fruit' => [
+                    ['type' => 'fruit', 'name' => 'apple'],
+                    ['type' => 'fruit', 'name' => 'banana'],
+                ],
+                'vegetable' => [
+                    ['type' => 'vegetable', 'name' => 'carrot'],
+                ],
+            ],
+        ];
+
+        yield 'with missing keys' => [
+            'input' => [
+                ['type' => 'fruit', 'name' => 'apple'],
+                ['name' => 'carrot'],
+                ['type' => 'fruit', 'name' => 'banana'],
+            ],
+            'key'      => 'type',
+            'expected' => [
+                'fruit' => [
+                    ['type' => 'fruit', 'name' => 'apple'],
+                    ['type' => 'fruit', 'name' => 'banana'],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * Data provider for interlace() method tests.
+     *
+     * @return Generator<string, array{
+     *     arrays: array<int, array<int, int|string>>,
+     *     expected: array<int, int|string>|false
+     * }>
+     */
+    public static function interlaceDataProvider(): Generator
+    {
+        yield 'two arrays' => [
+            'arrays'   => [[1, 2], ['a', 'b']],
+            'expected' => [1, 'a', 2, 'b'],
+        ];
+
+        yield 'single array' => [
+            'arrays'   => [[1, 2, 3]],
+            'expected' => [1, 2, 3],
+        ];
+
+        yield 'different length arrays' => [
+            'arrays'   => [[1, 2], ['a']],
+            'expected' => [1, 'a', 2],
+        ];
+
+        yield 'empty arrays' => [
+            'arrays'   => [],
+            'expected' => false,
+        ];
+    }
+
+    /**
+     * Data provider for isAssociative() method tests.
+     *
+     * @return Generator<string, array{
+     *     array: array<array-key, mixed>,
+     *     expected: bool
+     * }>
+     */
+    public static function isAssociativeDataProvider(): Generator
+    {
+        yield 'empty array' => [
+            'array'    => [],
+            'expected' => false,
+        ];
+
+        yield 'sequential array' => [
+            'array'    => [1, 2, 3],
+            'expected' => false,
+        ];
+
+        yield 'associative array' => [
+            'array'    => ['a' => 1, 'b' => 2],
+            'expected' => true,
+        ];
+
+        yield 'mixed array' => [
+            'array'    => [0 => 'a', 2 => 'b'],
+            'expected' => true,
+        ];
+    }
+
+    /**
+     * Data provider for set() method tests.
+     *
+     * @return Generator<string, array{
+     *     array: array<array-key, mixed>|ArrayObject<array-key, mixed>,
+     *     key: string|null,
+     *     value: mixed,
+     *     expected: mixed
+     * }>
+     */
+    public static function setDataProvider(): Generator
+    {
+        yield 'array with key' => [
+            'array'    => [],
+            'key'      => 'test',
+            'value'    => 'value',
+            'expected' => ['test' => 'value'],
+        ];
+
+        yield 'array without key' => [
+            'array'    => [],
+            'key'      => null,
+            'value'    => 'value',
+            'expected' => 'value',
+        ];
+
+        yield 'ArrayAccess' => [
+            'array'    => new ArrayObject(),
+            'key'      => 'test',
+            'value'    => 'value',
+            'expected' => ['test' => 'value'],
+        ];
+    }
+
+    /**
+     * Provides test cases for valueExists method.
+     *
+     * @return Generator<string, array{
+     *     array: array<array-key, mixed>,
+     *     value: mixed,
+     *     expected: bool
+     * }>
+     */
+    public static function valueExistsDataProvider(): Generator
+    {
+        yield 'existing value' => [
+            'array'    => [1, 2, 3],
+            'value'    => 2,
+            'expected' => true,
+        ];
+
+        yield 'non-existing value' => [
+            'array'    => [1, 2, 3],
+            'value'    => 4,
+            'expected' => false,
+        ];
+
+        yield 'strict comparison' => [
+            'array'    => [1, 2, 3],
+            'value'    => '2',
+            'expected' => false,
+        ];
+
+        yield 'null value exists' => [
+            'array'    => [1, null, 3],
+            'value'    => null,
+            'expected' => true,
+        ];
+
+        yield 'array value exists' => [
+            'array'    => [1, [2], 3],
+            'value'    => [2],
+            'expected' => true,
+        ];
     }
 }

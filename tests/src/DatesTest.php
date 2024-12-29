@@ -5,7 +5,7 @@ declare(strict_types=1);
 /**
  * This file is part of Esi\Utility.
  *
- * (c) 2017 - 2024 Eric Sizemore <admin@secondversion.com>
+ * (c) 2017 - 2025 Eric Sizemore <admin@secondversion.com>
  *
  * For the full copyright and license information, please view
  * the LICENSE.md file that was distributed with this source code.
@@ -21,6 +21,7 @@ use Iterator;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
@@ -33,13 +34,14 @@ use RuntimeException;
  */
 #[CoversClass(Dates::class)]
 #[CoversMethod(Arrays::class, 'valueExists')]
-class DatesTest extends TestCase
+final class DatesTest extends TestCase
 {
     /**
      * Test Dates::timeDifference() with invalid $timestampFrom and $timestampTo.
      */
     #[DataProvider('invalidTimestampProvider')]
-    public function testInvalidTimeDifference(int $timestampFrom, int $timestampTo): void
+    #[Test]
+    public function invalidTimeDifference(int $timestampFrom, int $timestampTo): void
     {
         self::expectException(InvalidArgumentException::class);
         Dates::timeDifference($timestampFrom, $timestampTo);
@@ -48,7 +50,8 @@ class DatesTest extends TestCase
     /**
      * Test Dates::timeDifference() with invalid timezone.
      */
-    public function testInvalidTimezoneTimeDifference(): void
+    #[Test]
+    public function invalidTimezoneTimeDifference(): void
     {
         $clock = FrozenClock::fromUtc()->now();
 
@@ -59,7 +62,8 @@ class DatesTest extends TestCase
     /**
      * Test Dates::timeDifference().
      */
-    public function testTimeDifference(): void
+    #[Test]
+    public function timeDifference(): void
     {
         $timestampFrom = FrozenClock::fromUtc()->now();
         $timestampTo   = FrozenClock::fromUtc()->now();
@@ -105,7 +109,8 @@ class DatesTest extends TestCase
     /**
      * Test Dates::timezoneInfo().
      */
-    public function testTimezoneInfo(): void
+    #[Test]
+    public function timezoneInfo(): void
     {
         $zoneInfo = Dates::timezoneInfo('America/New_York');
         $expected = ((bool) $zoneInfo['dst']) ? -4 : -5;
@@ -133,7 +138,8 @@ class DatesTest extends TestCase
      * } $expected
      */
     #[DataProvider('falseForLocationProvider')]
-    public function testTimezoneInfoLocationReturnsFalse(array $expected, string $timezone): void
+    #[Test]
+    public function timezoneInfoLocationReturnsFalse(array $expected, string $timezone): void
     {
         self::assertSame($expected, Dates::timezoneInfo($timezone, true));
     }
@@ -141,7 +147,8 @@ class DatesTest extends TestCase
     /**
      * Test Dates::validTimezone().
      */
-    public function testValidTimezone(): void
+    #[Test]
+    public function validTimezone(): void
     {
         self::assertFalse(Dates::validTimezone('InvalidTimezone'));
         self::assertTrue(Dates::validTimezone('America/New_York'));

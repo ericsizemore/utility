@@ -5,7 +5,7 @@ declare(strict_types=1);
 /**
  * This file is part of Esi\Utility.
  *
- * (c) 2017 - 2024 Eric Sizemore <admin@secondversion.com>
+ * (c) 2017 - 2025 Eric Sizemore <admin@secondversion.com>
  *
  * For the full copyright and license information, please view
  * the LICENSE.md file that was distributed with this source code.
@@ -28,12 +28,14 @@ use Random\RandomException;
  * String utility tests.
  *
  * @internal
+ *
+ * @psalm-api
  */
 #[CoversClass(Strings::class)]
 #[CoversMethod(Environment::class, 'iniGet')]
 #[CoversMethod(Environment::class, 'iniSet')]
 #[CoversMethod(Numbers::class, 'random')]
-class StringsTest extends TestCase
+final class StringsTest extends TestCase
 {
     /**
      * Test Strings::ascii().

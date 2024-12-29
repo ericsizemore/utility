@@ -5,7 +5,7 @@ declare(strict_types=1);
 /**
  * This file is part of Esi\Utility.
  *
- * (c) 2017 - 2024 Eric Sizemore <admin@secondversion.com>
+ * (c) 2017 - 2025 Eric Sizemore <admin@secondversion.com>
  *
  * For the full copyright and license information, please view
  * the LICENSE.md file that was distributed with this source code.
@@ -89,6 +89,11 @@ abstract class Numbers
 
         $absNumber = abs($number);
 
+        /**
+         * @var string $suffix
+         *
+         * @psalm-suppress InvalidArrayOffset
+         */
         $suffix = ($absNumber % 100 >= 11 && $absNumber % 100 <= 13)
                   ? $suffixes[0]
                   : $suffixes[$absNumber % 10] ?? $suffixes[0];

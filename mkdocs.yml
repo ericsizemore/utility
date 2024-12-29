@@ -1,7 +1,7 @@
 site_name: Esi\Utility
 site_description: 'Documentation for Utility - A Collection of various PHP utility functions.'
 site_author: 'Eric Sizemore'
-copyright: 'Copyright (C) 2017 - 2024 Eric Sizemore'
+copyright: 'Copyright (C) 2017 - 2025 Eric Sizemore'
 site_url: https://www.secondversion.com/docs/utility
 docs_dir: docs/
 repo_name: 'ericsizemore/utility'

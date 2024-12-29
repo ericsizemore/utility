@@ -5,7 +5,7 @@ declare(strict_types=1);
 /**
  * This file is part of Esi\Utility.
  *
- * (c) 2017 - 2024 Eric Sizemore <admin@secondversion.com>
+ * (c) 2017 - 2025 Eric Sizemore <admin@secondversion.com>
  *
  * For the full copyright and license information, please view
  * the LICENSE.md file that was distributed with this source code.
@@ -134,6 +134,10 @@ abstract class Environment
      */
     public const VALIDATE_HOST_REGEX = '#^\[?(?:[a-z0-9-:\]_]+\.?)+$#';
 
+    private static ?bool $iniGetAvailable = null;
+
+    private static ?bool $iniSetAvailable = null;
+
     /**
      * host().
      *
@@ -141,6 +145,8 @@ abstract class Environment
      *
      * @param bool $stripWww        True to strip www. off the host, false to leave it be.
      * @param bool $acceptForwarded True to accept, false otherwise.
+     *
+     * @return non-empty-string
      */
     public static function host(bool $stripWww = false, bool $acceptForwarded = false): string
     {
@@ -156,17 +162,20 @@ abstract class Environment
         $host = trim($host);
 
         if ($host === '' || preg_match(Environment::VALIDATE_HOST_REGEX, $host) === 0) {
-            $host = self::HOST_HEADERS['default'];
+            return self::HOST_HEADERS['default'];
         }
 
         $host = Strings::lower($host);
 
-        // Strip 'www.'
         if ($stripWww) {
-            $strippedHost = preg_replace('#^www\.#', '', $host);
+            /** @var non-empty-string $result */
+            $result = (string) preg_replace('#^www\.#', '', $host);
+
+            return $result;
         }
 
-        return ($strippedHost ?? $host);
+        /** @var non-empty-string */
+        return $host;
     }
 
     /**
@@ -181,15 +190,12 @@ abstract class Environment
      */
     public static function iniGet(string $option, bool $standardize = false): string
     {
-        static $iniGetAvailable;
+        self::$iniGetAvailable ??= \function_exists('ini_get');
 
-        $iniGetAvailable ??= \function_exists('ini_get');
-
-        if (!$iniGetAvailable) {
-            // disabled_functions?
-            // @codeCoverageIgnoreStart
+        if (self::$iniGetAvailable === false) {
+            //@codeCoverageIgnoreStart
             throw new RuntimeException('Native ini_get function not available.');
-            // @codeCoverageIgnoreEnd
+            //@codeCoverageIgnoreEnd
         }
 
         $value = \ini_get($option);
@@ -221,18 +227,15 @@ abstract class Environment
      */
     public static function iniSet(string $option, null|bool|float|int|string $value): false|string
     {
-        static $iniSetAvailable;
+        self::$iniSetAvailable ??= \function_exists('ini_set');
 
-        $iniSetAvailable ??= \function_exists('ini_set');
-
-        if (!$iniSetAvailable) {
-            // disabled_functions?
-            // @codeCoverageIgnoreStart
+        if (self::$iniSetAvailable === false) {
+            //@codeCoverageIgnoreStart
             throw new RuntimeException('Native ini_set function not available.');
-            // @codeCoverageIgnoreEnd
+            //@codeCoverageIgnoreEnd
         }
 
-        return ini_set($option, $value);
+        return ini_set($option, (string) $value);
     }
 
     /**
@@ -249,6 +252,7 @@ abstract class Environment
 
         // cloudflare connecting ip found, update REMOTE_ADDR
         if ($cloudflare !== '') {
+            /** @var array<string, mixed> $_SERVER */
             Arrays::set($_SERVER, self::IP_ADDRESS_HEADERS['default'], $cloudflare);
         }
 
@@ -260,38 +264,35 @@ abstract class Environment
 
         $ip = '';
 
-        /** @var string $forwarded */
+        /** @var string */
         $forwarded = Environment::var(self::IP_ADDRESS_HEADERS['forwarded']);
-
-        /** @var string $realip */
+        /** @var string */
         $realip = Environment::var(self::IP_ADDRESS_HEADERS['realip']);
 
-        /** @var list<string> $ips */
         $ips = match (true) {
             $forwarded !== '' => explode(',', $forwarded),
             $realip !== ''    => explode(',', $realip),
             default           => []
         };
 
-        /** @var list<string> $ips */
-        $ips = Arrays::mapDeep($ips, 'trim');
+        /** @var list<string> $mappedIps */
+        $mappedIps = Arrays::mapDeep($ips, static fn (mixed $value): string => \is_string($value) ? trim($value) : '');
 
-        // Filter out any potentially empty entries
-        $ips = array_filter($ips, static fn (string $string): bool => Strings::length($string) > 0);
+        $filteredIps = array_filter(
+            $mappedIps,
+            static fn (string $value): bool => Strings::length($value) > 0
+        );
 
-        // Traverses the $ips array. Set $ip to current value if it's a public IP.
-        array_walk($ips, static function (string $value, int $key) use (&$ip): string {
+        foreach ($filteredIps as $value) {
             if (Environment::isPublicIp($value)) {
                 $ip = $value;
+                break;
             }
-
-            return $ip;
-        });
-        unset($ips);
+        }
 
         // If at this point $ip is empty, then we are not dealing with proxy ip's
         if ($ip === '') {
-            /** @var string $ip */
+            /** @var string */
             $ip = Environment::var(
                 self::IP_ADDRESS_HEADERS['client'],
                 Environment::var(self::IP_ADDRESS_HEADERS['default'])
@@ -308,8 +309,10 @@ abstract class Environment
      */
     public static function isHttps(): bool
     {
+        /** @var array<string, string> $headers */
         $headers = getallheaders();
 
+        /** @var string $server */
         $server    = Environment::var(self::HTTPS_HEADERS['default']);
         $frontEnd  = Arrays::get($headers, self::HTTPS_HEADERS['forwarded'], '');
         $forwarded = Arrays::get($headers, self::HTTPS_HEADERS['frontend'], '');
@@ -393,43 +396,32 @@ abstract class Environment
      */
     public static function url(): string
     {
-        // Scheme
         $scheme = (Environment::isHttps()) ? 'https://' : 'http://';
 
-        // Auth
-        $authUser = Environment::var(self::URL_HEADERS['authuser']);
-        $authPwd  = Environment::var(self::URL_HEADERS['authpw']);
-        $auth     = \sprintf('%s:%s@', $authUser, $authPwd);
+        $authUser = (string) Environment::var(self::URL_HEADERS['authuser']);
+        $authPwd  = (string) Environment::var(self::URL_HEADERS['authpw']);
 
-        if ($auth === ':@') {
-            $auth = '';
-        }
+        $auth = ($authUser !== '' || $authPwd !== '')
+            ? \sprintf('%s:%s@', $authUser, $authPwd)
+            : '';
 
-        // Host and port
         $host = Environment::host();
+        $port = (int) Environment::var(self::URL_HEADERS['port'], 0);
 
-        /** @var int $port */
-        $port = Environment::var(self::URL_HEADERS['port'], 0);
-        $port = ($port === (Environment::isHttps() ? Environment::PORT_SECURE : Environment::PORT_UNSECURE) || $port === 0) ? '' : ':' . $port;
+        $portStr = ($port === (Environment::isHttps() ? Environment::PORT_SECURE : Environment::PORT_UNSECURE)
+            || $port === 0) ? '' : ':' . $port;
 
-        // Path
         /** @var string $self */
         $self = Environment::var(self::URL_HEADERS['self']);
-
         /** @var string $query */
         $query = Environment::var(self::URL_HEADERS['query']);
-
         /** @var string $request */
         $request = Environment::var(self::URL_HEADERS['request']);
 
-        /** @var string $path */
         $path = ($request === '' ? $self . ($query !== '' ? '?' . $query : '') : $request);
 
-        // Put it all together
-        /** @var non-falsy-string $url */
-        $url = \sprintf('%s%s%s%s%s', $scheme, $auth, $host, $port, $path);
-
-        return $url;
+        /** @var non-empty-string */
+        return \sprintf('%s%s%s%s%s', $scheme, $auth, $host, $portStr, $path);
     }
 
     /**

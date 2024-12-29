@@ -5,7 +5,7 @@ declare(strict_types=1);
 /**
  * This file is part of Esi\Utility.
  *
- * (c) 2017 - 2024 Eric Sizemore <admin@secondversion.com>
+ * (c) 2017 - 2025 Eric Sizemore <admin@secondversion.com>
  *
  * For the full copyright and license information, please view
  * the LICENSE.md file that was distributed with this source code.
@@ -19,6 +19,7 @@ use Random\RandomException;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RuntimeException;
+use SplFileInfo;
 use SplFileObject;
 
 use function array_filter;
@@ -61,7 +62,7 @@ abstract class Filesystem
      *
      * @throws InvalidArgumentException
      *
-     * @return array<mixed>
+     * @return array<string>
      */
     public static function directoryList(string $directory, array $ignore = []): array
     {
@@ -70,20 +71,24 @@ abstract class Filesystem
             throw new InvalidArgumentException('Invalid $directory specified');
         }
 
-        // Initialize
+        /** @var array<string> $contents */
         $contents = [];
 
         // Directories to ignore, if any
         $ignore = Filesystem::buildIgnore($ignore);
 
+        $iterator = Filesystem::getIterator($directory, true);
+
         // Build the actual contents of the directory
-        /** @var RecursiveDirectoryIterator $fileInfo */
-        foreach (Filesystem::getIterator($directory, true) as $key => $fileInfo) {
-            if (Filesystem::checkIgnore($fileInfo->getPath(), $ignore)) {
+        /** @var SplFileInfo $pathInfo */
+        foreach ($iterator as $pathInfo) {
+            $path = $pathInfo->getPathname();
+
+            if (Filesystem::checkIgnore($path, $ignore)) {
                 continue;
             }
 
-            $contents[] = $key;
+            $contents[] = $path;
         }
 
         natsort($contents);
@@ -330,23 +335,31 @@ abstract class Filesystem
         // Clean up the path a bit first
         $path = rtrim(str_replace(['/', '\\'], $separator, $path), $separator);
 
-        // Filter through and reduce as needed
-        $filtered = array_filter(
+        /** @var array<string> $parts */
+        $parts = array_filter(
             explode($separator, $path),
-            static fn (string $string, bool $binarySafe = false): bool => Strings::length($string, $binarySafe) > 0
+            static fn (string $string): bool => Strings::length($string) > 0
         );
 
-        $filtered = array_reduce($filtered, static function (array $tmp, string $item): array {
-            if ($item === '..') {
-                array_pop($tmp);
-            } elseif ($item !== '.') {
-                $tmp[] = $item;
-            }
+        $filtered = array_reduce(
+            $parts,
+            /**
+             * @param array<string> $tmp
+             *
+             * @return array<string>
+             */
+            static function (array $tmp, string $item): array {
+                if ($item === '..') {
+                    array_pop($tmp);
+                } elseif ($item !== '.') {
+                    $tmp[] = $item;
+                }
 
-            return $tmp;
-        }, []);
+                return $tmp;
+            },
+            []
+        );
 
-        // Put it all together.
         return ($separator !== '\\' ? $separator : '') . implode($separator, $filtered);
     }
 
@@ -404,17 +417,15 @@ abstract class Filesystem
      */
     private static function getIterator(string $forDirectory, bool $keyAsPath = false): RecursiveIteratorIterator
     {
-        /**
-         * @var int $options
-         */
-        static $options = FilesystemIterator::CURRENT_AS_FILEINFO | FilesystemIterator::SKIP_DOTS;
+        /** @var FilesystemIterator::CURRENT_AS_FILEINFO|FilesystemIterator::KEY_AS_PATHNAME|FilesystemIterator::SKIP_DOTS $flags */
+        $flags = FilesystemIterator::CURRENT_AS_FILEINFO | FilesystemIterator::SKIP_DOTS;
 
         if ($keyAsPath) {
-            $options |= FilesystemIterator::KEY_AS_PATHNAME;
+            $flags |= FilesystemIterator::KEY_AS_PATHNAME;
         }
 
         return new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator($forDirectory, $options)
+            new RecursiveDirectoryIterator($forDirectory, $flags)
         );
     }
 }

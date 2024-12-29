@@ -45,7 +45,7 @@
         }
     ],
     "require": {
-        "php": ">=8.2",
+        "php": "~8.2.0 || ~8.3.0 || ~8.4.1",
         "ext-filter": "*",
         "ext-json": "*",
         "ext-mbstring": "*",
@@ -61,7 +61,10 @@
         "phpstan/phpstan-deprecation-rules": "^2.0",
         "phpstan/phpstan-phpunit": "^2.0",
         "phpstan/phpstan-strict-rules": "^2.0",
-        "phpunit/phpunit": "^11.5"
+        "phpunit/phpunit": "^11.5",
+        "psalm/plugin-phpunit": "^0.19.0",
+        "rector/rector": "^2.0",
+        "vimeo/psalm": "dev-master"
     },
     "suggest": {
         "ext-exif": "To be able to use Exif for guessing image types with Utility\\Image",
@@ -95,7 +98,8 @@
             "@composer validate",
             "@phpunit",
             "@code-coverage",
-            "@phpstan"
+            "@phpstan",
+            "@psalm"
         ],
         "clear-build": "rm -rf ./build/*",
         "code-coverage": "vendor/bin/coverage-check build/logs/clover.xml 100",
@@ -103,6 +107,12 @@
         "phpcs:fix": "vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php",
         "phpstan": "vendor/bin/phpstan analyse -c phpstan.neon -vvv",
         "phpunit": "vendor/bin/phpunit",
-        "phpunit:migrate": "@phpunit --migrate-configuration"
+        "phpunit:migrate": "@phpunit --migrate-configuration",
+        "psalm": "vendor/bin/psalm -c psalm.xml --no-cache  --no-diff",
+        "psalm:baseline": "@psalm --set-baseline=psalm-baseline.xml",
+        "psalm:security": "@psalm --taint-analysis",
+        "psalm:shepherd": "@psalm --shepherd --stats",
+        "refactor:check": "@refactor:fix --dry-run",
+        "refactor:fix": "vendor/bin/rector process"
     }
 }

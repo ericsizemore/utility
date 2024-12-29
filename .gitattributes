@@ -1,6 +1,9 @@
 # Set the default behavior, in case people don't have core.autocrlf set.
 * text eol=lf
 
+*.php text diff=php
+*.md text diff=markdown
+
 *.gif binary
 *.jpg binary
 *.png binary
@@ -14,12 +17,14 @@
 /.scrutinizer.yml          export-ignore
 /docs                      export-ignore
 /tests                     export-ignore
-/composer.lock             export-ignore
 /backward-compatibility.md export-ignore
 /CODE_OF_CONDUCT.md        export-ignore
+/composer.lock             export-ignore
 /CONTRIBUTING.md           export-ignore
 /mkdocs.yml                export-ignore
 /phpstan.neon              export-ignore
 /phpstan-baseline.neon     export-ignore
 /phpunit.xml               export-ignore
+/psalm.xml                 export-ignore
+/rector.php                export-ignore
 /renovate.json             export-ignore

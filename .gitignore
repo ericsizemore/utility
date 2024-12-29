@@ -1,14 +1,4 @@
-.idea/
 vendor/
 build/
 dochtml/
-composer.phar
-.phpunit.result.cache
 .php-cs-fixer.cache
-*.iws
-out/
-.idea_modules/
-atlassian-ide-plugin.xml
-.idea/php.xml
-.idea/utility.iml
-clover.xml

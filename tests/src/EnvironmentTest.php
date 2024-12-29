@@ -5,7 +5,7 @@ declare(strict_types=1);
 /**
  * This file is part of Esi\Utility.
  *
- * (c) 2017 - 2024 Eric Sizemore <admin@secondversion.com>
+ * (c) 2017 - 2025 Eric Sizemore <admin@secondversion.com>
  *
  * For the full copyright and license information, please view
  * the LICENSE.md file that was distributed with this source code.
@@ -27,6 +27,8 @@ use RuntimeException;
  * Environment utility tests.
  *
  * @internal
+ *
+ * @psalm-api
  */
 #[CoversClass(Environment::class)]
 #[CoversMethod(Arrays::class, 'get')]
@@ -36,7 +38,7 @@ use RuntimeException;
 #[CoversMethod(Strings::class, 'length')]
 #[CoversMethod(Strings::class, 'lower')]
 #[CoversMethod(Strings::class, 'upper')]
-class EnvironmentTest extends TestCase
+final class EnvironmentTest extends TestCase
 {
     /**
      * Test Environment::host().

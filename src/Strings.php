@@ -5,7 +5,7 @@ declare(strict_types=1);
 /**
  * This file is part of Esi\Utility.
  *
- * (c) 2017 - 2024 Eric Sizemore <admin@secondversion.com>
+ * (c) 2017 - 2025 Eric Sizemore <admin@secondversion.com>
  *
  * For the full copyright and license information, please view
  * the LICENSE.md file that was distributed with this source code.
@@ -67,13 +67,14 @@ abstract class Strings
      * Transliterate a UTF-8 value to ASCII.
      *
      * @param string $value    Value to transliterate.
-     * @param string $language Language code (2 characters, eg: en). {@see ASCII}
+     * @param string $language Language code (2 characters, eg: en). One of the ASCII::*_LANGUAGE_CODE constants.
+     *
+     * @see ASCII::to_ascii()
      *
      * @return string Value as ASCII.
      */
     public static function ascii(string $value, string $language = 'en'): string
     {
-        /** @var ASCII::*_LANGUAGE_CODE $language */
         return ASCII::to_ascii($value, $language);
     }
 
@@ -283,7 +284,7 @@ abstract class Strings
      */
     public static function lower(string $value): string
     {
-        return mb_convert_case($value, MB_CASE_LOWER, (self::$encoding ?? null));
+        return mb_convert_case($value, MB_CASE_LOWER, self::$encoding);
     }
 
     /**
@@ -319,7 +320,7 @@ abstract class Strings
      *
      * Generate cryptographically secure pseudo-random bytes.
      *
-     * @param int<1, max> $length Length of the random string that should be returned in bytes.
+     * @param int<0, max> $length Length of the random string that should be returned in bytes.
      *
      * @throws RandomException
      *
@@ -440,7 +441,7 @@ abstract class Strings
      */
     public static function substr(string $string, int $start, ?int $length = null): string
     {
-        return mb_substr($string, $start, $length, (self::$encoding ?? null));
+        return mb_substr($string, $start, $length, self::$encoding);
     }
 
     /**
@@ -454,7 +455,7 @@ abstract class Strings
      */
     public static function title(string $value): string
     {
-        return mb_convert_case($value, MB_CASE_TITLE, (self::$encoding ?? null));
+        return mb_convert_case($value, MB_CASE_TITLE, self::$encoding);
     }
 
     /**
@@ -484,7 +485,7 @@ abstract class Strings
      */
     public static function upper(string $value): string
     {
-        return mb_convert_case($value, MB_CASE_UPPER, (self::$encoding ?? null));
+        return mb_convert_case($value, MB_CASE_UPPER, self::$encoding);
     }
 
     /**
@@ -515,6 +516,9 @@ abstract class Strings
     public static function validJson(string $data): bool
     {
         $data = trim($data);
+        /**
+         * @psalm-suppress UnusedFunctionCall
+         */
         json_decode($data);
 
         return (json_last_error() === JSON_ERROR_NONE);

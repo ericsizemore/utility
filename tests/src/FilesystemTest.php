@@ -5,7 +5,7 @@ declare(strict_types=1);
 /**
  * This file is part of Esi\Utility.
  *
- * (c) 2017 - 2024 Eric Sizemore <admin@secondversion.com>
+ * (c) 2017 - 2025 Eric Sizemore <admin@secondversion.com>
  *
  * For the full copyright and license information, please view
  * the LICENSE.md file that was distributed with this source code.
@@ -44,6 +44,8 @@ use const DIRECTORY_SEPARATOR;
  * File system utility tests.
  *
  * @internal
+ *
+ * @psalm-api
  */
 #[CoversClass(Filesystem::class)]
 #[CoversMethod(Arrays::class, 'valueExists')]
@@ -51,14 +53,14 @@ use const DIRECTORY_SEPARATOR;
 #[CoversMethod(Strings::class, 'randomString')]
 #[CoversMethod(Strings::class, 'randomBytes')]
 #[CoversMethod(Strings::class, 'substr')]
-class FilesystemTest extends TestCase
+final class FilesystemTest extends TestCase
 {
-    protected static string $testDir;
+    private static string $testDir;
 
     /**
      * @var array<string>
      */
-    protected static array $testFiles;
+    private static array $testFiles;
 
     #[\Override]
     public static function setUpBeforeClass(): void

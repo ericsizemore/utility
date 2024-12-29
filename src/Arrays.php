@@ -5,7 +5,7 @@ declare(strict_types=1);
 /**
  * This file is part of Esi\Utility.
  *
- * (c) 2017 - 2024 Eric Sizemore <admin@secondversion.com>
+ * (c) 2017 - 2025 Eric Sizemore <admin@secondversion.com>
  *
  * For the full copyright and license information, please view
  * the LICENSE.md file that was distributed with this source code.
@@ -14,22 +14,10 @@ declare(strict_types=1);
 namespace Esi\Utility;
 
 use ArrayAccess;
-use RuntimeException;
-use SplObjectStorage;
-
-use function array_map;
-use function array_merge;
-use function array_sum;
+use WeakMap;
 
 /**
  * Array utilities.
- *
- * @see Tests\ArraysTest
- *
- * @template TObject of SplObjectStorage
- * @template TData
- *
- * @uses SplObjectStorage<TObject, TData>
  */
 abstract class Arrays
 {
@@ -40,32 +28,31 @@ abstract class Arrays
      *
      * Keys are preserved based on $separator.
      *
-     * @param array<TKey, TValue> $array     Array to flatten.
-     * @param string              $separator The new keys are a list of original keys separated by $separator.
-     * @param string              $prepend   A string to prepend to resulting array keys.
-     *
      * @since 1.2.0
      *
-     * @return array<TKey, TValue> The flattened array.
-     *
-     * @template TKey
      * @template TValue
+     *
+     * @param array<array-key, array<array-key, TValue>|TValue> $array
+     *
+     * @return array<string, TValue>
      */
     public static function flatten(array $array, string $separator = '.', string $prepend = ''): array
     {
+        /** @var array<string, TValue> $result */
         $result = [];
 
         foreach ($array as $key => $value) {
-            if (\is_array($value) && $value !== []) {
-                $result = array_merge($result, Arrays::flatten($value, $separator, $prepend . $key . $separator));
-            } else {
-                $result[$prepend . $key] = $value;
+            $currentKey = $prepend . $key;
+
+            if (\is_array($value)) {
+                $flattened = self::flatten($value, $separator, $currentKey . $separator);
+                $result    = array_merge($result, $flattened);
+                continue;
             }
+
+            $result[$currentKey] = $value;
         }
 
-        /**
-         * @var array<TKey, TValue> $result
-         */
         return $result;
     }
 
@@ -74,24 +61,24 @@ abstract class Arrays
      *
      * Retrieve a value from an array.
      *
-     * @param array<TKey, TValue>|ArrayAccess<TKey, TValue> $array   Array to retrieve value from.
-     * @param TKey                                          $key     Key to retrieve
-     * @param TDefault                                      $default A default value to return if $key does not exist
-     *
-     * @throws RuntimeException If $array is not accessible
-     *
-     * @template TKey of (int|string)
+     * @template TKey of array-key
      * @template TValue
      * @template TDefault
      *
-     * @uses ArrayAccess<TKey, TValue>
+     * @param array<TKey, TValue>|ArrayAccess<TKey, TValue> $array
+     * @param TKey                                          $key
+     * @param TDefault                                      $default
+     *
+     * @return TDefault|TValue
      */
     public static function get(array|ArrayAccess $array, int|string $key, mixed $default = null): mixed
     {
-        if (Arrays::keyExists($array, $key)) {
+        if (self::keyExists($array, $key)) {
+            /** @var TValue */
             return $array[$key];
         }
 
+        /** @var TDefault */
         return $default;
     }
 
@@ -103,31 +90,31 @@ abstract class Arrays
      *
      * @since 2.0.0
      *
-     * @param array<TKey, array<TKey, mixed>> $array Input array.
-     * @param string                          $key   Key to use for grouping.
+     * @template TKey of array-key
      *
-     * @return array<mixed, non-empty-list<array<TKey, mixed>>>|array{}
+     * @param array<TKey, array{key?: mixed}> $array
+     * @param non-empty-string                $key
      *
-     * @template TKey
+     * @return array<array-key, non-empty-list<array{key?: mixed}>>
      */
     public static function groupBy(array $array, string $key): array
     {
+        /** @var array<array-key, non-empty-list<array{key?: mixed}>> $result */
         $result = [];
 
         foreach ($array as $item) {
-            if (!self::isAssociative($item)) {
-                //@codeCoverageIgnoreStart
-                continue;
-                //@codeCoverageIgnoreEnd
-            }
-
             if (!isset($item[$key])) {
                 continue;
             }
 
+            /** @var array-key */
             $groupKey = $item[$key];
 
-            $result[$groupKey] ??= [];
+            if (!isset($result[$groupKey])) {
+                $result[$groupKey] = [$item];
+                continue;
+            }
+
             $result[$groupKey][] = $item;
         }
 
@@ -140,13 +127,15 @@ abstract class Arrays
      * Interlaces one or more arrays' values (not preserving keys).
      *
      * Example:
-     *
+     * <code>
      *      var_dump(Utility\Arrays::interlace(
      *          [1, 2, 3],
      *          ['a', 'b', 'c']
      *      ));
+     * </code>
      *
      * Result:
+     * <code>
      *      Array (
      *          [0] => 1
      *          [1] => a
@@ -155,40 +144,44 @@ abstract class Arrays
      *          [4] => 3
      *          [5] => c
      *      )
+     * </code>
      *
      * @since 1.2.0
      *
-     * @param array<TKey, TValue> ...$args
-     *
-     * @return array<TKey, TValue>|false|list<TValue>
-     *
-     * @template TKey
      * @template TValue
+     *
+     * @param array<array-key, TValue> ...$arrays
+     *
+     * @return array<int, TValue>|false
      */
-    public static function interlace(array ...$args): array|false
+    public static function interlace(array ...$arrays): array|false
     {
-        $numArgs = \count($args);
-
-        if ($numArgs === 0) {
+        if ($arrays === []) {
             return false;
         }
 
-        if ($numArgs === 1) {
-            return $args[0];
+        if (\count($arrays) === 1) {
+            /** @var array<int, TValue> */
+            return array_values($arrays[0]);
         }
 
-        $newArray      = [];
-        $totalElements = array_sum(array_map('count', $args));
+        /** @var array<int, TValue> $result */
+        $result    = [];
+        $maxLength = 0;
 
-        for ($i = 0; $i < $totalElements; ++$i) {
-            foreach ($args as $arg) {
-                if (isset($arg[$i])) {
-                    $newArray[] = $arg[$i];
+        foreach ($arrays as $array) {
+            $maxLength = max($maxLength, \count($array));
+        }
+
+        for ($i = 0; $i < $maxLength; ++$i) {
+            foreach ($arrays as $array) {
+                if (isset($array[$i])) {
+                    $result[] = $array[$i];
                 }
             }
         }
 
-        return $newArray;
+        return $result;
     }
 
     /**
@@ -196,25 +189,25 @@ abstract class Arrays
      *
      * Determines if the given array is an associative array.
      *
-     * @param array<mixed> $array Array to check
+     * @param array<array-key, mixed> $array
      */
     public static function isAssociative(array $array): bool
     {
-        return !array_is_list($array);
+        if ($array === []) {
+            return false;
+        }
+
+        return array_keys($array) !== range(0, \count($array) - 1);
     }
 
     /**
      * Checks if a key exists in an array.
      *
-     * @param array<TKey, TValue>|ArrayAccess<TKey, TValue> $array Array to check
-     * @param TKey                                          $key   Key to check
-     *
-     * @return bool
-     *
-     * @template TKey of (int|string)
+     * @template TKey of array-key
      * @template TValue
      *
-     * @uses ArrayAccess<TKey, TValue>
+     * @param array<TKey, TValue>|ArrayAccess<TKey, TValue> $array
+     * @param TKey                                          $key
      */
     public static function keyExists(array|ArrayAccess $array, int|string $key): bool
     {
@@ -230,45 +223,53 @@ abstract class Arrays
      *
      * Recursively applies a callback to all non-iterable elements of an array or an object.
      *
-     * @since 1.2.0 - updated with inspiration from the WordPress map_deep() function.
-     * @see https://developer.wordpress.org/reference/functions/map_deep/
+     * @since 1.2.0
      *
-     * @param array<mixed>|mixed|object $array    The array to apply $callback to.
-     * @param callable                  $callback The callback function to apply.
+     * @template TValue
+     *
+     * @param mixed                      $data     Data to process
+     * @param callable(mixed): TValue    $callback Callback to apply to non-iterable values
+     * @param null|WeakMap<object, true> $seen     Track objects to prevent circular reference issues
      */
-    public static function mapDeep(mixed $array, callable $callback): mixed
+    public static function mapDeep(mixed $data, callable $callback, ?WeakMap $seen = null): mixed
     {
-        /**
-         * @var ?SplObjectStorage<TObject, TData> $visited
-         */
-        static $visited;
+        /** @var WeakMap<object, true> $weakMap */
+        $weakMap = $seen ?? (static function (): WeakMap {
+            /** @return WeakMap<object, true> */
+            return new WeakMap();
+        })();
 
-        $visited ??= new SplObjectStorage();
-
-        if (\is_object($array)) {
-            if ($visited->contains($array)) {
-                return $array; // Avoid circular references.
-            }
-            $visited->attach($array);
+        if (!\is_array($data) && !\is_object($data)) {
+            return $callback($data);
         }
 
-        if (\is_array($array)) {
-            foreach ($array as $key => $value) {
-                $array[$key] = Arrays::mapDeep($value, $callback);
-            }
-        } elseif (\is_object($array)) {
-            foreach (get_object_vars($array) as $key => $value) {
-                $array->{$key} = Arrays::mapDeep($value, $callback);
-            }
-        } else {
-            $array = $callback($array);
+        if (\is_array($data)) {
+            return array_map(
+                static fn (mixed $item): mixed => self::mapDeep($item, $callback, $weakMap),
+                $data
+            );
         }
 
-        if (\is_object($array)) {
-            $visited->detach($array);
+        if ($weakMap->offsetExists($data)) {
+            return $data;
         }
 
-        return $array;
+        $weakMap->offsetSet($data, true);
+
+        try {
+            $props = get_object_vars($data);
+
+            array_walk(
+                $props,
+                static function (mixed $propValue, string $propName) use ($data, $callback, $weakMap): void {
+                    $data->$propName = self::mapDeep($propValue, $callback, $weakMap);
+                }
+            );
+        } finally {
+            $weakMap->offsetUnset($data);
+        }
+
+        return $data;
     }
 
     /**
@@ -276,42 +277,40 @@ abstract class Arrays
      *
      * Add a value to an array.
      *
-     * @param array<TKey, TValue>|ArrayAccess<TKey, TValue> $array Array to add value to.
-     * @param TKey                                          $key   Key to add
-     * @param TValue                                        $value Value to add
-     *
-     * @param-out TValue|non-empty-array<TKey, TValue>|ArrayAccess<TKey, TValue> $array
-     *
-     * @throws RuntimeException If $array is not accessible
-     *
-     * @template TKey of (int|string)
+     * @template TKey of array-key
      * @template TValue
      *
-     * @uses ArrayAccess<TKey, TValue>
+     * @param array<TKey, TValue>|ArrayAccess<TKey, TValue> $array
+     * @param null|TKey                                     $key
+     * @param TValue                                        $value
+     *
+     * @param-out (TValue|array<TKey, TValue>|ArrayAccess<TKey, TValue>) $array
      */
     public static function set(array|ArrayAccess &$array, null|int|string $key, mixed $value): void
     {
         if ($key === null) {
             $array = $value;
-        } else {
-            if ($array instanceof ArrayAccess) {
-                $array->offsetSet($key, $value);
-            } else {
-                $array[$key] = $value;
-            }
+            return;
         }
+
+        if ($array instanceof ArrayAccess) {
+            $array->offsetSet($key, $value);
+            return;
+        }
+
+        $array[$key] = $value;
     }
 
     /**
      * Checks if a value exists in an array.
      *
-     * @param array<TKey, TValue> $array Array to check
-     * @param TKey                $value Value to check
-     *
-     * @template TKey of (int|string)
+     * @template TKey of array-key
      * @template TValue
+     *
+     * @param array<TKey, TValue> $array
+     * @param TValue              $value
      */
-    public static function valueExists(array $array, int|string $value): bool
+    public static function valueExists(array $array, mixed $value): bool
     {
         return \in_array($value, $array, true);
     }
