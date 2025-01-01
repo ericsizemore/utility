@@ -32,7 +32,7 @@ abstract class Image
     /**
      * Image type/mime strings to determine image type.
      *
-     * @var array<string, array<string>> IMAGE_TYPES
+     * @var string[][]
      */
     public const IMAGE_TYPES = [
         'jpg'  => ['image/jpg', 'image/jpeg'],

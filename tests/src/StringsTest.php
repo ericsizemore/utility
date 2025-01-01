@@ -16,8 +16,8 @@ namespace Esi\Utility\Tests;
 use Esi\Utility\Environment;
 use Esi\Utility\Numbers;
 use Esi\Utility\Strings;
+use Generator;
 use InvalidArgumentException;
-use Iterator;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -307,8 +307,10 @@ final class StringsTest extends TestCase
      * this provider is based on Stringy/Test/camelizeProvider().
      *
      * @see https://github.com/danielstjules/Stringy/blob/master/tests/StringyTest.php#L372
+     *
+     * @return Generator<int, string[], mixed, void>
      */
-    public static function camelCaseProvider(): Iterator
+    public static function camelCaseProvider(): Generator
     {
         yield ['camelCase', 'CamelCase'];
         yield ['camelCase', 'Camel-Case'];
@@ -331,7 +333,10 @@ final class StringsTest extends TestCase
         yield ['σamelCase', 'σamel  Case', 'UTF-8'];
     }
 
-    public static function slugifyProvider(): Iterator
+    /**
+     * @return Generator<int, string[], mixed, void>
+     */
+    public static function slugifyProvider(): Generator
     {
         yield ['a-simple-title', 'A simple title', '-', 'en'];
         yield ['this-post-it-has-a-dash', 'This post -- it has a dash', '-', 'en'];

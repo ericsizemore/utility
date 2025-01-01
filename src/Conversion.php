@@ -29,9 +29,9 @@ use function sqrt;
 abstract class Conversion
 {
     /**
-     * @var int EARTH_RADIUS          Earth's radius, in meters.
-     * @var int METERS_TO_KILOMETERS  Used in the conversion of meters to kilometers.
-     * @var int METERS_TO_MILES       Used in the conversion of meters to miles.
+     * @const int EARTH_RADIUS          Earth's radius, in meters.
+     * @const int METERS_TO_KILOMETERS  Used in the conversion of meters to kilometers.
+     * @const int METERS_TO_MILES       Used in the conversion of meters to miles.
      */
     public const EARTH_RADIUS = 6_370_986;
 
@@ -165,29 +165,24 @@ abstract class Conversion
         float|int $endingLongitude,
         int $precision = 0
     ): array {
-        // Radians
-        $startingLatitude  = deg2rad($startingLatitude);
-        $startingLongitude = deg2rad($startingLongitude);
-        $endingLatitude    = deg2rad($endingLatitude);
-        $endingLongitude   = deg2rad($endingLongitude);
+        // Pre-calculate values used multiple times
+        $startingLatRad = deg2rad($startingLatitude);
+        $endingLatRad   = deg2rad($endingLatitude);
+        $latDiff        = deg2rad($endingLatitude - $startingLatitude);
+        $lonDiff        = deg2rad($endingLongitude - $startingLongitude);
 
-        // Determine distance
-        $latitudinalDistance  = $endingLatitude - $startingLatitude;
-        $longitudinalDistance = $endingLongitude - $startingLongitude;
+        $cosStartLat = cos($startingLatRad);
+        $cosEndLat   = cos($endingLatRad);
 
-        // Square of half the chord length between the two points on the surface of the sphere (Earth)
-        $square = sin($latitudinalDistance / 2)
-            * sin($latitudinalDistance / 2)
-            + cos($startingLatitude)
-            * cos($endingLatitude)
-            * sin($longitudinalDistance / 2)
-            * sin($longitudinalDistance / 2);
+        // Calculate using optimized formula
+        $sinLatHalf = sin($latDiff / 2);
+        $sinLonHalf = sin($lonDiff / 2);
 
-        // Central angle
-        $centralAngle = 2 * atan2(sqrt($square), sqrt(1 - $square));
+        $square = $sinLatHalf * $sinLatHalf +
+            $cosStartLat * $cosEndLat *
+            $sinLonHalf * $sinLonHalf;
 
-        // great-circle distance between the two points on the surface of the sphere (Earth)
-        $distance = self::EARTH_RADIUS * $centralAngle;
+        $distance = self::EARTH_RADIUS * 2 * atan2(sqrt($square), sqrt(1 - $square));
 
         return [
             'meters'     => number_format($distance, $precision),

@@ -33,7 +33,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     * `Arrays::mapDeep()` updated to avoid circular references when dealing with objects.
       * New PHPUnit tests added to cover `mapDeep()` as well.
     * Updated the `Arrays` class for psalm/phpstan templates/generics.
-      * Still something I am admittedly not highly experienced with, so it may look/feel a little wonky. Going to improve it as I can. 
+      * Still something I am admittedly not highly experienced with, so it may look/feel a little wonky. Going to improve it as I can.
+  * Optimized the `Conversion::haversineDistance()` method.
+  * Refactored unit tests.
   * Changes throughout to make fixes and improvements reported by Psalm.
 
 

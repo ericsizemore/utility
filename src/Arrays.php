@@ -234,10 +234,8 @@ abstract class Arrays
     public static function mapDeep(mixed $data, callable $callback, ?WeakMap $seen = null): mixed
     {
         /** @var WeakMap<object, true> $weakMap */
-        $weakMap = $seen ?? (static function (): WeakMap {
-            /** @return WeakMap<object, true> */
-            return new WeakMap();
-        })();
+        $weakMap = $seen ?? (static fn (): WeakMap => /** @return WeakMap<object, true> */
+            new WeakMap())();
 
         if (!\is_array($data) && !\is_object($data)) {
             return $callback($data);

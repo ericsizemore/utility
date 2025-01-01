@@ -36,6 +36,28 @@ use RuntimeException;
 #[CoversMethod(Arrays::class, 'valueExists')]
 final class DatesTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        date_default_timezone_set(Dates::DEFAULT_TIMEZONE);
+    }
+
+    /**
+     * Test extended time difference formatting.
+     */
+    #[DataProvider('extendedTimeDifferenceProvider')]
+    #[Test]
+    public function extendedTimeDifference(int $seconds, string $expected): void
+    {
+        $timestampTo   = FrozenClock::fromUtc()->now();
+        $timestampFrom = FrozenClock::fromUtc()->now()->getTimestamp() - $seconds;
+
+        self::assertSame(
+            $expected,
+            Dates::timeDifference($timestampFrom, $timestampTo->getTimestamp(), extendedOutput: true)
+        );
+    }
+
     /**
      * Test Dates::timeDifference() with invalid $timestampFrom and $timestampTo.
      */
@@ -60,50 +82,31 @@ final class DatesTest extends TestCase
     }
 
     /**
-     * Test Dates::timeDifference().
+     * Test standard time difference formatting.
+     */
+    #[DataProvider('standardTimeDifferenceProvider')]
+    #[Test]
+    public function standardTimeDifference(int $seconds, string $expected): void
+    {
+        $timestampTo   = FrozenClock::fromUtc()->now();
+        $timestampFrom = FrozenClock::fromUtc()->now()->getTimestamp() - $seconds;
+
+        self::assertSame($expected, Dates::timeDifference($timestampFrom, $timestampTo->getTimestamp()));
+    }
+
+    /**
+     * Test time difference with empty timezone (should default to UTC).
      */
     #[Test]
-    public function timeDifference(): void
+    public function timeDifferenceWithEmptyTimezone(): void
     {
-        $timestampFrom = FrozenClock::fromUtc()->now();
         $timestampTo   = FrozenClock::fromUtc()->now();
+        $timestampFrom = FrozenClock::fromUtc()->now()->getTimestamp() - 3_600;
 
-        $modifyClock = static fn (int $minus): int => $timestampFrom->getTimestamp() - $minus;
-
-        self::assertSame('1 second old', Dates::timeDifference($modifyClock(1), $timestampTo->getTimestamp()));
-        self::assertSame('15 seconds old', Dates::timeDifference($modifyClock(15), $timestampTo->getTimestamp(), ''));
-        self::assertSame('30 seconds old', Dates::timeDifference($modifyClock(30), $timestampTo->getTimestamp()));
-        self::assertSame('1 minute old', Dates::timeDifference($modifyClock(60), $timestampTo->getTimestamp()));
-        self::assertSame('5 minutes old', Dates::timeDifference($modifyClock(60 * 5), $timestampTo->getTimestamp()));
-        self::assertSame('1 hour old', Dates::timeDifference($modifyClock(3_600), $timestampTo->getTimestamp()));
-        self::assertSame('2 hours old', Dates::timeDifference($modifyClock(3_600 * 2), $timestampTo->getTimestamp()));
-        self::assertSame('1 day old', Dates::timeDifference($modifyClock(3_600 * 24), $timestampTo->getTimestamp()));
-        self::assertSame('5 days old', Dates::timeDifference($modifyClock(3_600 * 24 * 5), $timestampTo->getTimestamp()));
-        self::assertSame('1 week old', Dates::timeDifference($modifyClock(3_600 * 24 * 7), $timestampTo->getTimestamp()));
-        self::assertSame('2 weeks old', Dates::timeDifference($modifyClock(3_600 * 24 * 14), $timestampTo->getTimestamp()));
-        self::assertSame('1 month old', Dates::timeDifference($modifyClock(604_800 * 5), $timestampTo->getTimestamp()));
-        self::assertSame('2 months old', Dates::timeDifference($modifyClock(604_800 * 10), $timestampTo->getTimestamp()));
-        self::assertSame('1 year old', Dates::timeDifference($modifyClock(2_592_000 * 15), $timestampTo->getTimestamp()));
-        self::assertSame('2 years old', Dates::timeDifference($modifyClock(2_592_000 * 36), $timestampTo->getTimestamp()));
-        self::assertSame('11 years old', Dates::timeDifference($modifyClock(2_592_000 * 140), $timestampTo->getTimestamp()));
-
-        // With $extendedOutput
-        self::assertSame('1 second old', Dates::timeDifference($modifyClock(1), $timestampTo->getTimestamp(), extendedOutput: true));
-        self::assertSame('15 seconds old', Dates::timeDifference($modifyClock(15), $timestampTo->getTimestamp(), extendedOutput: true));
-        self::assertSame('30 seconds old', Dates::timeDifference($modifyClock(30), $timestampTo->getTimestamp(), extendedOutput: true));
-        self::assertSame('1 minute old', Dates::timeDifference($modifyClock(60), $timestampTo->getTimestamp(), extendedOutput: true));
-        self::assertSame('5 minutes old', Dates::timeDifference($modifyClock(60 * 5), $timestampTo->getTimestamp(), extendedOutput: true));
-        self::assertSame('1 hour old', Dates::timeDifference($modifyClock(3_600), $timestampTo->getTimestamp(), extendedOutput: true));
-        self::assertSame('2 hours old', Dates::timeDifference($modifyClock(3_600 * 2), $timestampTo->getTimestamp(), extendedOutput: true));
-        self::assertSame('1 day old', Dates::timeDifference($modifyClock(3_600 * 24), $timestampTo->getTimestamp(), extendedOutput: true));
-        self::assertSame('5 days old', Dates::timeDifference($modifyClock(3_600 * 24 * 5), $timestampTo->getTimestamp(), extendedOutput: true));
-        self::assertSame('1 week old', Dates::timeDifference($modifyClock(3_600 * 24 * 7), $timestampTo->getTimestamp(), extendedOutput: true));
-        self::assertSame('2 weeks old', Dates::timeDifference($modifyClock(3_600 * 24 * 14), $timestampTo->getTimestamp(), extendedOutput: true));
-        self::assertSame('1 month 5 days old', Dates::timeDifference($modifyClock(604_800 * 5), $timestampTo->getTimestamp(), extendedOutput: true));
-        self::assertSame('2 months 2 weeks old', Dates::timeDifference($modifyClock(604_800 * 10), $timestampTo->getTimestamp(), extendedOutput: true));
-        self::assertSame('1 year 2 months 4 weeks old', Dates::timeDifference($modifyClock(2_592_000 * 15), $timestampTo->getTimestamp(), extendedOutput: true));
-        self::assertSame('2 years 11 months 3 weeks old', Dates::timeDifference($modifyClock(2_592_000 * 36), $timestampTo->getTimestamp(), extendedOutput: true));
-        self::assertSame('11 years 5 months 5 weeks old', Dates::timeDifference($modifyClock(2_592_000 * 140), $timestampTo->getTimestamp(), extendedOutput: true));
+        self::assertSame(
+            '1 hour old',
+            Dates::timeDifference($timestampFrom, $timestampTo->getTimestamp(), '')
+        );
     }
 
     /**
@@ -154,6 +157,35 @@ final class DatesTest extends TestCase
         self::assertTrue(Dates::validTimezone('America/New_York'));
     }
 
+    /**
+     * Data provider for extended time difference tests.
+     *
+     * @return Iterator<string, array{seconds: int, expected: string}>
+     */
+    public static function extendedTimeDifferenceProvider(): Iterator
+    {
+        yield 'complex month' => [
+            'seconds'  => 604_800 * 5,
+            'expected' => '1 month 5 days old',
+        ];
+        yield 'complex months' => [
+            'seconds'  => 604_800 * 10,
+            'expected' => '2 months 2 weeks old',
+        ];
+        yield 'complex year' => [
+            'seconds'  => 2_592_000 * 15,
+            'expected' => '1 year 2 months 4 weeks old',
+        ];
+        yield 'complex years' => [
+            'seconds'  => 2_592_000 * 36,
+            'expected' => '2 years 11 months 3 weeks old',
+        ];
+        yield 'many complex years' => [
+            'seconds'  => 2_592_000 * 140,
+            'expected' => '11 years 5 months 5 weeks old',
+        ];
+    }
+
     public static function falseForLocationProvider(): Iterator
     {
         yield [['offset' => 1, 'country' => 'N/A', 'latitude' => 'N/A', 'longitude' => 'N/A', 'dst' => null], 'CET'];
@@ -176,5 +208,30 @@ final class DatesTest extends TestCase
         yield [1_234_567, 0];
         yield [0, \PHP_INT_MAX];
         yield [\PHP_INT_MAX, 0];
+    }
+
+    /**
+     * Data provider for standard time difference tests.
+     *
+     * @return Iterator<string, array{seconds: int, expected: string}>
+     */
+    public static function standardTimeDifferenceProvider(): Iterator
+    {
+        yield 'one second' => ['seconds' => 1, 'expected' => '1 second old'];
+        yield 'multiple seconds' => ['seconds' => 15, 'expected' => '15 seconds old'];
+        yield 'half minute' => ['seconds' => 30, 'expected' => '30 seconds old'];
+        yield 'one minute' => ['seconds' => 60, 'expected' => '1 minute old'];
+        yield 'multiple minutes' => ['seconds' => 60 * 5, 'expected' => '5 minutes old'];
+        yield 'one hour' => ['seconds' => 3_600, 'expected' => '1 hour old'];
+        yield 'multiple hours' => ['seconds' => 3_600 * 2, 'expected' => '2 hours old'];
+        yield 'one day' => ['seconds' => 3_600 * 24, 'expected' => '1 day old'];
+        yield 'multiple days' => ['seconds' => 3_600 * 24 * 5, 'expected' => '5 days old'];
+        yield 'one week' => ['seconds' => 3_600 * 24 * 7, 'expected' => '1 week old'];
+        yield 'multiple weeks' => ['seconds' => 3_600 * 24 * 14, 'expected' => '2 weeks old'];
+        yield 'one month' => ['seconds' => 604_800 * 5, 'expected' => '1 month old'];
+        yield 'multiple months' => ['seconds' => 604_800 * 10, 'expected' => '2 months old'];
+        yield 'one year' => ['seconds' => 2_592_000 * 15, 'expected' => '1 year old'];
+        yield 'multiple years' => ['seconds' => 2_592_000 * 36, 'expected' => '2 years old'];
+        yield 'many years' => ['seconds' => 2_592_000 * 140, 'expected' => '11 years old'];
     }
 }

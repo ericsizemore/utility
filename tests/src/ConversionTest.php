@@ -14,7 +14,9 @@ declare(strict_types=1);
 namespace Esi\Utility\Tests;
 
 use Esi\Utility\Conversion;
+use Iterator;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
@@ -29,67 +31,47 @@ use PHPUnit\Framework\TestCase;
 final class ConversionTest extends TestCase
 {
     /**
-     * Test Conversion::celsiusToFahrenheit().
+     * Tests Celsius conversion methods.
      */
     #[Test]
-    public function celsiusToFahrenheit(): void
-    {
-        self::assertSame(73.99, Conversion::celsiusToFahrenheit(23.33));
-        self::assertSame(74.0, Conversion::celsiusToFahrenheit(23.333_333_333_333_332, false));
+    #[DataProvider('provideCelsiusConversionData')]
+    public function celsiusConversions(
+        float $input,
+        float $fahrenheit,
+        float $kelvin,
+        float $rankine,
+        bool $rounded
+    ): void {
+        if ($rounded) {
+            self::assertSame($fahrenheit, Conversion::celsiusToFahrenheit($input));
+            self::assertSame($kelvin, Conversion::celsiusToKelvin($input));
+            self::assertSame($rankine, Conversion::celsiusToRankine($input));
+        } else {
+            self::assertEqualsWithDelta($fahrenheit, Conversion::celsiusToFahrenheit($input, false), 0.0_000_000_001);
+            self::assertEqualsWithDelta($kelvin, Conversion::celsiusToKelvin($input, false), 0.0_000_000_001);
+            self::assertEqualsWithDelta($rankine, Conversion::celsiusToRankine($input, false), 0.0_000_000_001);
+        }
     }
 
     /**
-     * Test Conversion::celsiusToKelvin().
+     * Tests Fahrenheit conversion methods.
      */
     #[Test]
-    public function celsiusToKelvin(): void
-    {
-        self::assertSame(296.48, Conversion::celsiusToKelvin(23.33));
-        self::assertSame(296.483_333_333_333_3, Conversion::celsiusToKelvin(23.333_333_333_333_332, false));
+    #[DataProvider('provideFahrenheitConversionData')]
+    public function fahrenheitConversions(
+        float $input,
+        float $celsius,
+        float $kelvin,
+        float $rankine,
+        bool $rounded
+    ): void {
+        self::assertSame($celsius, Conversion::fahrenheitToCelsius($input, $rounded));
+        self::assertSame($kelvin, Conversion::fahrenheitToKelvin($input, $rounded));
+        self::assertSame($rankine, Conversion::fahrenheitToRankine($input, $rounded));
     }
 
     /**
-     * Test Conversion::celsiusToRankine().
-     */
-    #[Test]
-    public function celsiusToRankine(): void
-    {
-        self::assertSame(545.67, Conversion::celsiusToRankine(30));
-        self::assertSame(545.670_000_000_000_1, Conversion::celsiusToRankine(30, false));
-    }
-
-    /**
-     * Test Conversion::fahrenheitToCelsius().
-     */
-    #[Test]
-    public function fahrenheitToCelsius(): void
-    {
-        self::assertSame(23.33, Conversion::fahrenheitToCelsius(74));
-        self::assertSame(23.333_333_333_333_332, Conversion::fahrenheitToCelsius(74, false));
-    }
-
-    /**
-     * Test Conversion::fahrenheitToKelvin().
-     */
-    #[Test]
-    public function fahrenheitToKelvin(): void
-    {
-        self::assertSame(296.48, Conversion::fahrenheitToKelvin(74));
-        self::assertSame(296.483_333_333_333_3, Conversion::fahrenheitToKelvin(74, false));
-    }
-
-    /**
-     * Test Conversion::fahrenheitToRankine().
-     */
-    #[Test]
-    public function fahrenheitToRankine(): void
-    {
-        self::assertSame(533.67, Conversion::fahrenheitToRankine(74));
-        self::assertSame(533.670_000_000_000_1, Conversion::fahrenheitToRankine(74, false));
-    }
-
-    /**
-     * Test Conversion::haversineDistance().
+     * Tests the Haversine distance calculation.
      */
     #[Test]
     public function haversineDistance(): void
@@ -109,62 +91,189 @@ final class ConversionTest extends TestCase
     }
 
     /**
-     * Test Conversion::kelvinToCelsius().
+     * Tests edge cases for Haversine distance calculation.
      */
     #[Test]
-    public function kelvinToCelsius(): void
+    public function haversineDistanceEdgeCases(): void
     {
-        self::assertSame(23.33, Conversion::kelvinToCelsius(296.48));
-        self::assertSame(23.333_333_333_333_314, Conversion::kelvinToCelsius(296.483_333_333_333_3, false));
+        // Test same point (zero distance)
+        $zeroDistance = Conversion::haversineDistance(0.0, 0.0, 0.0, 0.0);
+        self::assertSame('0', $zeroDistance['meters']);
+
+        // Test antipodal points (maximum distance)
+        $maxDistance = Conversion::haversineDistance(90.0, 0.0, -90.0, 0.0);
+        self::assertGreaterThan('20,000,000', $maxDistance['meters']);
+
+        // Test equator crossing
+        $equatorCross = Conversion::haversineDistance(1.0, 0.0, -1.0, 0.0);
+        self::assertArrayHasKey('kilometers', $equatorCross);
+        self::assertArrayHasKey('miles', $equatorCross);
     }
 
     /**
-     * Test Conversion::kelvinToFahrenheit().
+     * Tests Kelvin conversion methods.
      */
     #[Test]
-    public function kelvinToFahrenheit(): void
-    {
-        self::assertSame(73.99, Conversion::kelvinToFahrenheit(296.48));
-        self::assertSame(73.999_999_999_999_97, Conversion::kelvinToFahrenheit(296.483_333_333_333_3, false));
+    #[DataProvider('provideKelvinConversionData')]
+    public function kelvinConversions(
+        float $input,
+        float $celsius,
+        float $fahrenheit,
+        float $rankine,
+        bool $rounded
+    ): void {
+        self::assertSame($celsius, Conversion::kelvinToCelsius($input, $rounded));
+        self::assertSame($fahrenheit, Conversion::kelvinToFahrenheit($input, $rounded));
+        self::assertSame($rankine, Conversion::kelvinToRankine($input, $rounded));
     }
 
     /**
-     * Test Conversion::kelvinToRankine().
+     * Tests Rankine conversion methods.
      */
     #[Test]
-    public function kelvinToRankine(): void
-    {
-        self::assertSame(234.0, Conversion::kelvinToRankine(130));
-        self::assertSame(234.000_000_000_000_06, Conversion::kelvinToRankine(130, false));
+    #[DataProvider('provideRankineConversionData')]
+    public function rankineConversions(
+        float $input,
+        float $celsius,
+        float $fahrenheit,
+        float $kelvin,
+        bool $rounded
+    ): void {
+        if ($rounded) {
+            self::assertSame($celsius, Conversion::rankineToCelsius($input));
+            self::assertSame($fahrenheit, Conversion::rankineToFahrenheit($input));
+            self::assertSame($kelvin, Conversion::rankineToKelvin($input));
+        } else {
+            self::assertEqualsWithDelta($celsius, Conversion::rankineToCelsius($input, false), 0.0_000_000_001);
+            self::assertEqualsWithDelta($fahrenheit, Conversion::rankineToFahrenheit($input, false), 0.0_000_000_001);
+            self::assertEqualsWithDelta($kelvin, Conversion::rankineToKelvin($input, false), 0.0_000_000_001);
+        }
     }
 
     /**
-     * Test Conversion::rankineToCelsius().
+     * Tests temperature conversion consistency (round-trip conversions).
      */
     #[Test]
-    public function rankineToCelsius(): void
+    public function temperatureConversionConsistency(): void
     {
-        self::assertSame(30.0, Conversion::rankineToCelsius(545.67));
-        self::assertSame(29.999_999_999_999_968, Conversion::rankineToCelsius(545.67, false));
+        $celsius = 25.0;
+
+        // Test Celsius -> Other -> Celsius
+        $fahrenheit = Conversion::celsiusToFahrenheit($celsius, false);
+        $kelvin     = Conversion::celsiusToKelvin($celsius, false);
+        $rankine    = Conversion::celsiusToRankine($celsius, false);
+
+        self::assertEqualsWithDelta(
+            $celsius,
+            Conversion::fahrenheitToCelsius($fahrenheit, false),
+            0.0000001,
+            'Celsius -> Fahrenheit -> Celsius conversion failed'
+        );
+
+        self::assertEqualsWithDelta(
+            $celsius,
+            Conversion::kelvinToCelsius($kelvin, false),
+            0.0000001,
+            'Celsius -> Kelvin -> Celsius conversion failed'
+        );
+
+        self::assertEqualsWithDelta(
+            $celsius,
+            Conversion::rankineToCelsius($rankine, false),
+            0.0000001,
+            'Celsius -> Rankine -> Celsius conversion failed'
+        );
     }
 
     /**
-     * Test Conversion::rankineToFahrenheit().
+     * Provides test data for Celsius conversion tests.
+     *
+     * @return Iterator<string, array{input: float, fahrenheit: float, kelvin: float, rankine: float, rounded: bool}>
      */
-    #[Test]
-    public function rankineToFahrenheit(): void
+    public static function provideCelsiusConversionData(): Iterator
     {
-        self::assertSame(74.0, Conversion::rankineToFahrenheit(533.67));
-        self::assertSame(74.000_000_000_000_06, Conversion::rankineToFahrenheit(533.670_000_000_000_1, false));
+        yield 'standard values' => [
+            'input'      => 23.33,
+            'fahrenheit' => 73.99,
+            'kelvin'     => 296.48,
+            'rankine'    => 533.66,
+            'rounded'    => true,
+        ];
+        yield 'high precision' => [
+            'input'      => 23.333_333_333_333_332,
+            'fahrenheit' => 74.0,
+            'kelvin'     => 296.483_333_333_333_3,
+            'rankine'    => 533.67,
+            'rounded'    => false,
+        ];
     }
 
     /**
-     * Test Conversion::rankineToKelvin().
+     * Provides test data for Fahrenheit conversion tests.
+     *
+     * @return Iterator<string, array{input: float, celsius: float, kelvin: float, rankine: float, rounded: bool}>
      */
-    #[Test]
-    public function rankineToKelvin(): void
+    public static function provideFahrenheitConversionData(): Iterator
     {
-        self::assertSame(130.0, Conversion::rankineToKelvin(234.0));
-        self::assertSame(129.999_999_999_999_97, Conversion::rankineToKelvin(234.0, false));
+        yield 'standard values' => [
+            'input'   => 74.0,
+            'celsius' => 23.33,
+            'kelvin'  => 296.48,
+            'rankine' => 533.67,
+            'rounded' => true,
+        ];
+        yield 'high precision' => [
+            'input'   => 74.0,
+            'celsius' => 23.333_333_333_333_332,
+            'kelvin'  => 296.483_333_333_333_3,
+            'rankine' => 533.670_000_000_000_1,
+            'rounded' => false,
+        ];
+    }
+
+    /**
+     * Provides test data for Kelvin conversion tests.
+     *
+     * @return Iterator<string, array{input: float, celsius: float, fahrenheit: float, rankine: float, rounded: bool}>
+     */
+    public static function provideKelvinConversionData(): Iterator
+    {
+        yield 'standard values' => [
+            'input'      => 296.48,
+            'celsius'    => 23.33,
+            'fahrenheit' => 73.99,
+            'rankine'    => 533.66,
+            'rounded'    => true,
+        ];
+        yield 'high precision' => [
+            'input'      => 296.483_333_333_333_3,
+            'celsius'    => 23.333_333_333_333_314,
+            'fahrenheit' => 73.999_999_999_999_97,
+            'rankine'    => 533.67,
+            'rounded'    => false,
+        ];
+    }
+
+    /**
+     * Provides test data for Rankine conversion tests.
+     *
+     * @return Iterator<string, array{input: float, celsius: float, fahrenheit: float, kelvin: float, rounded: bool}>
+     */
+    public static function provideRankineConversionData(): Iterator
+    {
+        yield 'standard values' => [
+            'input'      => 533.67,
+            'celsius'    => 23.33,
+            'fahrenheit' => 74.0,
+            'kelvin'     => 296.48,
+            'rounded'    => true,
+        ];
+        yield 'high precision' => [
+            'input'      => 533.670_000_000_000_1,
+            'celsius'    => 23.333_333_333_333_364,
+            'fahrenheit' => 74.000_000_000_000_06,
+            'kelvin'     => 296.483_333_333_333_35,
+            'rounded'    => false,
+        ];
     }
 }

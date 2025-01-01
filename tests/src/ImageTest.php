@@ -21,6 +21,7 @@ use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\RequiresPhpExtension;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
@@ -49,17 +50,25 @@ final class ImageTest extends TestCase
     #[\Override]
     protected function setUp(): void
     {
-        $this->resourceDir = \dirname(__FILE__, 2) . DIRECTORY_SEPARATOR . 'resources/';
+        $this->resourceDir = \sprintf('%s%sresources/', \dirname(__FILE__, 2), DIRECTORY_SEPARATOR);
 
         $this->resources = [
-            'image/jpeg' => $this->resourceDir . 'testImage.jpg',
-            'image/png'  => $this->resourceDir . 'testImage.png',
-            'image/gif'  => $this->resourceDir . 'testImage.gif',
-            'image/webp' => $this->resourceDir . 'testImage.webp',
+            'image/jpeg' => \sprintf('%stestImage.jpg', $this->resourceDir),
+            'image/png'  => \sprintf('%stestImage.png', $this->resourceDir),
+            'image/gif'  => \sprintf('%stestImage.gif', $this->resourceDir),
+            'image/webp' => \sprintf('%stestImage.webp', $this->resourceDir),
         ];
     }
 
-    public function testGuessImageType(): void
+    #[RequiresPhpExtension('fileinfo')]
+    #[Test]
+    public function guessImageTypeFinfo(): void
+    {
+        $this->guessImageTypeGuessesCorrectly();
+    }
+
+    #[Test]
+    public function guessImageTypeGuessesCorrectly(): void
     {
         foreach ($this->resources as $key => $val) {
             $result = Image::guessImageType($val);
@@ -69,107 +78,118 @@ final class ImageTest extends TestCase
         }
     }
 
-    #[RequiresPhpExtension('fileinfo')]
-    public function testGuessImageTypeFinfo(): void
-    {
-        $this->testGuessImageType();
-    }
-
-    public function testGuessImageTypeInvalidFile(): void
+    #[Test]
+    public function guessImageTypeInvalidFile(): void
     {
         $this->expectException(InvalidArgumentException::class);
         Image::guessImageType('');
     }
 
+    #[Test]
+    public function imageIsGif(): void
+    {
+        self::assertTrue(Image::isGif($this->resources['image/gif']));
+    }
+
+    #[Test]
+    public function imageIsJpg(): void
+    {
+        self::assertTrue(Image::isJpg($this->resources['image/jpeg']));
+    }
+
+    #[Test]
+    public function imageIsPng(): void
+    {
+        self::assertTrue(Image::isPng($this->resources['image/png']));
+    }
+
+    #[Test]
+    public function imageIsWebp(): void
+    {
+        self::assertTrue(Image::isWebp($this->resources['image/webp']));
+    }
+
     #[RequiresPhpExtension('exif')]
-    public function testIsExifAvailable(): void
+    #[Test]
+    public function isExifAvailable(): void
     {
         self::assertTrue(Image::isExifAvailable());
     }
 
     #[RequiresPhpExtension('gd')]
-    public function testIsGdAvailable(): void
+    #[Test]
+    public function isGdAvailable(): void
     {
         self::assertTrue(Image::isGdAvailable());
     }
 
-    public function testIsGif(): void
-    {
-        self::assertTrue(Image::isGif($this->resources['image/gif']));
-    }
-
-    public function testIsGifInvalidFile(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        Image::isGif($this->resourceDir . 'doesNotExist.gif');
-    }
-
-    public function testIsGifInvalidImageFile(): void
+    #[Test]
+    public function isGifThrowsExceptionForInvalidImageFile(): void
     {
         $this->expectException(RuntimeException::class);
         Image::isGif($this->resourceDir . 'notAnImage.txt');
     }
 
+    #[Test]
+    public function isGifThrowsExceptionForNonExistentFile(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        Image::isGif($this->resourceDir . 'doesNotExist.gif');
+    }
+
     #[RequiresPhpExtension('gmagick')]
-    public function testIsGmagickAvailable(): void
+    #[Test]
+    public function isGmagickAvailable(): void
     {
         self::assertTrue(Image::isGmagickAvailable());
     }
 
+    #[Test]
     #[RequiresPhpExtension('imagick')]
-    public function testIsImagickAvailable(): void
+    public function isImagickAvailable(): void
     {
         self::assertTrue(Image::isImagickAvailable());
     }
 
-    public function testIsJpg(): void
-    {
-        self::assertTrue(Image::isJpg($this->resources['image/jpeg']));
-    }
-
-    public function testIsJpgInvalidFile(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        Image::isJpg($this->resourceDir . 'doesNotExist.jpg');
-    }
-
-    public function testIsJpgInvalidImageFile(): void
+    #[Test]
+    public function isJpgThrowsExceptionForInvalidImageFile(): void
     {
         $this->expectException(RuntimeException::class);
         Image::isJpg($this->resourceDir . 'notAnImage.txt');
     }
 
-    public function testIsPng(): void
-    {
-        self::assertTrue(Image::isPng($this->resources['image/png']));
-    }
-
-    public function testIsPngInvalidFile(): void
+    #[Test]
+    public function isJpgThrowsExceptionForNonExistentFile(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        Image::isPng($this->resourceDir . 'doesNotExist.png');
+        Image::isJpg($this->resourceDir . 'doesNotExist.jpg');
     }
 
-    public function testIsPngInvalidImageFile(): void
+    #[Test]
+    public function isPngThrowsExceptionForInvalidImageFile(): void
     {
         $this->expectException(RuntimeException::class);
         Image::isPng($this->resourceDir . 'notAnImage.txt');
     }
 
-    public function testIsWebp(): void
-    {
-        self::assertTrue(Image::isWebp($this->resources['image/webp']));
-    }
-
-    public function testIsWebpInvalidFile(): void
+    #[Test]
+    public function isPngThrowsExceptionForNonExistentFile(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        Image::isWebp($this->resourceDir . 'doesNotExist.webp');
+        Image::isPng($this->resourceDir . 'doesNotExist.png');
     }
 
-    public function testIsWebpInvalidImageFile(): void
+    #[Test]
+    public function isWebpThrowsExceptionForInvalidImageFile(): void
     {
         $this->expectException(RuntimeException::class);
         Image::isWebp($this->resourceDir . 'notAnImage.txt');
+    }
+
+    #[Test]
+    public function testIsWebpThrowsExceptionForNonExistentFile(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        Image::isWebp($this->resourceDir . 'doesNotExist.webp');
     }
 }

@@ -14,8 +14,11 @@ declare(strict_types=1);
 namespace Esi\Utility\Tests;
 
 use Esi\Utility\Numbers;
+use Generator;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ValueError;
 
@@ -35,7 +38,8 @@ final class NumbersTest extends TestCase
     /**
      * Test Numbers::inside() with float's.
      */
-    public function testInsideFloat(): void
+    #[Test]
+    public function insideCanWorkWithFloats(): void
     {
         self::assertTrue(Numbers::inside(25.0, 24.0, 26.0));
         self::assertFalse(Numbers::inside(25.0, 26.0, 27.0));
@@ -44,7 +48,8 @@ final class NumbersTest extends TestCase
     /**
      * Test Numbers::inside() with int's.
      */
-    public function testInsideInt(): void
+    #[Test]
+    public function insideCanWorkWithIntegers(): void
     {
         self::assertTrue(Numbers::inside(25, 24, 26));
         self::assertFalse(Numbers::inside(25, 26, 27));
@@ -53,38 +58,18 @@ final class NumbersTest extends TestCase
     /**
      * Test Numbers::ordinal().
      */
-    public function testOrdinal(): void
+    #[DataProvider('ordinalDataProvider')]
+    #[Test]
+    public function ordinalReturnsProperValues(int $number, string $expected): void
     {
-        self::assertSame('1st', Numbers::ordinal(1));
-        self::assertSame('2nd', Numbers::ordinal(2));
-        self::assertSame('3rd', Numbers::ordinal(3));
-        self::assertSame('4th', Numbers::ordinal(4));
-        self::assertSame('5th', Numbers::ordinal(5));
-        self::assertSame('6th', Numbers::ordinal(6));
-        self::assertSame('7th', Numbers::ordinal(7));
-        self::assertSame('8th', Numbers::ordinal(8));
-        self::assertSame('9th', Numbers::ordinal(9));
-        self::assertSame('11th', Numbers::ordinal(11));
-        self::assertSame('15th', Numbers::ordinal(15));
-        self::assertSame('22nd', Numbers::ordinal(22));
-        self::assertSame('23rd', Numbers::ordinal(23));
-        self::assertSame('102nd', Numbers::ordinal(102));
-        self::assertSame('104th', Numbers::ordinal(104));
-        self::assertSame('143rd', Numbers::ordinal(143));
-        self::assertSame('1001st', Numbers::ordinal(1_001));
-        self::assertSame('1002nd', Numbers::ordinal(1_002));
-        self::assertSame('1003rd', Numbers::ordinal(1_003));
-        self::assertSame('1004th', Numbers::ordinal(1_004));
-        self::assertSame('10001st', Numbers::ordinal(10_001));
-        self::assertSame('10002nd', Numbers::ordinal(10_002));
-        self::assertSame('10003rd', Numbers::ordinal(10_003));
-        self::assertSame('10004th', Numbers::ordinal(10_004));
+        self::assertSame($expected, Numbers::ordinal($number));
     }
 
     /**
      * Test Numbers::outside() with float's.
      */
-    public function testOutsideFloat(): void
+    #[Test]
+    public function outsideCanWorkWithFloats(): void
     {
         self::assertTrue(Numbers::outside(23.0, 24.0, 26.0));
         self::assertFalse(Numbers::outside(25.0, 24.0, 26.0));
@@ -93,7 +78,8 @@ final class NumbersTest extends TestCase
     /**
      * Test Numbers::outside() with int's.
      */
-    public function testOutsideInt(): void
+    #[Test]
+    public function outsideCanWorkWithIntegers(): void
     {
         self::assertTrue(Numbers::outside(23, 24, 26));
         self::assertFalse(Numbers::outside(25, 24, 26));
@@ -102,7 +88,8 @@ final class NumbersTest extends TestCase
     /**
      * Test Numbers::randomInt().
      */
-    public function testRandomInt(): void
+    #[Test]
+    public function randomIntCanReturnProperValueOrException(): void
     {
         $int = Numbers::random(100, 250);
         self::assertGreaterThanOrEqual(100, $int);
@@ -114,37 +101,10 @@ final class NumbersTest extends TestCase
     }
 
     /**
-     * Test Numbers::sizeFormat() with binary standard.
-     */
-    public function testSizeFormatBinary(): void
-    {
-        // Test 'binary' standard formatting.
-        $size = Numbers::sizeFormat(512);
-        self::assertSame('512 B', $size);
-
-        $size = Numbers::sizeFormat(2_048, 1);
-        self::assertSame('2.0 KiB', $size);
-
-        $size = Numbers::sizeFormat(25_151_251, 2);
-        self::assertSame('23.99 MiB', $size);
-
-        $size = Numbers::sizeFormat(19_971_597_926, 2);
-        self::assertSame('18.60 GiB', $size);
-
-        $size = Numbers::sizeFormat(2_748_779_069_440, 1);
-        self::assertSame('2.5 TiB', $size);
-
-        $size = Numbers::sizeFormat(2_748_779_069_440 * 1_024, 1);
-        self::assertSame('2.5 PiB', $size);
-
-        $size = Numbers::sizeFormat(2_748_779_069_440 * (1_024 * 1_024), 1);
-        self::assertSame('2.5 EiB', $size);
-    }
-
-    /**
      * Test Numbers::sizeFormat() with an invalid standard.
      */
-    public function testSizeFormatInvalidStandard(): void
+    #[Test]
+    public function sizeFormatThrowsExceptionForInvalidStandard(): void
     {
         // Test if we provide an invalid $standard option (should throw an exception).
         self::expectException(InvalidArgumentException::class);
@@ -152,30 +112,163 @@ final class NumbersTest extends TestCase
     }
 
     /**
+     * Test Numbers::sizeFormat() with binary standard.
+     */
+    #[DataProvider('sizeFormatWithBinaryProvider')]
+    #[Test]
+    public function sizeFormatWithBinary(int $bytes, int $precision, string $expected): void
+    {
+        $size = Numbers::sizeFormat($bytes, $precision);
+        self::assertSame($expected, $size);
+    }
+
+    /**
      * Test Numbers::sizeFormat() with metric standard.
      */
-    public function testSizeFormatMetric(): void
+    #[DataProvider('sizeFormatWithMetricProvider')]
+    #[Test]
+    public function sizeFormatWithMetric(int $bytes, int $precision, string $expected): void
     {
-        // Test 'metric' standard formatting.
-        $size = Numbers::sizeFormat(512, standard: 'metric');
-        self::assertSame('512 B', $size);
+        $size = Numbers::sizeFormat($bytes, $precision, 'metric');
+        self::assertSame($expected, $size);
+    }
 
-        $size = Numbers::sizeFormat(2_000, 1, 'metric');
-        self::assertSame('2.0 kB', $size);
+    /**
+     * @return Generator<int, array{0: int, 1: string}, mixed, void>
+     */
+    public static function ordinalDataProvider(): Generator
+    {
+        yield [1, '1st'];
+        yield [2, '2nd'];
+        yield [3, '3rd'];
+        yield [4, '4th'];
+        yield [5, '5th'];
+        yield [6, '6th'];
+        yield [7, '7th'];
+        yield [8, '8th'];
+        yield [9, '9th'];
+        yield [11, '11th'];
+        yield [15, '15th'];
+        yield [22, '22nd'];
+        yield [23, '23rd'];
+        yield [102, '102nd'];
+        yield [104, '104th'];
+        yield [143, '143rd'];
+        yield [1_001, '1001st'];
+        yield [1_002, '1002nd'];
+        yield [1_003, '1003rd'];
+        yield [1_004, '1004th'];
+        yield [10_001, '10001st'];
+        yield [10_002, '10002nd'];
+        yield [10_003, '10003rd'];
+        yield [10_004, '10004th'];
+    }
 
-        $size = Numbers::sizeFormat(25_151_251, 2, 'metric');
-        self::assertSame('25.15 MB', $size);
+    /**
+     * Data provider for binary size formatting tests.
+     *
+     * @return Generator<int, array{
+     *     bytes: int,
+     *     precision: int,
+     *     expected: string
+     * }, mixed, void>
+     */
+    public static function sizeFormatWithBinaryProvider(): Generator
+    {
+        yield [
+            'bytes'     => 512,
+            'precision' => 0,
+            'expected'  => '512 B',
+        ];
 
-        $size = Numbers::sizeFormat(19_971_597_926, 2, 'metric');
-        self::assertSame('19.97 GB', $size);
+        yield [
+            'bytes'     => 2_048,
+            'precision' => 1,
+            'expected'  => '2.0 KiB',
+        ];
 
-        $size = Numbers::sizeFormat(2_748_779_069_440, 1, 'metric');
-        self::assertSame('2.7 TB', $size);
+        yield [
+            'bytes'     => 25_151_251,
+            'precision' => 2,
+            'expected'  => '23.99 MiB',
+        ];
 
-        $size = Numbers::sizeFormat(2_748_779_069_440 * 1_000, 1, 'metric');
-        self::assertSame('2.7 PB', $size);
+        yield [
+            'bytes'     => 19_971_597_926,
+            'precision' => 2,
+            'expected'  => '18.60 GiB',
+        ];
 
-        $size = Numbers::sizeFormat(2_748_779_069_440 * (1_000 * 1_000), 1, 'metric');
-        self::assertSame('2.7 EB', $size);
+        yield [
+            'bytes'     => 2_748_779_069_440,
+            'precision' => 1,
+            'expected'  => '2.5 TiB',
+        ];
+
+        yield [
+            'bytes'     => 2_748_779_069_440 * 1_024,
+            'precision' => 1,
+            'expected'  => '2.5 PiB',
+        ];
+
+        yield [
+            'bytes'     => 2_748_779_069_440 * (1_024 * 1_024),
+            'precision' => 1,
+            'expected'  => '2.5 EiB',
+        ];
+    }
+
+    /**
+     * Data provider for metric size formatting tests.
+     *
+     * @return Generator<int, array{
+     *     bytes: int,
+     *     precision: int,
+     *     expected: string
+     * }, mixed, void>
+     */
+    public static function sizeFormatWithMetricProvider(): Generator
+    {
+        yield [
+            'bytes'     => 512,
+            'precision' => 0,
+            'expected'  => '512 B',
+        ];
+
+        yield [
+            'bytes'     => 2_000,
+            'precision' => 1,
+            'expected'  => '2.0 kB',
+        ];
+
+        yield [
+            'bytes'     => 25_151_251,
+            'precision' => 2,
+            'expected'  => '25.15 MB',
+        ];
+
+        yield [
+            'bytes'     => 19_971_597_926,
+            'precision' => 2,
+            'expected'  => '19.97 GB',
+        ];
+
+        yield [
+            'bytes'     => 2_748_779_069_440,
+            'precision' => 1,
+            'expected'  => '2.7 TB',
+        ];
+
+        yield [
+            'bytes'     => 2_748_779_069_440 * 1_000,
+            'precision' => 1,
+            'expected'  => '2.7 PB',
+        ];
+
+        yield [
+            'bytes'     => 2_748_779_069_440 * (1_000 * 1_000),
+            'precision' => 1,
+            'expected'  => '2.7 EB',
+        ];
     }
 }

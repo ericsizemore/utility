@@ -20,6 +20,7 @@ use Esi\Utility\Strings;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
@@ -43,7 +44,8 @@ final class EnvironmentTest extends TestCase
     /**
      * Test Environment::host().
      */
-    public function testHost(): void
+    #[Test]
+    public function hostReturnsProperValues(): void
     {
         $origHost    = Environment::var('HTTP_HOST');
         $origFwdHost = Environment::var('HTTP_X_FORWARDED_HOST');
@@ -73,7 +75,8 @@ final class EnvironmentTest extends TestCase
     /**
      * Test Environment::iniGet().
      */
-    public function testIniGet(): void
+    #[Test]
+    public function iniGetCanGet(): void
     {
         self::assertNotEmpty(Environment::iniGet('request_order'));
 
@@ -89,7 +92,8 @@ final class EnvironmentTest extends TestCase
     /**
      * Test Environment::iniSet().
      */
-    public function testIniSet(): void
+    #[Test]
+    public function iniSetCanSet(): void
     {
         // @var string $oldValue
         $oldValue = Environment::iniSet('display_errors', Environment::iniGet('display_errors'));
@@ -107,7 +111,8 @@ final class EnvironmentTest extends TestCase
     /**
      * Test Environment::ipAddress().
      */
-    public function testIpAddress(): void
+    #[Test]
+    public function ipAddressReturnsProperValues(): void
     {
         Arrays::set($_SERVER, 'REMOTE_ADDR', '1.1.1.1');
         Arrays::set($_SERVER, 'HTTP_CLIENT_IP', '1.1.1.2');
@@ -137,7 +142,8 @@ final class EnvironmentTest extends TestCase
     /**
      * Test Environment::isHttps().
      */
-    public function testIsHttps(): void
+    #[Test]
+    public function isHttpsRecognizesHttpsAndProto(): void
     {
         Arrays::set($_SERVER, 'HTTPS', null);
 
@@ -158,7 +164,8 @@ final class EnvironmentTest extends TestCase
     /**
      * Test Environment::isPrivateIp().
      */
-    public function testIsPrivateIp(): void
+    #[Test]
+    public function isPrivateIpCanDistinguish(): void
     {
         self::assertTrue(Environment::isPrivateIp('192.168.0.0'));
         self::assertFalse(Environment::isPrivateIp('1.1.1.1'));
@@ -167,7 +174,8 @@ final class EnvironmentTest extends TestCase
     /**
      * Test Environment::isPublicIp().
      */
-    public function testIsPublicIp(): void
+    #[Test]
+    public function isPublicIpCanDistinguish(): void
     {
         self::assertTrue(Environment::isPublicIp('1.1.1.1'));
         self::assertFalse(Environment::isPublicIp('192.168.0.0'));
@@ -177,7 +185,8 @@ final class EnvironmentTest extends TestCase
     /**
      * Test Environment::isReservedIp().
      */
-    public function testIsReservedIp(): void
+    #[Test]
+    public function isReservedIpCanDistinguish(): void
     {
         self::assertTrue(Environment::isReservedIp('0.255.255.255'));
         self::assertFalse(Environment::isReservedIp('192.168.0.0'));
@@ -186,7 +195,8 @@ final class EnvironmentTest extends TestCase
     /**
      * Test Environment::requestMethod().
      */
-    public function testRequestMethod(): void
+    #[Test]
+    public function requestMethodRecognizesMethodAndOverride(): void
     {
         Arrays::set($_SERVER, 'HTTP_X_HTTP_METHOD_OVERRIDE', 'GET');
         Arrays::set($_SERVER, 'REQUEST_METHOD', 'POST');
@@ -206,7 +216,8 @@ final class EnvironmentTest extends TestCase
     /**
      * Test Environment::url().
      */
-    public function testUrl(): void
+    #[Test]
+    public function urlReturnsProperValues(): void
     {
         $expected      = 'http://test.dev/test.php?foo=bar';
         $expectedAuth  = 'http://admin:123@test.dev/test.php?foo=bar';

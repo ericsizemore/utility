@@ -19,6 +19,7 @@ use Esi\Utility\Strings;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
@@ -65,11 +66,11 @@ final class FilesystemTest extends TestCase
     #[\Override]
     public static function setUpBeforeClass(): void
     {
-        self::$testDir   = __DIR__ . DIRECTORY_SEPARATOR . 'dir1';
+        self::$testDir   = \sprintf('%s%sdir1', __DIR__, DIRECTORY_SEPARATOR);
         self::$testFiles = [
-            'file1' => self::$testDir . DIRECTORY_SEPARATOR . 'file1',
-            'file2' => self::$testDir . DIRECTORY_SEPARATOR . 'file2',
-            'file3' => self::$testDir . DIRECTORY_SEPARATOR . 'file3.txt',
+            'file1' => \sprintf('%s%sfile1', self::$testDir, DIRECTORY_SEPARATOR),
+            'file2' => \sprintf('%s%sfile2', self::$testDir, DIRECTORY_SEPARATOR),
+            'file3' => \sprintf('%s%sfile3.txt', self::$testDir, DIRECTORY_SEPARATOR),
         ];
 
         if (!is_dir(self::$testDir)) {
@@ -105,7 +106,8 @@ final class FilesystemTest extends TestCase
     /**
      * Test Filesystem::directoryList().
      */
-    public function testDirectoryList(): void
+    #[Test]
+    public function directoryListCanList(): void
     {
         Filesystem::fileWrite(self::$testFiles['file1'], '1234567890');
         Filesystem::fileWrite(self::$testFiles['file2'], implode('', range('a', 'z')));
@@ -132,7 +134,8 @@ final class FilesystemTest extends TestCase
     /**
      * Test Filesystem::directorySize().
      */
-    public function testDirectorySize(): void
+    #[Test]
+    public function directorySizeReturnsProperCountOrException(): void
     {
         Filesystem::fileWrite(self::$testFiles['file1'], '1234567890');
         Filesystem::fileWrite(self::$testFiles['file2'], implode('', range('a', 'z')));
@@ -150,7 +153,8 @@ final class FilesystemTest extends TestCase
     /**
      * Test Filesystem::fileRead().
      */
-    public function testFileRead(): void
+    #[Test]
+    public function fileReadReturnsProperValueOrException(): void
     {
         Filesystem::fileWrite(self::$testFiles['file1'], 'This is a test.');
 
@@ -169,7 +173,8 @@ final class FilesystemTest extends TestCase
     /**
      * Test Filesystem::fileWrite().
      */
-    public function testFileWrite(): void
+    #[Test]
+    public function fileWriteReturnsProperBytesWrittenOrException(): void
     {
         self::assertSame(15, Filesystem::fileWrite(self::$testFiles['file1'], 'This is a test.'));
 
@@ -187,7 +192,8 @@ final class FilesystemTest extends TestCase
     /**
      * Test Filesystem::isReallyWritable().
      */
-    public function testIsReallyWritable(): void
+    #[Test]
+    public function isReallyWritableReturnsProperStatusOrException(): void
     {
         self::assertTrue(Filesystem::isReallyWritable(self::$testDir));
         self::assertTrue(Filesystem::isReallyWritable(self::$testFiles['file1']));
@@ -201,7 +207,8 @@ final class FilesystemTest extends TestCase
     /**
      * Test Filesystem::lineCounter().
      */
-    public function testLineCounter(): void
+    #[Test]
+    public function lineCounterReturnsProperCountOrException(): void
     {
         Filesystem::fileWrite(self::$testFiles['file1'], "This\nis\na\nnew\nline.\n");
         self::assertSame(5, array_sum(Filesystem::lineCounter(directory: self::$testDir, onlyLineCount: true)));
@@ -239,23 +246,30 @@ final class FilesystemTest extends TestCase
     /**
      * Test Filesystem::normalizeFilePath().
      */
-    public function testNormalizeFilePath(): void
+    #[Test]
+    public function normalizeFilePathReturnsProperValues(): void
     {
-        $separator = DIRECTORY_SEPARATOR;
-
-        $path1 = __DIR__ . $separator . 'dir1' . $separator . 'file1';
+        $path1 = \sprintf('%1$s%2$sdir1%2$sfile1', __DIR__, DIRECTORY_SEPARATOR);
         self::assertSame($path1, Filesystem::normalizeFilePath($path1));
 
-        $path2 = $path1 . $separator;
+        $path2 = \sprintf('%s%s', $path1, DIRECTORY_SEPARATOR);
         self::assertSame($path1, Filesystem::normalizeFilePath($path2));
 
-        $path3 = str_replace($separator, '\\//', $path2);
+        $path3 = str_replace(DIRECTORY_SEPARATOR, '\\//', $path2);
         self::assertSame($path1, Filesystem::normalizeFilePath($path3));
 
-        $path4 = $path2 . '..' . $separator;
-        self::assertSame(str_replace($separator . 'file1', '', $path1), Filesystem::normalizeFilePath($path4));
+        $path4 = \sprintf('%s..%s', $path2, DIRECTORY_SEPARATOR);
+        self::assertSame(str_replace(
+            \sprintf('%sfile1', DIRECTORY_SEPARATOR),
+            '',
+            $path1
+        ), Filesystem::normalizeFilePath($path4));
 
         $path5 = $path4 . '..';
-        self::assertSame(str_replace($separator . 'dir1' . $separator . 'file1', '', $path1), Filesystem::normalizeFilePath($path5));
+        self::assertSame(str_replace(
+            \sprintf('%1$sdir1%1$sfile1', DIRECTORY_SEPARATOR),
+            '',
+            $path1
+        ), Filesystem::normalizeFilePath($path5));
     }
 }

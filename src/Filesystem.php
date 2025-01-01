@@ -271,7 +271,7 @@ abstract class Filesystem
      *
      * @throws InvalidArgumentException
      *
-     * @return array<int>|array<string, array<string, int>>
+     * @return ($onlyLineCount is true ? int[] : array<string, array<string, int>>)
      */
     public static function lineCounter(string $directory, array $ignore = [], array $extensions = [], bool $onlyLineCount = false): array
     {
@@ -310,7 +310,7 @@ abstract class Filesystem
                 /** @var array<string, array<string, int>> $lines */
                 $lines[$file->getPath()][$file->getFilename()] = $lineCount;
             } else {
-                /** @var array<int> $lines */
+                /** @var int[] $lines */
                 $lines[] = $lineCount;
             }
         }
