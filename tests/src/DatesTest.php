@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Esi\Utility\Tests;
 
+use DateTimeImmutable;
 use Esi\Clock\FrozenClock;
 use Esi\Utility\Arrays;
 use Esi\Utility\Dates;
@@ -36,9 +37,12 @@ use RuntimeException;
 #[CoversMethod(Arrays::class, 'valueExists')]
 final class DatesTest extends TestCase
 {
+    protected const FrozenTimestamp = 1736132798;
+
     protected function setUp(): void
     {
         parent::setUp();
+
         date_default_timezone_set(Dates::DEFAULT_TIMEZONE);
     }
 
@@ -49,13 +53,10 @@ final class DatesTest extends TestCase
     #[Test]
     public function extendedTimeDifference(int $seconds, string $expected): void
     {
-        $timestampTo   = FrozenClock::fromUtc()->now();
-        $timestampFrom = FrozenClock::fromUtc()->now()->getTimestamp() - $seconds;
+        $timestampTo   = FrozenClock::fromUtc()->now()->setTimestamp(self::FrozenTimestamp);
+        $timestampFrom = $timestampTo->getTimestamp() - $seconds;
 
-        self::assertSame(
-            $expected,
-            Dates::timeDifference($timestampFrom, $timestampTo->getTimestamp(), extendedOutput: true)
-        );
+        self::assertSame($expected, Dates::timeDifference($timestampFrom, $timestampTo->getTimestamp(), extendedOutput: true));
     }
 
     /**
@@ -88,8 +89,8 @@ final class DatesTest extends TestCase
     #[Test]
     public function standardTimeDifference(int $seconds, string $expected): void
     {
-        $timestampTo   = FrozenClock::fromUtc()->now();
-        $timestampFrom = FrozenClock::fromUtc()->now()->getTimestamp() - $seconds;
+        $timestampTo   = FrozenClock::fromUtc()->now()->setTimestamp(self::FrozenTimestamp);
+        $timestampFrom = $timestampTo->getTimestamp() - $seconds;
 
         self::assertSame($expected, Dates::timeDifference($timestampFrom, $timestampTo->getTimestamp()));
     }
@@ -166,7 +167,7 @@ final class DatesTest extends TestCase
     {
         yield 'complex month' => [
             'seconds'  => 604_800 * 5,
-            'expected' => '1 month 5 days old',
+            'expected' => '1 month 4 days old',
         ];
         yield 'complex months' => [
             'seconds'  => 604_800 * 10,

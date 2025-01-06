@@ -55,9 +55,9 @@
     },
     "require-dev": {
         "esi/phpunit-coverage-check": "^2.0",
-        "friendsofphp/php-cs-fixer": "^3.65",
+        "friendsofphp/php-cs-fixer": "^3.66",
         "phpstan/extension-installer": "^1.4",
-        "phpstan/phpstan": "^2.0",
+        "phpstan/phpstan": "^2.1",
         "phpstan/phpstan-deprecation-rules": "^2.0",
         "phpstan/phpstan-phpunit": "^2.0",
         "phpstan/phpstan-strict-rules": "^2.0",
