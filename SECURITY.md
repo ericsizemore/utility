@@ -4,10 +4,11 @@
 
 | Version | Supported          | [Tidelift Only](https://github.com/ericsizemore/utility/security/policy#tidelift-subscribers) [^1] |
 |---------|--------------------|----------------------------------------------------------------------------------------------------|
+| 2.2.x   | :white_check_mark: | No                                                                                                 |
 | 2.1.x   | :white_check_mark: | No                                                                                                 |
 | 2.0.x   | :white_check_mark: | No                                                                                                 |
 | 1.3.x   | :x:                | Yes                                                                                                |
-| 1.2.x   | :x:                | Yes                                                                                                |
+| 1.2.x   | :x:                | Not Maintained                                                                                     |
 | 1.1.x   | :x:                | Not Maintained                                                                                     |
 | 1.0.x   | :x:                | Not Maintained                                                                                     |
 

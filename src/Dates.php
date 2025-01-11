@@ -60,11 +60,11 @@ abstract class Dates
      * @param int    $timestampFrom  Starting unix timestamp.
      * @param int    $timestampTo    Ending unix timestamp.
      * @param string $timezone       The timezone to use. Must be a valid timezone:
-     *                               http://www.php.net/manual/en/timezones.php
+     *                               https://www.php.net/manual/en/timezones.php
      * @param string $append         The string to append to the difference.
      * @param bool   $extendedOutput By default, the time difference will be the first non-zero unit.
      *                               Set this option to true and it will display the full output considering
-     *                               all units. For example: 2 day(s) 2 hour(s) 20 minute(s) old
+     *                               all units. For example: 2 days 2 hours 20 minutes old
      *
      * @throws Exception|InvalidArgumentException|RuntimeException
      */
@@ -116,7 +116,8 @@ abstract class Dates
      *
      * @see http://www.php.net/manual/en/timezones.php
      *
-     * @param string $timezone The timezone to return information for.
+     * @param string $timezone       The timezone to return information for.
+     * @param bool   $includeBcZones Whether to include backwards compatible time zones.
      *
      * @throws Exception|InvalidArgumentException|RuntimeException
      *
@@ -189,9 +190,10 @@ abstract class Dates
 
     /**
      * Determines if a given timezone is valid, according to
-     * {@link http://www.php.net/manual/en/timezones.php}.
+     * {@link https://www.php.net/manual/en/timezones.php}.
      *
-     * @param string $timezone The timezone to validate.
+     * @param string $timezone       The timezone to validate.
+     * @param bool   $includeBcZones Whether to include backwards compatible time zones.
      */
     public static function validTimezone(string $timezone, bool $includeBcZones = false): bool
     {

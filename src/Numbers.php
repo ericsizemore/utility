@@ -172,7 +172,9 @@ abstract class Numbers
         }
 
         // Perform the conversion
-        for ($i = 0; ($bytes / $base) > Numbers::CONVERSION_MODIFIER && ($i < \count($units) - 1); ++$i) {
+        $i = 0;
+
+        for (; ($bytes / $base) > Numbers::CONVERSION_MODIFIER && ($i < \count($units) - 1); ++$i) {
             /**
              * @var float $bytes
              */

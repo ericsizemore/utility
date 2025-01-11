@@ -2,9 +2,9 @@
 
 `Esi\Utility\Dates`
 
-* [timeDifference](#timedifference)(int $timestampFrom, int $timestampTo = 0, string $timezone = 'UTC', string $append = ' old'): string;
-* [timezoneInfo](#timezoneinfo)(string $timezone = 'UTC'): array;
-* [validTimezone](#validtimezone)(string $timezone): bool;
+* [timeDifference](#timedifference)(int $timestampFrom, int $timestampTo = 0, string $timezone = 'UTC', string $append = ' old', bool $extendedOutput = false): string;
+* [timezoneInfo](#timezoneinfo)(string $timezone = 'UTC', bool $includeBcZones = false): array;
+* [validTimezone](#validtimezone)(string $timezone, bool $includeBcZones = false): bool;
 * [validateTimestamp](#validatetimestamp)(int $timestamp): bool;
 
 
@@ -15,9 +15,14 @@ Formats the difference between two timestamps to be human-readable.
 ```php
 use Esi\Utility\Dates;
 
-$diff = Dates::timeDifference(time() - (604800 * 5));
+$diff = Dates::timeDifference(time() - (604_800 * 5));
 
-echo $diff; // '1 month(s) old'
+echo $diff; // '1 month old'
+
+// … or with extended output:
+$diff = Dates::timeDifference(time() - (604_800 * 5), extendedOutput: true);
+
+echo $diff // '1 month 4 days old'
 ```
 
 ## timezoneInfo
@@ -40,6 +45,21 @@ Array
     [dst] => 
 )
 */
+
+// To get information on an outdated timezone identifier, set $includeBcZones to true
+$zoneInfo = Dates::timezoneInfo('EET', true);
+print_r($zoneInfo);
+
+/*
+Array
+(
+    [offset] => 2
+    [country] => N/A
+    [latitude] => N/A
+    [longitude] => N/A
+    [dst] => 
+)
+*/ 
 ```
 
 ## validTimezone

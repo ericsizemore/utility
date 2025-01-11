@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
-## [Unreleased]
+## [2.2.0] - 2025-01-10
 
 > [!IMPORTANT]
 > Initially, in the previous `2.1.0` release, several functions were deprecated (see `Deprecated` under `2.1.0` [below](CHANGELOG.md#deprecated)).
@@ -275,6 +275,7 @@ Utility has undergone a complete restructuring, wherein it is no longer a single
 
 
 [unreleased]: https://github.com/ericsizemore/utility/tree/master
+[2.2.0]: https://github.com/ericsizemore/utility/releases/tag/v2.2.0
 [2.1.0]: https://github.com/ericsizemore/utility/releases/tag/v2.1.0
 [2.0.0]: https://github.com/ericsizemore/utility/releases/tag/v2.0.0
 [1.3.0]: https://github.com/ericsizemore/utility/releases/tag/v1.3.0

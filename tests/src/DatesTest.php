@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Esi\Utility\Tests;
 
-use DateTimeImmutable;
 use Esi\Clock\FrozenClock;
 use Esi\Utility\Arrays;
 use Esi\Utility\Dates;
@@ -25,6 +24,8 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
+
+use function date_default_timezone_set;
 
 /**
  * Date utility tests.
