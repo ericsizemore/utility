@@ -5,6 +5,7 @@
 [![Continuous Integration](https://github.com/ericsizemore/utility/actions/workflows/continuous-integration.yml/badge.svg)](https://github.com/ericsizemore/utility/actions/workflows/continuous-integration.yml)
 [![Type Coverage](https://shepherd.dev/github/ericsizemore/utility/coverage.svg)](https://shepherd.dev/github/ericsizemore/utility)
 [![Psalm Level](https://shepherd.dev/github/ericsizemore/utility/level.svg)](https://shepherd.dev/github/ericsizemore/utility)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ericsizemore_utility&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=ericsizemore_utility)
 [![Latest Stable Version](https://img.shields.io/packagist/v/esi/utility.svg)](https://packagist.org/packages/esi/utility)
 [![Downloads per Month](https://img.shields.io/packagist/dm/esi/utility.svg)](https://packagist.org/packages/esi/utility)
 [![License](https://img.shields.io/packagist/l/esi/utility.svg)](https://packagist.org/packages/esi/utility)
