@@ -54,7 +54,7 @@
         "voku/portable-ascii": "^2.0"
     },
     "require-dev": {
-        "esi/phpunit-coverage-check": "^2.0",
+        "esi/phpunit-coverage-check": "^3.0",
         "friendsofphp/php-cs-fixer": "^3.67",
         "phpstan/extension-installer": "^1.4",
         "phpstan/phpstan": "^2.1",
