@@ -49,22 +49,22 @@
         "ext-filter": "*",
         "ext-json": "*",
         "ext-mbstring": "*",
-        "esi/clock": "^1.1",
-        "ralouphie/getallheaders": "^3.0",
-        "voku/portable-ascii": "^2.0"
+        "esi/clock": "^1.1.0",
+        "ralouphie/getallheaders": "^3.0.3",
+        "voku/portable-ascii": "^2.0.3"
     },
     "require-dev": {
         "esi/phpunit-coverage-check": "^2.0",
-        "friendsofphp/php-cs-fixer": "^3.71",
-        "phpstan/extension-installer": "^1.4",
-        "phpstan/phpstan": "^2.1",
-        "phpstan/phpstan-deprecation-rules": "^2.0",
-        "phpstan/phpstan-phpunit": "^2.0",
-        "phpstan/phpstan-strict-rules": "^2.0",
-        "phpunit/phpunit": "^11.5",
-        "psalm/plugin-phpunit": "^0.19.0",
-        "rector/rector": "^2.0",
-        "vimeo/psalm": "^6.9"
+        "friendsofphp/php-cs-fixer": "^3.73.1",
+        "phpstan/extension-installer": "^1.4.3",
+        "phpstan/phpstan": "^2.1.10",
+        "phpstan/phpstan-deprecation-rules": "^2.0.1",
+        "phpstan/phpstan-phpunit": "^2.0.4",
+        "phpstan/phpstan-strict-rules": "^2.0.4",
+        "phpunit/phpunit": "^11.5.15",
+        "psalm/plugin-phpunit": "^0.19.3",
+        "rector/rector": "^2.0.10",
+        "vimeo/psalm": "^6.9.4"
     },
     "suggest": {
         "ext-exif": "To be able to use Exif for guessing image types with Utility\\Image",

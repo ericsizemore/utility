@@ -174,11 +174,11 @@ abstract class Numbers
         // Perform the conversion
         $i = 0;
 
-        for (; ($bytes / $base) > Numbers::CONVERSION_MODIFIER && ($i < \count($units) - 1); ++$i) {
+        for (; ((float) $bytes / (float) $base) > Numbers::CONVERSION_MODIFIER && ($i < \count($units) - 1); ++$i) {
             /**
              * @var float $bytes
              */
-            $bytes /= $base;
+            $bytes /= (float) $base;
         }
 
         return number_format($bytes, $precision, '.', '') . ' ' . $units[$i];

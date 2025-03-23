@@ -566,7 +566,7 @@ final class ArraysTest extends TestCase
             'array'    => [],
             'key'      => null,
             'value'    => 'value',
-            'expected' => 'value',
+            'expected' => [0 => 'value'],
         ];
 
         yield 'ArrayAccess' => [

@@ -282,12 +282,12 @@ abstract class Arrays
      * @param null|TKey                                     $key
      * @param TValue                                        $value
      *
-     * @param-out (TValue|array<TKey, TValue>|ArrayAccess<TKey, TValue>) $array
+     * @param-out (array<TKey, TValue>|ArrayAccess<TKey, TValue>) $array
      */
     public static function set(array|ArrayAccess &$array, null|int|string $key, mixed $value): void
     {
         if ($key === null) {
-            $array = $value;
+            $array[] = $value;
             return;
         }
 

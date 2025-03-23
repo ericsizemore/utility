@@ -54,7 +54,7 @@ abstract class Conversion
      */
     public static function celsiusToFahrenheit(float $celsius, bool $rounded = true, int $precision = 2): float
     {
-        $result = ($celsius * 1.8) + 32;
+        $result = ($celsius * 1.8) + 32.0;
 
         return ($rounded) ? round($result, $precision) : $result;
     }
@@ -102,7 +102,7 @@ abstract class Conversion
      */
     public static function fahrenheitToCelsius(float $fahrenheit, bool $rounded = true, int $precision = 2): float
     {
-        $result = ($fahrenheit - 32) / 1.8;
+        $result = ($fahrenheit - 32.0) / 1.8;
 
         return ($rounded) ? round($result, $precision) : $result;
     }
@@ -118,7 +118,7 @@ abstract class Conversion
      */
     public static function fahrenheitToKelvin(float $fahrenheit, bool $rounded = true, int $precision = 2): float
     {
-        $result = (($fahrenheit - 32) / 1.8) + 273.15;
+        $result = (($fahrenheit - 32.0) / 1.8) + 273.15;
 
         return ($rounded) ? round($result, $precision) : $result;
     }
@@ -165,6 +165,22 @@ abstract class Conversion
         float|int $endingLongitude,
         int $precision = 0
     ): array {
+        if (!\is_float($startingLatitude)) {
+            $startingLatitude = (float) $startingLatitude;
+        }
+
+        if (!\is_float($endingLatitude)) {
+            $endingLatitude = (float) $endingLatitude;
+        }
+
+        if (!\is_float($startingLongitude)) {
+            $startingLongitude = (float) $startingLongitude;
+        }
+
+        if (!\is_float($endingLongitude)) {
+            $endingLongitude = (float) $endingLongitude;
+        }
+
         // Pre-calculate values used multiple times
         $startingLatRad = deg2rad($startingLatitude);
         $endingLatRad   = deg2rad($endingLatitude);
@@ -175,18 +191,18 @@ abstract class Conversion
         $cosEndLat   = cos($endingLatRad);
 
         // Calculate using optimized formula
-        $sinLatHalf = sin($latDiff / 2);
-        $sinLonHalf = sin($lonDiff / 2);
+        $sinLatHalf = sin($latDiff / 2.0);
+        $sinLonHalf = sin($lonDiff / 2.0);
 
         $square = $sinLatHalf * $sinLatHalf +
             $cosStartLat * $cosEndLat *
             $sinLonHalf * $sinLonHalf;
 
-        $distance = self::EARTH_RADIUS * 2 * atan2(sqrt($square), sqrt(1 - $square));
+        $distance = (float) self::EARTH_RADIUS * 2.0 * atan2(sqrt($square), sqrt(1.0 - $square));
 
         return [
             'meters'     => number_format($distance, $precision),
-            'kilometers' => number_format($distance / self::METERS_TO_KILOMETERS, $precision),
+            'kilometers' => number_format($distance / (float) self::METERS_TO_KILOMETERS, $precision),
             'miles'      => number_format($distance / self::METERS_TO_MILES, $precision),
         ];
     }
@@ -218,7 +234,7 @@ abstract class Conversion
      */
     public static function kelvinToFahrenheit(float $kelvin, bool $rounded = true, int $precision = 2): float
     {
-        $result = (($kelvin - 273.15) * 1.8) + 32;
+        $result = (($kelvin - 273.15) * 1.8) + 32.0;
 
         return ($rounded) ? round($result, $precision) : $result;
     }
