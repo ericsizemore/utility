@@ -91,6 +91,26 @@ final class ConversionTest extends TestCase
     }
 
     /**
+     * Tests the Haversine distance calculation.
+     */
+    #[Test]
+    public function haversineDistanceNoFloats(): void
+    {
+        $lat1 = 37;
+        $lon1 = -122;
+        $lat2 = 34;
+        $lon2 = -118;
+
+        $resultNoPrecision   = Conversion::haversineDistance($lat1, $lon1, $lat2, $lon2);
+        $expectedNoPrecision = ['meters' => '492,242', 'kilometers' => '492', 'miles' => '306'];
+        self::assertSame($expectedNoPrecision, $resultNoPrecision);
+
+        $resultPrecision   = Conversion::haversineDistance($lat1, $lon1, $lat2, $lon2, 2);
+        $expectedPrecision = ['meters' => '492,241.80', 'kilometers' => '492.24', 'miles' => '305.86'];
+        self::assertSame($expectedPrecision, $resultPrecision);
+    }
+
+    /**
      * Tests edge cases for Haversine distance calculation.
      */
     #[Test]
