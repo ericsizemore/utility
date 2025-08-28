@@ -99,7 +99,6 @@ Please see [docs](/docs) or view [online](https://www.secondversion.com/docs/uti
 
 - [Eric Sizemore](https://github.com/ericsizemore)
 - [All Contributors](https://github.com/ericsizemore/utility/contributors)
-- Special thanks to [JetBrains](https://www.jetbrains.com/?from=esi-utility) for their Licenses for Open Source Development.
 - Special thanks to Brandon Wamboldt and their [utilphp](https://brandonwamboldt.github.io/utilphp/) library for the inspiration for `Esi\Utility`.
 
 ### Contributing
