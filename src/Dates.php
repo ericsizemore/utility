@@ -249,6 +249,8 @@ abstract class Dates
 
             $unitName .= ($property > 1) ? 's' : '';
 
+            $property = (int) $property;
+
             if ($extendedOutput) {
                 $string .= \sprintf('%d %s ', $property, $unitName);
             } else {
