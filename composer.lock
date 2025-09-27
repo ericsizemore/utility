@@ -1875,16 +1875,16 @@
         },
         {
             "name": "friendsofphp/php-cs-fixer",
-            "version": "v3.88.1",
+            "version": "v3.88.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer.git",
-                "reference": "1c2a98f4d6cd9675cba10c59932692aa01108426"
+                "reference": "a8d15584bafb0f0d9d938827840060fd4a3ebc99"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHP-CS-Fixer/PHP-CS-Fixer/zipball/1c2a98f4d6cd9675cba10c59932692aa01108426",
-                "reference": "1c2a98f4d6cd9675cba10c59932692aa01108426",
+                "url": "https://api.github.com/repos/PHP-CS-Fixer/PHP-CS-Fixer/zipball/a8d15584bafb0f0d9d938827840060fd4a3ebc99",
+                "reference": "a8d15584bafb0f0d9d938827840060fd4a3ebc99",
                 "shasum": ""
             },
             "require": {
@@ -1967,7 +1967,7 @@
             ],
             "support": {
                 "issues": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/issues",
-                "source": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/tree/v3.88.1"
+                "source": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/tree/v3.88.2"
             },
             "funding": [
                 {
@@ -1975,7 +1975,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-09-26T23:39:09+00:00"
+            "time": "2025-09-27T00:24:15+00:00"
         },
         {
             "name": "kelunik/certificate",
