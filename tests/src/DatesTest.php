@@ -17,7 +17,6 @@ use Esi\Clock\FrozenClock;
 use Esi\Utility\Arrays;
 use Esi\Utility\Dates;
 use InvalidArgumentException;
-use Iterator;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -162,33 +161,33 @@ final class DatesTest extends TestCase
     /**
      * Data provider for extended time difference tests.
      *
-     * @return Iterator<string, array{seconds: int, expected: string}>
+     * @return iterable<string, array{int, string}>
      */
-    public static function extendedTimeDifferenceProvider(): Iterator
+    public static function extendedTimeDifferenceProvider(): iterable
     {
         yield 'complex month' => [
-            'seconds'  => 604_800 * 5,
-            'expected' => '1 month 4 days old',
+            604_800 * 5,
+            '1 month 4 days old',
         ];
         yield 'complex months' => [
-            'seconds'  => 604_800 * 10,
-            'expected' => '2 months 2 weeks old',
+            604_800 * 10,
+            '2 months 2 weeks old',
         ];
         yield 'complex year' => [
-            'seconds'  => 2_592_000 * 15,
-            'expected' => '1 year 2 months 4 weeks old',
+            2_592_000 * 15,
+            '1 year 2 months 4 weeks old',
         ];
         yield 'complex years' => [
-            'seconds'  => 2_592_000 * 36,
-            'expected' => '2 years 11 months 3 weeks old',
+            2_592_000 * 36,
+            '2 years 11 months 3 weeks old',
         ];
         yield 'many complex years' => [
-            'seconds'  => 2_592_000 * 140,
-            'expected' => '11 years 5 months 5 weeks old',
+            2_592_000 * 140,
+            '11 years 5 months 5 weeks old',
         ];
     }
 
-    public static function falseForLocationProvider(): Iterator
+    public static function falseForLocationProvider(): iterable
     {
         yield [['offset' => 1, 'country' => 'N/A', 'latitude' => 'N/A', 'longitude' => 'N/A', 'dst' => null], 'CET'];
         yield [['offset' => 2, 'country' => 'N/A', 'latitude' => 'N/A', 'longitude' => 'N/A', 'dst' => null], 'EET'];
@@ -203,7 +202,7 @@ final class DatesTest extends TestCase
         yield [['offset' => 0, 'country' => 'N/A', 'latitude' => 'N/A', 'longitude' => 'N/A', 'dst' => null], 'WET'];
     }
 
-    public static function invalidTimestampProvider(): Iterator
+    public static function invalidTimestampProvider(): iterable
     {
         yield [0, 0];
         yield [0, 1_234_567];
@@ -215,25 +214,25 @@ final class DatesTest extends TestCase
     /**
      * Data provider for standard time difference tests.
      *
-     * @return Iterator<string, array{seconds: int, expected: string}>
+     * @return iterable<string, array{int, string}>
      */
-    public static function standardTimeDifferenceProvider(): Iterator
+    public static function standardTimeDifferenceProvider(): iterable
     {
-        yield 'one second' => ['seconds' => 1, 'expected' => '1 second old'];
-        yield 'multiple seconds' => ['seconds' => 15, 'expected' => '15 seconds old'];
-        yield 'half minute' => ['seconds' => 30, 'expected' => '30 seconds old'];
-        yield 'one minute' => ['seconds' => 60, 'expected' => '1 minute old'];
-        yield 'multiple minutes' => ['seconds' => 60 * 5, 'expected' => '5 minutes old'];
-        yield 'one hour' => ['seconds' => 3_600, 'expected' => '1 hour old'];
-        yield 'multiple hours' => ['seconds' => 3_600 * 2, 'expected' => '2 hours old'];
-        yield 'one day' => ['seconds' => 3_600 * 24, 'expected' => '1 day old'];
-        yield 'multiple days' => ['seconds' => 3_600 * 24 * 5, 'expected' => '5 days old'];
-        yield 'one week' => ['seconds' => 3_600 * 24 * 7, 'expected' => '1 week old'];
-        yield 'multiple weeks' => ['seconds' => 3_600 * 24 * 14, 'expected' => '2 weeks old'];
-        yield 'one month' => ['seconds' => 604_800 * 5, 'expected' => '1 month old'];
-        yield 'multiple months' => ['seconds' => 604_800 * 10, 'expected' => '2 months old'];
-        yield 'one year' => ['seconds' => 2_592_000 * 15, 'expected' => '1 year old'];
-        yield 'multiple years' => ['seconds' => 2_592_000 * 36, 'expected' => '2 years old'];
-        yield 'many years' => ['seconds' => 2_592_000 * 140, 'expected' => '11 years old'];
+        yield 'one second' => [1, '1 second old'];
+        yield 'multiple seconds' => [15, '15 seconds old'];
+        yield 'half minute' => [30, '30 seconds old'];
+        yield 'one minute' => [60, '1 minute old'];
+        yield 'multiple minutes' => [60 * 5, '5 minutes old'];
+        yield 'one hour' => [3_600, '1 hour old'];
+        yield 'multiple hours' => [3_600 * 2, '2 hours old'];
+        yield 'one day' => [3_600 * 24, '1 day old'];
+        yield 'multiple days' => [3_600 * 24 * 5, '5 days old'];
+        yield 'one week' => [3_600 * 24 * 7, '1 week old'];
+        yield 'multiple weeks' => [3_600 * 24 * 14, '2 weeks old'];
+        yield 'one month' => [604_800 * 5, '1 month old'];
+        yield 'multiple months' => [604_800 * 10, '2 months old'];
+        yield 'one year' => [2_592_000 * 15, '1 year old'];
+        yield 'multiple years' => [2_592_000 * 36, '2 years old'];
+        yield 'many years' => [2_592_000 * 140, '11 years old'];
     }
 }

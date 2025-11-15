@@ -15,7 +15,6 @@ namespace Esi\Utility\Tests;
 
 use ArrayObject;
 use Esi\Utility\Arrays;
-use Generator;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -357,13 +356,13 @@ final class ArraysTest extends TestCase
     /**
      * Provides test cases for complex nested structures.
      *
-     * @return Generator<string, array{
-     *     input: array<string, mixed>,
-     *     callback: callable(mixed): string,
-     *     expected: array<string, mixed>
+     * @return iterable<string, array{
+     *     array<string, mixed>,
+     *     callable(mixed): string,
+     *     array<string, mixed>
      * }>
      */
-    public static function complexStructuresDataProvider(): Generator
+    public static function complexStructuresDataProvider(): iterable
     {
         $callback = static fn (mixed $value): string => \is_string($value) ? strtoupper($value) : (string) $value;
 
@@ -371,7 +370,7 @@ final class ArraysTest extends TestCase
         $obj->name = 'test';
 
         yield 'nested arrays and objects' => [
-            'input' => [
+            [
                 'string' => 'hello',
                 'array'  => [1, 2, 3],
                 'nested' => [
@@ -379,8 +378,8 @@ final class ArraysTest extends TestCase
                     'deep'   => ['a' => ['b' => 'c']],
                 ],
             ],
-            'callback' => $callback,
-            'expected' => [
+            $callback,
+            [
                 'string' => 'HELLO',
                 'array'  => ['1', '2', '3'],
                 'nested' => [
@@ -398,63 +397,63 @@ final class ArraysTest extends TestCase
     /**
      * Data provider for get() method tests.
      *
-     * @return Generator<string, array{
-     *     array: array<string, string>|ArrayObject<string, string>,
-     *     key: string,
-     *     default: mixed,
-     *     expected: mixed
+     * @return iterable<string, array{
+     *     array<string, string>|ArrayObject<string, string>,
+     *     string,
+     *     mixed,
+     *     mixed
      * }>
      */
-    public static function getDataProvider(): Generator
+    public static function getDataProvider(): iterable
     {
         yield 'array with existing key' => [
-            'array'    => ['key' => 'value'],
-            'key'      => 'key',
-            'default'  => null,
-            'expected' => 'value',
+            ['key' => 'value'],
+            'key',
+            null,
+            'value',
         ];
 
         yield 'array with non-existing key' => [
-            'array'    => ['key' => 'value'],
-            'key'      => 'nonexistent',
-            'default'  => 'default',
-            'expected' => 'default',
+            ['key' => 'value'],
+            'nonexistent',
+            'default',
+            'default',
         ];
 
         yield 'ArrayAccess with existing key' => [
-            'array'    => new ArrayObject(['key' => 'value']),
-            'key'      => 'key',
-            'default'  => null,
-            'expected' => 'value',
+            new ArrayObject(['key' => 'value']),
+            'key',
+            null,
+            'value',
         ];
 
         yield 'ArrayAccess with non-existing key' => [
-            'array'    => new ArrayObject(['key' => 'value']),
-            'key'      => 'nonexistent',
-            'default'  => 'default',
-            'expected' => 'default',
+            new ArrayObject(['key' => 'value']),
+            'nonexistent',
+            'default',
+            'default',
         ];
     }
 
     /**
      * Data provider for groupBy() method tests.
      *
-     * @return Generator<string, array{
-     *     input: GroupTestArray,
-     *     key: string,
-     *     expected: GroupTestResult
+     * @return iterable<string, array{
+     *     GroupTestArray,
+     *     string,
+     *     GroupTestResult
      * }>
      */
-    public static function groupByDataProvider(): Generator
+    public static function groupByDataProvider(): iterable
     {
         yield 'simple grouping' => [
-            'input' => [
+            [
                 ['type' => 'fruit', 'name' => 'apple'],
                 ['type' => 'vegetable', 'name' => 'carrot'],
                 ['type' => 'fruit', 'name' => 'banana'],
             ],
-            'key'      => 'type',
-            'expected' => [
+            'type',
+            [
                 'fruit' => [
                     ['type' => 'fruit', 'name' => 'apple'],
                     ['type' => 'fruit', 'name' => 'banana'],
@@ -466,13 +465,13 @@ final class ArraysTest extends TestCase
         ];
 
         yield 'with missing keys' => [
-            'input' => [
+            [
                 ['type' => 'fruit', 'name' => 'apple'],
                 ['name' => 'carrot'],
                 ['type' => 'fruit', 'name' => 'banana'],
             ],
-            'key'      => 'type',
-            'expected' => [
+            'type',
+            [
                 'fruit' => [
                     ['type' => 'fruit', 'name' => 'apple'],
                     ['type' => 'fruit', 'name' => 'banana'],
@@ -484,138 +483,138 @@ final class ArraysTest extends TestCase
     /**
      * Data provider for interlace() method tests.
      *
-     * @return Generator<string, array{
-     *     arrays: array<int, array<int, int|string>>,
-     *     expected: array<int, int|string>|false
+     * @return iterable<string, array{
+     *     array<int, array<int, int|string>>,
+     *     array<int, int|string>|false
      * }>
      */
-    public static function interlaceDataProvider(): Generator
+    public static function interlaceDataProvider(): iterable
     {
         yield 'two arrays' => [
-            'arrays'   => [[1, 2], ['a', 'b']],
-            'expected' => [1, 'a', 2, 'b'],
+            [[1, 2], ['a', 'b']],
+            [1, 'a', 2, 'b'],
         ];
 
         yield 'single array' => [
-            'arrays'   => [[1, 2, 3]],
-            'expected' => [1, 2, 3],
+            [[1, 2, 3]],
+            [1, 2, 3],
         ];
 
         yield 'different length arrays' => [
-            'arrays'   => [[1, 2], ['a']],
-            'expected' => [1, 'a', 2],
+            [[1, 2], ['a']],
+            [1, 'a', 2],
         ];
 
         yield 'empty arrays' => [
-            'arrays'   => [],
-            'expected' => false,
+            [],
+            false,
         ];
     }
 
     /**
      * Data provider for isAssociative() method tests.
      *
-     * @return Generator<string, array{
-     *     array: array<array-key, mixed>,
-     *     expected: bool
+     * @return iterable<string, array{
+     *     array<array-key, mixed>,
+     *     bool
      * }>
      */
-    public static function isAssociativeDataProvider(): Generator
+    public static function isAssociativeDataProvider(): iterable
     {
         yield 'empty array' => [
-            'array'    => [],
-            'expected' => false,
+            [],
+            false,
         ];
 
         yield 'sequential array' => [
-            'array'    => [1, 2, 3],
-            'expected' => false,
+            [1, 2, 3],
+            false,
         ];
 
         yield 'associative array' => [
-            'array'    => ['a' => 1, 'b' => 2],
-            'expected' => true,
+            ['a' => 1, 'b' => 2],
+            true,
         ];
 
         yield 'mixed array' => [
-            'array'    => [0 => 'a', 2 => 'b'],
-            'expected' => true,
+            [0 => 'a', 2 => 'b'],
+            true,
         ];
     }
 
     /**
      * Data provider for set() method tests.
      *
-     * @return Generator<string, array{
-     *     array: array<array-key, mixed>|ArrayObject<array-key, mixed>,
-     *     key: string|null,
-     *     value: mixed,
-     *     expected: mixed
+     * @return iterable<string, array{
+     *     array<array-key, mixed>|ArrayObject<array-key, mixed>,
+     *     null|string,
+     *     mixed,
+     *     mixed
      * }>
      */
-    public static function setDataProvider(): Generator
+    public static function setDataProvider(): iterable
     {
         yield 'array with key' => [
-            'array'    => [],
-            'key'      => 'test',
-            'value'    => 'value',
-            'expected' => ['test' => 'value'],
+            [],
+            'test',
+            'value',
+            ['test' => 'value'],
         ];
 
         yield 'array without key' => [
-            'array'    => [],
-            'key'      => null,
-            'value'    => 'value',
-            'expected' => [0 => 'value'],
+            [],
+            null,
+            'value',
+            [0 => 'value'],
         ];
 
         yield 'ArrayAccess' => [
-            'array'    => new ArrayObject(),
-            'key'      => 'test',
-            'value'    => 'value',
-            'expected' => ['test' => 'value'],
+            new ArrayObject(),
+            'test',
+            'value',
+            ['test' => 'value'],
         ];
     }
 
     /**
      * Provides test cases for valueExists method.
      *
-     * @return Generator<string, array{
-     *     array: array<array-key, mixed>,
-     *     value: mixed,
-     *     expected: bool
+     * @return iterable<string, array{
+     *     array<array-key, mixed>,
+     *     mixed,
+     *     bool
      * }>
      */
-    public static function valueExistsDataProvider(): Generator
+    public static function valueExistsDataProvider(): iterable
     {
         yield 'existing value' => [
-            'array'    => [1, 2, 3],
-            'value'    => 2,
-            'expected' => true,
+            [1, 2, 3],
+            2,
+            true,
         ];
 
         yield 'non-existing value' => [
-            'array'    => [1, 2, 3],
-            'value'    => 4,
-            'expected' => false,
+            [1, 2, 3],
+            4,
+            false,
         ];
 
         yield 'strict comparison' => [
-            'array'    => [1, 2, 3],
-            'value'    => '2',
-            'expected' => false,
+            [1, 2, 3],
+            '2',
+            false,
         ];
 
         yield 'null value exists' => [
-            'array'    => [1, null, 3],
-            'value'    => null,
-            'expected' => true,
+            [1, null, 3],
+            null,
+            true,
         ];
 
         yield 'array value exists' => [
-            'array'    => [1, [2], 3],
-            'value'    => [2],
-            'expected' => true,
+            [1, [2], 3],
+            [2],
+            true,
         ];
     }
 }

@@ -310,7 +310,7 @@ final class StringsTest extends TestCase
      *
      * @return Generator<int, string[], mixed, void>
      */
-    public static function camelCaseProvider(): Generator
+    public static function camelCaseProvider(): iterable
     {
         yield ['camelCase', 'CamelCase'];
         yield ['camelCase', 'Camel-Case'];
@@ -336,7 +336,7 @@ final class StringsTest extends TestCase
     /**
      * @return Generator<int, string[], mixed, void>
      */
-    public static function slugifyProvider(): Generator
+    public static function slugifyProvider(): iterable
     {
         yield ['a-simple-title', 'A simple title', '-', 'en'];
         yield ['this-post-it-has-a-dash', 'This post -- it has a dash', '-', 'en'];

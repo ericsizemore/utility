@@ -19,7 +19,7 @@ return RectorConfig::configure()
         __DIR__ . '/build/rector'
     )
     ->withRules([
-        AssertEqualsToSameRector::class,
+        //AssertEqualsToSameRector::class,
         PreferPHPUnitSelfCallRector::class,
     ])
     ->withSkip([
@@ -37,7 +37,7 @@ return RectorConfig::configure()
         typeDeclarations: true,
         privatization: true,
         earlyReturn: true,
-        strictBooleans: true,
+        //strictBooleans: true,
         rectorPreset: true,
         phpunitCodeQuality: true,
     )

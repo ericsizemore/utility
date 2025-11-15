@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Esi\Utility\Tests;
 
 use Esi\Utility\Conversion;
-use Iterator;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -91,26 +90,6 @@ final class ConversionTest extends TestCase
     }
 
     /**
-     * Tests the Haversine distance calculation.
-     */
-    #[Test]
-    public function haversineDistanceNoFloats(): void
-    {
-        $lat1 = 37;
-        $lon1 = -122;
-        $lat2 = 34;
-        $lon2 = -118;
-
-        $resultNoPrecision   = Conversion::haversineDistance($lat1, $lon1, $lat2, $lon2);
-        $expectedNoPrecision = ['meters' => '492,242', 'kilometers' => '492', 'miles' => '306'];
-        self::assertSame($expectedNoPrecision, $resultNoPrecision);
-
-        $resultPrecision   = Conversion::haversineDistance($lat1, $lon1, $lat2, $lon2, 2);
-        $expectedPrecision = ['meters' => '492,241.80', 'kilometers' => '492.24', 'miles' => '305.86'];
-        self::assertSame($expectedPrecision, $resultPrecision);
-    }
-
-    /**
      * Tests edge cases for Haversine distance calculation.
      */
     #[Test]
@@ -128,6 +107,26 @@ final class ConversionTest extends TestCase
         $equatorCross = Conversion::haversineDistance(1.0, 0.0, -1.0, 0.0);
         self::assertArrayHasKey('kilometers', $equatorCross);
         self::assertArrayHasKey('miles', $equatorCross);
+    }
+
+    /**
+     * Tests the Haversine distance calculation.
+     */
+    #[Test]
+    public function haversineDistanceNoFloats(): void
+    {
+        $lat1 = 37;
+        $lon1 = -122;
+        $lat2 = 34;
+        $lon2 = -118;
+
+        $resultNoPrecision   = Conversion::haversineDistance($lat1, $lon1, $lat2, $lon2);
+        $expectedNoPrecision = ['meters' => '492,242', 'kilometers' => '492', 'miles' => '306'];
+        self::assertSame($expectedNoPrecision, $resultNoPrecision);
+
+        $resultPrecision   = Conversion::haversineDistance($lat1, $lon1, $lat2, $lon2, 2);
+        $expectedPrecision = ['meters' => '492,241.80', 'kilometers' => '492.24', 'miles' => '305.86'];
+        self::assertSame($expectedPrecision, $resultPrecision);
     }
 
     /**
@@ -208,92 +207,92 @@ final class ConversionTest extends TestCase
     /**
      * Provides test data for Celsius conversion tests.
      *
-     * @return Iterator<string, array{input: float, fahrenheit: float, kelvin: float, rankine: float, rounded: bool}>
+     * @return iterable<string, array{float, float, float, float, bool}>
      */
-    public static function provideCelsiusConversionData(): Iterator
+    public static function provideCelsiusConversionData(): iterable
     {
         yield 'standard values' => [
-            'input'      => 23.33,
-            'fahrenheit' => 73.99,
-            'kelvin'     => 296.48,
-            'rankine'    => 533.66,
-            'rounded'    => true,
+            23.33,
+            73.99,
+            296.48,
+            533.66,
+            true,
         ];
         yield 'high precision' => [
-            'input'      => 23.333_333_333_333_332,
-            'fahrenheit' => 74.0,
-            'kelvin'     => 296.483_333_333_333_3,
-            'rankine'    => 533.67,
-            'rounded'    => false,
+            23.333_333_333_333_332,
+            74.0,
+            296.483_333_333_333_3,
+            533.67,
+            false,
         ];
     }
 
     /**
      * Provides test data for Fahrenheit conversion tests.
      *
-     * @return Iterator<string, array{input: float, celsius: float, kelvin: float, rankine: float, rounded: bool}>
+     * @return iterable<string, array{float, float, float, float, bool}>
      */
-    public static function provideFahrenheitConversionData(): Iterator
+    public static function provideFahrenheitConversionData(): iterable
     {
         yield 'standard values' => [
-            'input'   => 74.0,
-            'celsius' => 23.33,
-            'kelvin'  => 296.48,
-            'rankine' => 533.67,
-            'rounded' => true,
+            74.0,
+            23.33,
+            296.48,
+            533.67,
+            true,
         ];
         yield 'high precision' => [
-            'input'   => 74.0,
-            'celsius' => 23.333_333_333_333_332,
-            'kelvin'  => 296.483_333_333_333_3,
-            'rankine' => 533.670_000_000_000_1,
-            'rounded' => false,
+            74.0,
+            23.333_333_333_333_332,
+            296.483_333_333_333_3,
+            533.670_000_000_000_1,
+            false,
         ];
     }
 
     /**
      * Provides test data for Kelvin conversion tests.
      *
-     * @return Iterator<string, array{input: float, celsius: float, fahrenheit: float, rankine: float, rounded: bool}>
+     * @return iterable<string, array{float, float, float, float, bool}>
      */
-    public static function provideKelvinConversionData(): Iterator
+    public static function provideKelvinConversionData(): iterable
     {
         yield 'standard values' => [
-            'input'      => 296.48,
-            'celsius'    => 23.33,
-            'fahrenheit' => 73.99,
-            'rankine'    => 533.66,
-            'rounded'    => true,
+            296.48,
+            23.33,
+            73.99,
+            533.66,
+            true,
         ];
         yield 'high precision' => [
-            'input'      => 296.483_333_333_333_3,
-            'celsius'    => 23.333_333_333_333_314,
-            'fahrenheit' => 73.999_999_999_999_97,
-            'rankine'    => 533.67,
-            'rounded'    => false,
+            296.483_333_333_333_3,
+            23.333_333_333_333_314,
+            73.999_999_999_999_97,
+            533.67,
+            false,
         ];
     }
 
     /**
      * Provides test data for Rankine conversion tests.
      *
-     * @return Iterator<string, array{input: float, celsius: float, fahrenheit: float, kelvin: float, rounded: bool}>
+     * @return iterable<string, array{float, float, float, float, bool}>
      */
-    public static function provideRankineConversionData(): Iterator
+    public static function provideRankineConversionData(): iterable
     {
         yield 'standard values' => [
-            'input'      => 533.67,
-            'celsius'    => 23.33,
-            'fahrenheit' => 74.0,
-            'kelvin'     => 296.48,
-            'rounded'    => true,
+            533.67,
+            23.33,
+            74.0,
+            296.48,
+            true,
         ];
         yield 'high precision' => [
-            'input'      => 533.670_000_000_000_1,
-            'celsius'    => 23.333_333_333_333_364,
-            'fahrenheit' => 74.000_000_000_000_06,
-            'kelvin'     => 296.483_333_333_333_35,
-            'rounded'    => false,
+            533.670_000_000_000_1,
+            23.333_333_333_333_364,
+            74.000_000_000_000_06,
+            296.483_333_333_333_35,
+            false,
         ];
     }
 }

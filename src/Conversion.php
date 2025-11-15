@@ -194,9 +194,9 @@ abstract class Conversion
         $sinLatHalf = sin($latDiff / 2.0);
         $sinLonHalf = sin($lonDiff / 2.0);
 
-        $square = $sinLatHalf * $sinLatHalf +
-            $cosStartLat * $cosEndLat *
-            $sinLonHalf * $sinLonHalf;
+        $square = $sinLatHalf * $sinLatHalf
+            + $cosStartLat * $cosEndLat
+            * $sinLonHalf * $sinLonHalf;
 
         $distance = (float) self::EARTH_RADIUS * 2.0 * atan2(sqrt($square), sqrt(1.0 - $square));
 

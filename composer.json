@@ -55,16 +55,16 @@
     },
     "require-dev": {
         "esi/phpunit-coverage-check": "^2.0",
-        "friendsofphp/php-cs-fixer": "^3.73.1",
-        "phpstan/extension-installer": "^1.4.3",
-        "phpstan/phpstan": "^2.1.10",
-        "phpstan/phpstan-deprecation-rules": "^2.0.1",
-        "phpstan/phpstan-phpunit": "^2.0.4",
-        "phpstan/phpstan-strict-rules": "^2.0.4",
-        "phpunit/phpunit": "^11.5.15",
-        "psalm/plugin-phpunit": "^0.19.3",
-        "rector/rector": "^2.0.10",
-        "vimeo/psalm": "^6.9.4"
+        "friendsofphp/php-cs-fixer": "^3.89",
+        "phpstan/extension-installer": "^1.4",
+        "phpstan/phpstan": "^2.1",
+        "phpstan/phpstan-deprecation-rules": "^2.0",
+        "phpstan/phpstan-phpunit": "^2.0",
+        "phpstan/phpstan-strict-rules": "^2.0",
+        "phpunit/phpunit": "^11.5",
+        "psalm/plugin-phpunit": "^0.19",
+        "rector/rector": "^2.2",
+        "vimeo/psalm": "^6.13"
     },
     "suggest": {
         "ext-exif": "To be able to use Exif for guessing image types with Utility\\Image",

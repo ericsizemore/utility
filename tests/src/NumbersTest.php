@@ -136,7 +136,7 @@ final class NumbersTest extends TestCase
     /**
      * @return Generator<int, array{0: int, 1: string}, mixed, void>
      */
-    public static function ordinalDataProvider(): Generator
+    public static function ordinalDataProvider(): iterable
     {
         yield [1, '1st'];
         yield [2, '2nd'];
@@ -167,108 +167,108 @@ final class NumbersTest extends TestCase
     /**
      * Data provider for binary size formatting tests.
      *
-     * @return Generator<int, array{
-     *     bytes: int,
-     *     precision: int,
-     *     expected: string
-     * }, mixed, void>
+     * @return iterable<int, array{
+     *     int,
+     *     int,
+     *     string
+     * }>
      */
-    public static function sizeFormatWithBinaryProvider(): Generator
+    public static function sizeFormatWithBinaryProvider(): iterable
     {
         yield [
-            'bytes'     => 512,
-            'precision' => 0,
-            'expected'  => '512 B',
+            512,
+            0,
+            '512 B',
         ];
 
         yield [
-            'bytes'     => 2_048,
-            'precision' => 1,
-            'expected'  => '2.0 KiB',
+            2_048,
+            1,
+            '2.0 KiB',
         ];
 
         yield [
-            'bytes'     => 25_151_251,
-            'precision' => 2,
-            'expected'  => '23.99 MiB',
+            25_151_251,
+            2,
+            '23.99 MiB',
         ];
 
         yield [
-            'bytes'     => 19_971_597_926,
-            'precision' => 2,
-            'expected'  => '18.60 GiB',
+            19_971_597_926,
+            2,
+            '18.60 GiB',
         ];
 
         yield [
-            'bytes'     => 2_748_779_069_440,
-            'precision' => 1,
-            'expected'  => '2.5 TiB',
+            2_748_779_069_440,
+            1,
+            '2.5 TiB',
         ];
 
         yield [
-            'bytes'     => 2_748_779_069_440 * 1_024,
-            'precision' => 1,
-            'expected'  => '2.5 PiB',
+            2_748_779_069_440 * 1_024,
+            1,
+            '2.5 PiB',
         ];
 
         yield [
-            'bytes'     => 2_748_779_069_440 * (1_024 * 1_024),
-            'precision' => 1,
-            'expected'  => '2.5 EiB',
+            2_748_779_069_440 * (1_024 * 1_024),
+            1,
+            '2.5 EiB',
         ];
     }
 
     /**
      * Data provider for metric size formatting tests.
      *
-     * @return Generator<int, array{
-     *     bytes: int,
-     *     precision: int,
-     *     expected: string
-     * }, mixed, void>
+     * @return iterable<int, array{
+     *     int,
+     *     int,
+     *     string
+     * }>
      */
-    public static function sizeFormatWithMetricProvider(): Generator
+    public static function sizeFormatWithMetricProvider(): iterable
     {
         yield [
-            'bytes'     => 512,
-            'precision' => 0,
-            'expected'  => '512 B',
+            512,
+            0,
+            '512 B',
         ];
 
         yield [
-            'bytes'     => 2_000,
-            'precision' => 1,
-            'expected'  => '2.0 kB',
+            2_000,
+            1,
+            '2.0 kB',
         ];
 
         yield [
-            'bytes'     => 25_151_251,
-            'precision' => 2,
-            'expected'  => '25.15 MB',
+            25_151_251,
+            2,
+            '25.15 MB',
         ];
 
         yield [
-            'bytes'     => 19_971_597_926,
-            'precision' => 2,
-            'expected'  => '19.97 GB',
+            19_971_597_926,
+            2,
+            '19.97 GB',
         ];
 
         yield [
-            'bytes'     => 2_748_779_069_440,
-            'precision' => 1,
-            'expected'  => '2.7 TB',
+            2_748_779_069_440,
+            1,
+            '2.7 TB',
         ];
 
         yield [
-            'bytes'     => 2_748_779_069_440 * 1_000,
-            'precision' => 1,
-            'expected'  => '2.7 PB',
+            2_748_779_069_440 * 1_000,
+            1,
+            '2.7 PB',
         ];
 
         yield [
-            'bytes'     => 2_748_779_069_440 * (1_000 * 1_000),
-            'precision' => 1,
-            'expected'  => '2.7 EB',
+            2_748_779_069_440 * (1_000 * 1_000),
+            1,
+            '2.7 EB',
         ];
     }
 }
