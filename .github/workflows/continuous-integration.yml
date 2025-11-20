@@ -24,7 +24,7 @@ jobs:
       matrix:
         php: [ '8.2', '8.3', '8.4' ]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: "Install PHP ${{ matrix.php }}"
         uses: shivammathur/setup-php@master
@@ -48,7 +48,7 @@ jobs:
     name: "Psalm"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: "Psalm Analysis"
         uses: docker://vimeo/psalm-github-actions:latest
@@ -70,7 +70,7 @@ jobs:
       matrix:
         php: [ '8.2', '8.3', '8.4' ]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
            fetch-depth: 10
 
