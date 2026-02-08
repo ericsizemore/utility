@@ -5,7 +5,7 @@ declare(strict_types=1);
 $header = <<<'EOF'
     This file is part of Esi\Utility.
 
-    (c) 2017 - 2025 Eric Sizemore <admin@secondversion.com>
+    (c) 2017 - 2026 Eric Sizemore <admin@secondversion.com>
 
     For the full copyright and license information, please view
     the LICENSE.md file that was distributed with this source code.

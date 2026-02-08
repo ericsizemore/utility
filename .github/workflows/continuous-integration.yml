@@ -39,7 +39,8 @@ jobs:
         uses: ramsey/composer-install@v3
         with:
            composer-options: "--prefer-dist --optimize-autoloader"
-           require-lock-file: "true"
+           require-lock-file: "false"
+           dependency-versions: "highest"
 
       - name: "Run PHPStan"
         run: composer run-script phpstan
@@ -50,13 +51,24 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: "Psalm Analysis"
-        uses: docker://vimeo/psalm-github-actions:latest
+      - name: "Install PHP 8.2"
+        uses: shivammathur/setup-php@master
         with:
-          args: --shepherd
-          composer_require_dev: true
-          security_analysis: true
-          report_file: results.sarif
+          php-version: 8.2
+          coverage: none
+
+      - name: "Validate composer.json and composer.lock"
+        run: composer validate --strict
+
+      - name: "Setup Composer, install dependencies"
+        uses: ramsey/composer-install@v3
+        with:
+          composer-options: "--prefer-dist --optimize-autoloader"
+          require-lock-file: "false"
+          dependency-versions: "highest"
+
+      - name: "Psalm Analysis"
+        run: composer run-script psalm:ci
 
       - name: "Upload Security Analysis results to GitHub"
         uses: github/codeql-action/upload-sarif@v4
@@ -88,7 +100,8 @@ jobs:
         uses: ramsey/composer-install@v3
         with:
            composer-options: "--prefer-dist --optimize-autoloader"
-           require-lock-file: "true"
+           require-lock-file: "false"
+           dependency-versions: "highest"
 
       - name: "Run test suite"
         run: composer run-script phpunit

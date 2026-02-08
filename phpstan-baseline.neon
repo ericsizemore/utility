@@ -7,12 +7,6 @@ parameters:
 			path: src/Arrays.php
 
 		-
-			rawMessage: Variable property access on DateInterval.
-			identifier: property.dynamicName
-			count: 1
-			path: src/Dates.php
-
-		-
 			rawMessage: 'Parameter #2 $language of static method voku\helper\ASCII::to_ascii() expects '' ''|''am''|''ar''|''az''|''be''|''bg''|''bn''|''cs''|''da''|''de''|''de_at''|''de_ch''|''el''|''el__greeklish''|''en''|''eo''|''et''|''fa''|''fi''|''fr''|''fr_at''|''fr_ch''|''hi''|''hr''|''hu''|''hy''|''it''|''ja''|''ka''|''kk''|''ko''|''ky''|''latin''|''lt''|''lv''|''mk''|''mn''|''msword''|''my''|''nl''|''no''|''or''|''pl''|''ps''|''pt''|''ro''|''ru''|''ru__gost_2000_b''|''ru__passport_2013''|''sk''|''sr''|''sr__cyr''|''sr__lat''|''sv''|''th''|''tk''|''tr''|''uk''|''uz''|''vi''|''zh'', string given.'
 			identifier: argument.type
 			count: 1

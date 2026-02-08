@@ -2,33 +2,59 @@
 
 ## Supported Versions
 
-| Version | Supported | [Tidelift Only](https://github.com/ericsizemore/utility/security/policy#tidelift-subscribers) [^1] |
-|---------|-----------|----------------------------------------------------------------------------------------------------|
-| 2.2.x   | ✅         | No                                                                                                 |
-| 2.1.x   | ✅         | No                                                                                                 |
-| 2.0.x   | ✅         | No                                                                                                 |
-| 1.3.x   | ❌         | Yes                                                                                                |
-| 1.2.x   | ❌         | Not Maintained                                                                                     |
-| 1.1.x   | ❌         | Not Maintained                                                                                     |
-| 1.0.x   | ❌         | Not Maintained                                                                                     |
+Use this table to check if your version is eligible for security updates:
+
+| Version | Supported |
+|---------|-----------|
+| 2.2.x   | ✅         |
+| 2.1.x   | ✅         |
+| 2.0.x   | ✅         |
+| 1.3.x   | ❌         |
+| 1.2.x   | ❌         |
+| 1.1.x   | ❌         |
+| 1.0.x   | ❌         |
 
 ## Reporting a Vulnerability
 
-If there are any vulnerabilities discovered within **Utility**, please do not hesitate to _report them_. 
+I take the security of this project seriously. If you discover a security vulnerability, please follow these steps:
 
-To report a security issue, please use the GitHub Security Advisory ["Report a Vulnerability"](https://github.com/ericsizemore/utility/security/advisories/new) tab. If you have a fix for the issue, that is most welcome — please attach or summarize it in your message!
+### Preferred Method
+1. Use the GitHub Security Advisory ["Report a Vulnerability"](https://github.com/ericsizemore/utility/security/advisories/new) tab.
+2. Provide detailed information about the vulnerability.
+3. Include steps to reproduce (if possible).
+4. Attach or describe any potential fixes you may have identified.
 
-I will evaluate the vulnerability and, if necessary, release a fix or mitigating steps to address it. I will reach out to you to let you know the outcome, and will credit you in the report.
+> When you submit through GitHub's Security Advisory system, a private advisory is automatically created where we can securely discuss and track the vulnerability.
+> You'll maintain access to this advisory throughout the process and can communicate directly with me there.
 
-   Please **do not disclose the vulnerability publicly** until a fix is released!
+### Alternative Methods
+- For Tidelift subscribers: Use the [Tidelift security contact](https://tidelift.com/security).
 
-Once either a) a fix has been published, or b) I have declined to address the vulnerability for whatever reason, you are free to publicly disclose it.
+### What to Expect
+1. **Initial Response**: You'll receive an acknowledgment through the GitHub Security Advisory.
+2. **Collaboration**: Through the private advisory, we will:
+    - Confirm and validate the vulnerability
+    - Discuss potential fixes or mitigations
+    - Coordinate on the fix implementation
+3. **Resolution**: Once a fix is ready, we will:
+    - Prepare a new release with the fix
+    - Publish the security advisory
+    - Credit you as the reporter (unless you prefer to remain anonymous)
+    - Issue a CVE if appropriate
 
-## [^1] Tidelift Subscribers
+### Important Guidelines
+- **DO NOT** disclose the vulnerability publicly until a fix has been released.
+- **DO NOT** open a public issue or pull request describing the vulnerability.
+- If 90 days have passed since your report and no fix has been released, you may disclose the vulnerability publicly.
 
-Any packages marked as `Yes` under `Tidelift Only` in the [Supported Versions](https://github.com/ericsizemore/utility/security/policy#supported-versions) table above means that particular version will only receive updates for Tidelift Subscribers.
+## Security Best Practices
+- Keep your dependencies up to date.
+- Always use the latest supported version.
+- Enable security alerts in your GitHub repository settings.
+- Regularly check for security advisories related to this project.
 
-If you're a [Tidelift](https://tidelift.com/) subscriber, please use this route instead:
+## Past Security Advisories
+You can view our past security advisories here on [GitHub](https://github.com/ericsizemore/utility/security/advisories).
 
-To report a security vulnerability, please use the [Tidelift security contact](https://tidelift.com/security).
-Tidelift will coordinate the fix and disclosure.
+---
+Last updated: February 8th, 2026
