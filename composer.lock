@@ -8,38 +8,39 @@
     "packages": [
         {
             "name": "esi/clock",
-            "version": "1.1.0",
+            "version": "1.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ericsizemore/clock.git",
-                "reference": "bc7452c35486dc36a4bc868bda640571284f4248"
+                "reference": "3d24023e2d98645015e3f1eb1d217d7fdeaa2925"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ericsizemore/clock/zipball/bc7452c35486dc36a4bc868bda640571284f4248",
-                "reference": "bc7452c35486dc36a4bc868bda640571284f4248",
+                "url": "https://api.github.com/repos/ericsizemore/clock/zipball/3d24023e2d98645015e3f1eb1d217d7fdeaa2925",
+                "reference": "3d24023e2d98645015e3f1eb1d217d7fdeaa2925",
                 "shasum": ""
             },
             "require": {
-                "php": "^8.2 <8.5",
+                "php": ">=8.2",
                 "psr/clock": "^1.0",
-                "symfony/polyfill-php83": "^1.31"
+                "symfony/polyfill-php83": "^1.33"
             },
             "provide": {
                 "psr/clock-implementation": "1.0"
             },
             "require-dev": {
-                "esi/phpunit-coverage-check": "^2.0",
-                "friendsofphp/php-cs-fixer": "^3.64",
-                "infection/infection": "^0.29",
+                "esi/phpunit-coverage-check": "^2.0 || ^3.1",
+                "friendsofphp/php-cs-fixer": "^3.94",
+                "infection/infection": "^0.32",
                 "phpstan/extension-installer": "^1.4",
-                "phpstan/phpstan": "^2.0",
+                "phpstan/phpstan": "^2.1",
                 "phpstan/phpstan-deprecation-rules": "^2.0",
                 "phpstan/phpstan-phpunit": "^2.0",
                 "phpstan/phpstan-strict-rules": "^2.0",
-                "phpunit/phpunit": "^11.4",
+                "phpunit/phpunit": "^11.5 || ^12.5 || ^13.0",
                 "psalm/plugin-phpunit": "^0.19.0",
-                "vimeo/psalm": "dev-master"
+                "rector/rector": "^2.3",
+                "vimeo/psalm": "^6.15"
             },
             "type": "library",
             "extra": {
@@ -91,7 +92,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-11-17T09:41:53+00:00"
+            "time": "2026-02-25T07:01:42+00:00"
         },
         {
             "name": "psr/clock",
