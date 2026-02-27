@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [2.2.2] - 2026-02-27
+
+**No significant changes**
+
+### Changed
+
+  * Updated `composer.json` to allow PHP 8.5.
+  * Updated dev-dependencies to allow PHPUnit 11, 12 or 13.
+  * Allow PHP 8.5 in CI.
+
+
 ## [2.2.1] - 2026-02-09
 
 **No significant changes**
@@ -287,6 +298,7 @@ Utility has undergone a complete restructuring, wherein it is no longer a single
 
 
 [unreleased]: https://github.com/ericsizemore/utility/tree/master
+[2.2.2]: https://github.com/ericsizemore/utility/releases/tag/v2.2.2
 [2.2.1]: https://github.com/ericsizemore/utility/releases/tag/v2.2.1
 [2.2.0]: https://github.com/ericsizemore/utility/releases/tag/v2.2.0
 [2.1.0]: https://github.com/ericsizemore/utility/releases/tag/v2.1.0

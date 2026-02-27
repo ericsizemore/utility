@@ -9,10 +9,7 @@ Use this table to check if your version is eligible for security updates:
 | 2.2.x   | :white_check_mark: |
 | 2.1.x   | :white_check_mark: |
 | 2.0.x   | :white_check_mark: |
-| 1.3.x   | :x:                |
-| 1.2.x   | :x:                |
-| 1.1.x   | :x:                |
-| 1.0.x   | :x:                |
+| 1.x.x   | :x:                |
 
 ## Reporting a Vulnerability
 
