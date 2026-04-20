@@ -64,7 +64,7 @@
         "phpunit/phpunit": "^11.5 || ^12.5 || ^13.0",
         "psalm/plugin-phpunit": "^0.19",
         "rector/rector": "^2.3",
-        "vimeo/psalm": "^6.15"
+        "vimeo/psalm": "^6.15 || ^7.0"
     },
     "suggest": {
         "ext-exif": "To be able to use Exif for guessing image types with Utility\\Image",

@@ -359,7 +359,7 @@ abstract class Filesystem
             },
             []
         );
-
+        /** @var array<string> $filtered */
         return ($separator !== '\\' ? $separator : '') . implode($separator, $filtered);
     }
 
