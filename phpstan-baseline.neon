@@ -13,9 +13,21 @@ parameters:
 			path: src/Strings.php
 
 		-
+			rawMessage: 'Call to static method PHPUnit\Framework\Assert::assertSame() with array<non-empty-list<array{type?: string, name: string}>> and array<non-empty-list<array{key?: mixed}>> will always evaluate to false.'
+			identifier: staticMethod.impossibleType
+			count: 1
+			path: tests/src/ArraysTest.php
+
+		-
 			rawMessage: Cannot cast mixed to string.
 			identifier: cast.string
 			count: 6
+			path: tests/src/ArraysTest.php
+
+		-
+			rawMessage: 'Parameter #1 $array of static method Esi\Utility\Arrays::groupBy() expects array<array{key?: mixed}>, array<array{type?: string, name: string}> given.'
+			identifier: argument.type
+			count: 1
 			path: tests/src/ArraysTest.php
 
 		-

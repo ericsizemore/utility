@@ -51,20 +51,20 @@
         "ext-mbstring": "*",
         "esi/clock": "^1.1",
         "ralouphie/getallheaders": "^3.0",
-        "voku/portable-ascii": "^2.0"
+        "voku/portable-ascii": "^2.1"
     },
     "require-dev": {
         "esi/phpunit-coverage-check": "^2.0 || ^3.1",
-        "friendsofphp/php-cs-fixer": "^3.94",
+        "friendsofphp/php-cs-fixer": "^3.95",
         "phpstan/extension-installer": "^1.4",
-        "phpstan/phpstan": "^2.1",
+        "phpstan/phpstan": "^2.2",
         "phpstan/phpstan-deprecation-rules": "^2.0",
         "phpstan/phpstan-phpunit": "^2.0",
         "phpstan/phpstan-strict-rules": "^2.0",
-        "phpunit/phpunit": "^11.5 || ^12.5 || ^13.0",
+        "phpunit/phpunit": "^11.5 || ^12.5 || ^13.1",
         "psalm/plugin-phpunit": "^0.19",
-        "rector/rector": "^2.3",
-        "vimeo/psalm": "^6.15 || ^7.0"
+        "rector/rector": "^2.4",
+        "vimeo/psalm": "^6.16 || ^7.0"
     },
     "suggest": {
         "ext-exif": "To be able to use Exif for guessing image types with Utility\\Image",
@@ -109,6 +109,7 @@
         "phpcs:check": "vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php --dry-run --diff",
         "phpcs:fix": "vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php",
         "phpstan": "vendor/bin/phpstan analyse -c phpstan.neon -vvv",
+        "phpstan:baseline": "vendor/bin/phpstan --generate-baseline=phpstan-baseline.neon",
         "phpunit": "vendor/bin/phpunit",
         "phpunit:migrate": "@phpunit --migrate-configuration",
         "psalm": "vendor/bin/psalm -c psalm.xml --no-cache",
