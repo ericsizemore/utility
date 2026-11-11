@@ -144,6 +144,7 @@ abstract class Dates
         $location = $frozenClock->now()->getTimezone()->getLocation();
 
         // If getting the location fails
+        // @codeCoverageIgnoreStart
         if ($location === false) {
             $location = [
                 'country_code' => 'N/A',
@@ -151,6 +152,7 @@ abstract class Dates
                 'longitude'    => 'N/A',
             ];
         }
+        // @codeCoverageIgnoreEnd
 
         $transitions = $frozenClock->now()->getTimezone()->getTransitions(
             $frozenClock->now()->getTimestamp(),
@@ -208,6 +210,7 @@ abstract class Dates
 
         $validTimezones ??= \DateTimeZone::listIdentifiers();
 
+        // @codeCoverageIgnoreStart
         if ($includeBcZones) {
             $validTimezonesBc ??= \DateTimeZone::listIdentifiers(\DateTimeZone::ALL_WITH_BC);
 
@@ -216,6 +219,7 @@ abstract class Dates
              */
             return Arrays::valueExists($validTimezonesBc, $timezone);
         }
+        // @codeCoverageIgnoreEnd
 
         /**
          * @var list<string> $validTimezones

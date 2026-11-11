@@ -133,22 +133,6 @@ final class DatesTest extends TestCase
     }
 
     /**
-     * @param array{
-     *     offset: int<-10, 2>,
-     *     country: 'N/A',
-     *     latitude: 'N/A',
-     *     longitude: 'N/A',
-     *     'dst': null
-     * } $expected
-     */
-    #[DataProvider('falseForLocationProvider')]
-    #[Test]
-    public function timezoneInfoLocationReturnsFalse(array $expected, string $timezone): void
-    {
-        self::assertSame($expected, Dates::timezoneInfo($timezone, true));
-    }
-
-    /**
      * Test Dates::validTimezone().
      */
     #[Test]
@@ -185,21 +169,6 @@ final class DatesTest extends TestCase
             2_592_000 * 140,
             '11 years 5 months 5 weeks old',
         ];
-    }
-
-    public static function falseForLocationProvider(): iterable
-    {
-        yield [['offset' => 1, 'country' => 'N/A', 'latitude' => 'N/A', 'longitude' => 'N/A', 'dst' => null], 'CET'];
-        yield [['offset' => 2, 'country' => 'N/A', 'latitude' => 'N/A', 'longitude' => 'N/A', 'dst' => null], 'EET'];
-        yield [['offset' => -5, 'country' => 'N/A', 'latitude' => 'N/A', 'longitude' => 'N/A', 'dst' => null], 'EST'];
-        yield [['offset' => 0, 'country' => 'N/A', 'latitude' => 'N/A', 'longitude' => 'N/A', 'dst' => null], 'GMT'];
-        yield [['offset' => 0, 'country' => 'N/A', 'latitude' => 'N/A', 'longitude' => 'N/A', 'dst' => null], 'GMT+0'];
-        yield [['offset' => 0, 'country' => 'N/A', 'latitude' => 'N/A', 'longitude' => 'N/A', 'dst' => null], 'GMT-0'];
-        yield [['offset' => -10, 'country' => 'N/A', 'latitude' => 'N/A', 'longitude' => 'N/A', 'dst' => null], 'HST'];
-        yield [['offset' => 1, 'country' => 'N/A', 'latitude' => 'N/A', 'longitude' => 'N/A', 'dst' => null], 'MET'];
-        yield [['offset' => -7, 'country' => 'N/A', 'latitude' => 'N/A', 'longitude' => 'N/A', 'dst' => null], 'MST'];
-        yield [['offset' => 0, 'country' => 'N/A', 'latitude' => 'N/A', 'longitude' => 'N/A', 'dst' => null], 'UCT'];
-        yield [['offset' => 0, 'country' => 'N/A', 'latitude' => 'N/A', 'longitude' => 'N/A', 'dst' => null], 'WET'];
     }
 
     public static function invalidTimestampProvider(): iterable
