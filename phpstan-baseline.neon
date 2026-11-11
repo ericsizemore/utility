@@ -25,6 +25,24 @@ parameters:
 			path: tests/src/ArraysTest.php
 
 		-
+			rawMessage: 'Generator expects value type array{array<string, string>|ArrayObject<string, string>, string, mixed, mixed}, array{ArrayObject<''key'', ''value''>, ''key'', null, ''value''} given.'
+			identifier: generator.valueType
+			count: 1
+			path: tests/src/ArraysTest.php
+
+		-
+			rawMessage: 'Generator expects value type array{array<string, string>|ArrayObject<string, string>, string, mixed, mixed}, array{ArrayObject<''key'', ''value''>, ''nonexistent'', ''default'', ''default''} given.'
+			identifier: generator.valueType
+			count: 1
+			path: tests/src/ArraysTest.php
+
+		-
+			rawMessage: 'Parameter #1 $array of method Esi\Utility\Tests\ArraysTest::getShouldReturnCorrectValue() expects array<string, string>|ArrayObject<string, string>, ArrayObject<''key'', ''value''> given.'
+			identifier: argument.type
+			count: 2
+			path: tests/src/ArraysTest.php
+
+		-
 			rawMessage: 'Parameter #1 $array of static method Esi\Utility\Arrays::groupBy() expects array<array{key?: mixed}>, array<array{type?: string, name: string}> given.'
 			identifier: argument.type
 			count: 1

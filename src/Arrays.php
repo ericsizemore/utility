@@ -275,14 +275,14 @@ abstract class Arrays
      *
      * Add a value to an array.
      *
-     * @template TKey of array-key
+     * @template TKey of (int|string)
      * @template TValue
      *
      * @param array<TKey, TValue>|ArrayAccess<TKey, TValue> $array
      * @param null|TKey                                     $key
      * @param TValue                                        $value
      *
-     * @param-out (array<TKey, TValue>|ArrayAccess<TKey, TValue>) $array
+     * @param-out (ArrayAccess<TKey, TValue>|non-empty-array<int, TValue>|non-empty-array<TKey, TValue>) $array
      */
     public static function set(array|ArrayAccess &$array, null|int|string $key, mixed $value): void
     {

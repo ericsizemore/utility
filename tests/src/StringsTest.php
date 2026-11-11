@@ -183,7 +183,7 @@ final class StringsTest extends TestCase
     public function testRandomBytes(): void
     {
         $bytes = Strings::randomBytes(8);
-        self::assertNotEmpty($bytes);
+        self::assertTrue($bytes !== '');
 
         self::expectException(RandomException::class);
         Strings::randomBytes(-10);

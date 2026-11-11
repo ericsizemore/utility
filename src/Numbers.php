@@ -91,8 +91,6 @@ abstract class Numbers
 
         /**
          * @var string $suffix
-         *
-         * @psalm-suppress InvalidArrayOffset
          */
         $suffix = ($absNumber % 100 >= 11 && $absNumber % 100 <= 13)
                   ? $suffixes[0]

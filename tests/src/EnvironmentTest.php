@@ -78,7 +78,7 @@ final class EnvironmentTest extends TestCase
     #[Test]
     public function iniGetCanGet(): void
     {
-        self::assertNotEmpty(Environment::iniGet('request_order'));
+        self::assertTrue(Environment::iniGet('request_order') !== '');
 
         self::assertLessThanOrEqual('1', Environment::iniGet('display_errors', true));
 

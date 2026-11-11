@@ -2,7 +2,7 @@
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		 xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
          backupGlobals="true"
-         executionOrder="depends,defects"
+         executionOrder="defects"
 		 bootstrap="vendor/autoload.php"
          cacheDirectory="build/phpunit/cache"
          displayDetailsOnTestsThatTriggerDeprecations="true"
